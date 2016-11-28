@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="format.xsl" ?>
+<ValidateRule Name="重補修科目管理">
+  <DuplicateDetection>
+    <Detector Name="組合鍵值">
+      <Field Name="科目名稱" />
+      <Field Name="級別" />
+      <Field Name="學分數" />
+      <Field Name="所屬課表" />
+    </Detector>
+  </DuplicateDetection>
+  <FieldList>
+
+    <Field Required="True" Name="科目名稱" Description="科目名稱">
+      <Validate AutoCorrect="False" Description="「科目名稱」不允許空白。" ErrorType="Error" Validator="不可空白" When="" />
+    </Field>
+
+    <Field Required="True" Name="級別" Description="級別" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「級別」必須是數字。" ErrorType="Error" Validator="Integer極限" When="" />
+    </Field>
+
+    <Field Required="True" Name="學分數" Description="學分數">
+      <Validate AutoCorrect="False" Description="「學分數」不允許空白。" ErrorType="Error" Validator="不可空白" When="" />
+      <Validate AutoCorrect="False" Description="「學分數」必須是數字。" ErrorType="Error" Validator="Integer極限" When="" />
+    </Field>
+
+    <Field Required="False" Name="科別" Description="科別" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「科別」不存在系統中。" ErrorType="Error" Validator="科別名稱是否存在" When="" />
+    </Field>
+
+    <Field Required="True" Name="所屬課表" Description="所屬課表">
+      <Validate AutoCorrect="False" Description="「所屬課表」不允許空白。" ErrorType="Error" Validator="不可空白" When="" />
+      <Validate AutoCorrect="False" Description="「所屬課表」不存在系統中。" ErrorType="Error" Validator="所屬課表是否存在" When="" />
+    </Field>
+
+    <Field Required="False" Name="科目類別" Description="科目類別" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「科目類別」只允許「專業、實習、共同」。" ErrorType="Error" Validator="科目類別列舉" When="" />
+    </Field>
+
+    <Field Required="False" Name="一" Description="一" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次一」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="二" Description="二" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次二」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="三" Description="三" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次三」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="四" Description="四" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次四」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="五" Description="五" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次五」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="六" Description="六" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次六」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="七" Description="七" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次七」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+    <Field Required="False" Name="八" Description="八" EmptyAlsoValidate="False">
+      <Validate AutoCorrect="False" Description="「節次八」只允許「V、v」。" ErrorType="Error" Validator="節次列舉" When="" />
+    </Field>
+
+  </FieldList>
+
+  <ValidatorList>
+    <RowValidator Name="組合鍵值是否存在" Type="RETAKESUBJECTLISTCHECK"/>
+    <FieldValidator Name="科別名稱是否存在" Type="DEPARTMENTNAMECHECK"/>
+    <FieldValidator Name="所屬課表是否存在" Type="RETAKECOURSETIMETABLECHECK"/>
+
+    <FieldValidator Name="不可空白" Type="STRINGLENGTH">
+      <MinLength>1</MinLength>
+    </FieldValidator>
+
+    <FieldValidator Name="Integer極限" Type="Integer">
+      <MinValue>0</MinValue>
+      <MaxValue>2000000000</MaxValue>
+    </FieldValidator>
+
+    <FieldValidator Name="科目類別列舉" Type="Enumeration">
+      <Item Value="專業" />
+      <Item Value="實習" />
+      <Item Value="共同" />
+    </FieldValidator>
+
+    <FieldValidator Name="節次列舉" Type="Enumeration">
+      <Item Value="V" />
+      <Item Value="v" />
+    </FieldValidator>
+
+  </ValidatorList>
+
+  <RowValidate>
+    <Validate AutoCorrect="False" Description="「科目名稱」、「級別」、「學分數」、「所屬課表」組合不存在系統，此筆將新增。" ErrorType="Warning" Validator="組合鍵值是否存在" When=""/>
+  </RowValidate>
+
+  <ConditionList />
+
+</ValidateRule>
