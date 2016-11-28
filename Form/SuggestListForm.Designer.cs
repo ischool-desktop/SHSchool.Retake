@@ -31,16 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgData = new DevComponents.DotNetBar.Controls.DataGridViewX();
-            this.btnExportExcel = new DevComponents.DotNetBar.ButtonX();
-            this.itmPnlTimeName = new DevComponents.DotNetBar.ItemPanel();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.設成目前正在期間ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnAdd = new DevComponents.DotNetBar.ButtonX();
-            this.btnDel = new DevComponents.DotNetBar.ButtonX();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.labelX1 = new DevComponents.DotNetBar.LabelX();
-            this.iptSelectSchoolYear = new DevComponents.Editors.IntegerInput();
-            this.lblMsg = new DevComponents.DotNetBar.LabelX();
             this.colGradeYear = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDept = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colClassName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,6 +47,16 @@
             this.colRetake = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCurSel = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colStudStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnExportExcel = new DevComponents.DotNetBar.ButtonX();
+            this.itmPnlTimeName = new DevComponents.DotNetBar.ItemPanel();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.設成目前正在期間ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnAdd = new DevComponents.DotNetBar.ButtonX();
+            this.btnDel = new DevComponents.DotNetBar.ButtonX();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelX1 = new DevComponents.DotNetBar.LabelX();
+            this.iptSelectSchoolYear = new DevComponents.Editors.IntegerInput();
+            this.lblMsg = new DevComponents.DotNetBar.LabelX();
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -108,6 +108,134 @@
             this.dgData.Size = new System.Drawing.Size(750, 408);
             this.dgData.TabIndex = 7;
             this.dgData.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgData_CellContentClick);
+            // 
+            // colGradeYear
+            // 
+            this.colGradeYear.DataPropertyName = "年級";
+            this.colGradeYear.HeaderText = "年級";
+            this.colGradeYear.Name = "colGradeYear";
+            this.colGradeYear.ReadOnly = true;
+            this.colGradeYear.Width = 60;
+            // 
+            // colDept
+            // 
+            this.colDept.DataPropertyName = "科別";
+            this.colDept.HeaderText = "科別";
+            this.colDept.Name = "colDept";
+            this.colDept.ReadOnly = true;
+            // 
+            // colClassName
+            // 
+            this.colClassName.DataPropertyName = "班級";
+            this.colClassName.HeaderText = "班級";
+            this.colClassName.Name = "colClassName";
+            this.colClassName.ReadOnly = true;
+            // 
+            // colStudNumber
+            // 
+            this.colStudNumber.DataPropertyName = "學號";
+            this.colStudNumber.HeaderText = "學號";
+            this.colStudNumber.Name = "colStudNumber";
+            this.colStudNumber.ReadOnly = true;
+            // 
+            // colSeatNo
+            // 
+            this.colSeatNo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colSeatNo.DataPropertyName = "座號";
+            this.colSeatNo.HeaderText = "座號";
+            this.colSeatNo.Name = "colSeatNo";
+            this.colSeatNo.ReadOnly = true;
+            this.colSeatNo.Width = 59;
+            // 
+            // colName
+            // 
+            this.colName.DataPropertyName = "姓名";
+            this.colName.HeaderText = "姓名";
+            this.colName.Name = "colName";
+            this.colName.ReadOnly = true;
+            // 
+            // colSubjectName
+            // 
+            this.colSubjectName.DataPropertyName = "科目名稱";
+            this.colSubjectName.HeaderText = "科目名稱";
+            this.colSubjectName.Name = "colSubjectName";
+            this.colSubjectName.ReadOnly = true;
+            this.colSubjectName.Width = 120;
+            // 
+            // colRequied
+            // 
+            this.colRequied.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRequied.DataPropertyName = "必選修";
+            this.colRequied.HeaderText = "必/選";
+            this.colRequied.Name = "colRequied";
+            this.colRequied.ReadOnly = true;
+            this.colRequied.Width = 64;
+            // 
+            // colScore
+            // 
+            this.colScore.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colScore.DataPropertyName = "成績";
+            this.colScore.HeaderText = "成績";
+            this.colScore.Name = "colScore";
+            this.colScore.ReadOnly = true;
+            this.colScore.Width = 59;
+            // 
+            // colCredit
+            // 
+            this.colCredit.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colCredit.DataPropertyName = "學分";
+            this.colCredit.HeaderText = "學分";
+            this.colCredit.Name = "colCredit";
+            this.colCredit.ReadOnly = true;
+            this.colCredit.Width = 59;
+            // 
+            // colSchoolYear
+            // 
+            this.colSchoolYear.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colSchoolYear.DataPropertyName = "學年度";
+            this.colSchoolYear.HeaderText = "學年度";
+            this.colSchoolYear.Name = "colSchoolYear";
+            this.colSchoolYear.ReadOnly = true;
+            this.colSchoolYear.Width = 72;
+            // 
+            // ScGradeYear
+            // 
+            this.ScGradeYear.DataPropertyName = "成績年級";
+            this.ScGradeYear.HeaderText = "成績年級";
+            this.ScGradeYear.Name = "ScGradeYear";
+            this.ScGradeYear.ReadOnly = true;
+            // 
+            // colSemester
+            // 
+            this.colSemester.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colSemester.DataPropertyName = "學期";
+            this.colSemester.HeaderText = "學期";
+            this.colSemester.Name = "colSemester";
+            this.colSemester.ReadOnly = true;
+            this.colSemester.Width = 59;
+            // 
+            // colRetake
+            // 
+            this.colRetake.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colRetake.DataPropertyName = "重補修";
+            this.colRetake.HeaderText = "重/補";
+            this.colRetake.Name = "colRetake";
+            this.colRetake.ReadOnly = true;
+            this.colRetake.Width = 64;
+            // 
+            // colCurSel
+            // 
+            this.colCurSel.DataPropertyName = "本學期修課";
+            this.colCurSel.HeaderText = "本學期修課";
+            this.colCurSel.Name = "colCurSel";
+            this.colCurSel.ReadOnly = true;
+            // 
+            // colStudStatus
+            // 
+            this.colStudStatus.DataPropertyName = "學生狀態";
+            this.colStudStatus.HeaderText = "學生狀態";
+            this.colStudStatus.Name = "colStudStatus";
+            this.colStudStatus.ReadOnly = true;
             // 
             // btnExportExcel
             // 
@@ -257,134 +385,6 @@
             this.lblMsg.TabIndex = 21;
             this.lblMsg.Text = " ";
             // 
-            // colGradeYear
-            // 
-            this.colGradeYear.DataPropertyName = "年級";
-            this.colGradeYear.HeaderText = "年級";
-            this.colGradeYear.Name = "colGradeYear";
-            this.colGradeYear.ReadOnly = true;
-            this.colGradeYear.Width = 60;
-            // 
-            // colDept
-            // 
-            this.colDept.DataPropertyName = "科別";
-            this.colDept.HeaderText = "科別";
-            this.colDept.Name = "colDept";
-            this.colDept.ReadOnly = true;
-            // 
-            // colClassName
-            // 
-            this.colClassName.DataPropertyName = "班級";
-            this.colClassName.HeaderText = "班級";
-            this.colClassName.Name = "colClassName";
-            this.colClassName.ReadOnly = true;
-            // 
-            // colStudNumber
-            // 
-            this.colStudNumber.DataPropertyName = "學號";
-            this.colStudNumber.HeaderText = "學號";
-            this.colStudNumber.Name = "colStudNumber";
-            this.colStudNumber.ReadOnly = true;
-            // 
-            // colSeatNo
-            // 
-            this.colSeatNo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colSeatNo.DataPropertyName = "座號";
-            this.colSeatNo.HeaderText = "座號";
-            this.colSeatNo.Name = "colSeatNo";
-            this.colSeatNo.ReadOnly = true;
-            this.colSeatNo.Width = 59;
-            // 
-            // colName
-            // 
-            this.colName.DataPropertyName = "姓名";
-            this.colName.HeaderText = "姓名";
-            this.colName.Name = "colName";
-            this.colName.ReadOnly = true;
-            // 
-            // colSubjectName
-            // 
-            this.colSubjectName.DataPropertyName = "科目名稱";
-            this.colSubjectName.HeaderText = "科目名稱";
-            this.colSubjectName.Name = "colSubjectName";
-            this.colSubjectName.ReadOnly = true;
-            this.colSubjectName.Width = 120;
-            // 
-            // colRequied
-            // 
-            this.colRequied.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRequied.DataPropertyName = "必選修";
-            this.colRequied.HeaderText = "必/選";
-            this.colRequied.Name = "colRequied";
-            this.colRequied.ReadOnly = true;
-            this.colRequied.Width = 64;
-            // 
-            // colScore
-            // 
-            this.colScore.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colScore.DataPropertyName = "成績";
-            this.colScore.HeaderText = "成績";
-            this.colScore.Name = "colScore";
-            this.colScore.ReadOnly = true;
-            this.colScore.Width = 59;
-            // 
-            // colCredit
-            // 
-            this.colCredit.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colCredit.DataPropertyName = "學分";
-            this.colCredit.HeaderText = "學分";
-            this.colCredit.Name = "colCredit";
-            this.colCredit.ReadOnly = true;
-            this.colCredit.Width = 59;
-            // 
-            // colSchoolYear
-            // 
-            this.colSchoolYear.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colSchoolYear.DataPropertyName = "學年度";
-            this.colSchoolYear.HeaderText = "學年度";
-            this.colSchoolYear.Name = "colSchoolYear";
-            this.colSchoolYear.ReadOnly = true;
-            this.colSchoolYear.Width = 72;
-            // 
-            // ScGradeYear
-            // 
-            this.ScGradeYear.DataPropertyName = "成績年級";
-            this.ScGradeYear.HeaderText = "成績年級";
-            this.ScGradeYear.Name = "ScGradeYear";
-            this.ScGradeYear.ReadOnly = true;
-            // 
-            // colSemester
-            // 
-            this.colSemester.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colSemester.DataPropertyName = "學期";
-            this.colSemester.HeaderText = "學期";
-            this.colSemester.Name = "colSemester";
-            this.colSemester.ReadOnly = true;
-            this.colSemester.Width = 59;
-            // 
-            // colRetake
-            // 
-            this.colRetake.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colRetake.DataPropertyName = "重補修";
-            this.colRetake.HeaderText = "重/補";
-            this.colRetake.Name = "colRetake";
-            this.colRetake.ReadOnly = true;
-            this.colRetake.Width = 64;
-            // 
-            // colCurSel
-            // 
-            this.colCurSel.DataPropertyName = "本學期修課";
-            this.colCurSel.HeaderText = "本學期修課";
-            this.colCurSel.Name = "colCurSel";
-            this.colCurSel.ReadOnly = true;
-            // 
-            // colStudStatus
-            // 
-            this.colStudStatus.DataPropertyName = "學生狀態";
-            this.colStudStatus.HeaderText = "學生狀態";
-            this.colStudStatus.Name = "colStudStatus";
-            this.colStudStatus.ReadOnly = true;
-            // 
             // SuggestListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
@@ -398,7 +398,7 @@
             this.DoubleBuffered = true;
             this.MaximizeBox = true;
             this.Name = "SuggestListForm";
-            this.Text = "建議重補修名單";
+            this.Text = "梯次及重補修名單";
             this.Load += new System.EventHandler(this.SuggestListForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

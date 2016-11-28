@@ -30,12 +30,12 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgData = new DevComponents.DotNetBar.Controls.DataGridViewX();
+            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDeptName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnAdd = new DevComponents.DotNetBar.ButtonX();
             this.btnEdit = new DevComponents.DotNetBar.ButtonX();
             this.btnDel = new DevComponents.DotNetBar.ButtonX();
             this.btnExit = new DevComponents.DotNetBar.ButtonX();
-            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDeptName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,6 +69,20 @@
             this.dgData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgData.Size = new System.Drawing.Size(509, 169);
             this.dgData.TabIndex = 0;
+            // 
+            // colName
+            // 
+            this.colName.HeaderText = "課表名稱";
+            this.colName.Name = "colName";
+            this.colName.ReadOnly = true;
+            this.colName.Width = 185;
+            // 
+            // colDeptName
+            // 
+            this.colDeptName.HeaderText = "科別名稱";
+            this.colDeptName.Name = "colDeptName";
+            this.colDeptName.ReadOnly = true;
+            this.colDeptName.Width = 300;
             // 
             // btnAdd
             // 
@@ -126,20 +140,6 @@
             this.btnExit.Text = "離開";
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
-            // colName
-            // 
-            this.colName.HeaderText = "課表名稱";
-            this.colName.Name = "colName";
-            this.colName.ReadOnly = true;
-            this.colName.Width = 185;
-            // 
-            // colDeptName
-            // 
-            this.colDeptName.HeaderText = "科別名稱";
-            this.colDeptName.Name = "colDeptName";
-            this.colDeptName.ReadOnly = true;
-            this.colDeptName.Width = 300;
-            // 
             // CourseTimetableForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
@@ -150,8 +150,9 @@
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.dgData);
+            this.DoubleBuffered = true;
             this.Name = "CourseTimetableForm";
-            this.Text = "重補修課表管理";
+            this.Text = "選課課表管理";
             this.Load += new System.EventHandler(this.CourseTimetableForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).EndInit();
             this.ResumeLayout(false);

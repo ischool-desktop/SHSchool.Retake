@@ -27,7 +27,7 @@ namespace SHSchool.Retake.Report
         private bool _SelectChkNotExam = false;
         private string _SelectSession = "";
         private int _SelSchoolYear = 0, _SelSemester = 0, _SelMonth = 0;
-        private string _ReportName = "新民學生重補修缺曠通知單";
+        private string _ReportName = "學生重補修缺曠通知單";
 
         List<UDTSessionDef> _Session = new List<UDTSessionDef>();
         /// <summary>

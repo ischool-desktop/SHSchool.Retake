@@ -23,7 +23,7 @@ namespace SHSchool.Retake.DAO
         {
             List<UDTSuggestListDef> retVal = new List<UDTSuggestListDef>();
             AccessHelper accessHelper = new AccessHelper();
-            string qry = "ref_time_list_id="+UID;
+            string qry = "ref_session_id="+UID;
             retVal = accessHelper.Select<UDTSuggestListDef>(qry);
             return retVal;
         }

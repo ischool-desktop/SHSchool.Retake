@@ -102,7 +102,7 @@ namespace SHSchool.Retake.Report
 
         bool _SelectExportStudInfo = false;
 
-        private string _ReportName = "新民重補修缺曠通知單";
+        private string _ReportName = "重補修缺曠通知單";
         /// <summary>
         /// 設定檔
         /// </summary>

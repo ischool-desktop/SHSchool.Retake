@@ -43,7 +43,7 @@ namespace SHSchool.Retake.DAO
             retTable.Columns["成績"].DataType = System.Type.GetType("System.Decimal");
             retTable.Columns.Add("學分");
             retTable.Columns["學分"].DataType = System.Type.GetType("System.Int32");
-                
+
             retTable.Columns.Add("學年度");
             retTable.Columns.Add("學期");
             retTable.Columns.Add("成績年級");
@@ -55,8 +55,8 @@ namespace SHSchool.Retake.DAO
 
             // 學生使用的課程規劃id
             Dictionary<string, string> StudGraduationPlanIDDict = new Dictionary<string, string>();
-           
-            
+
+
             // 取得學生關聯班級課程規劃ID 放入暫存。
             QueryHelper qh1 = new QueryHelper();
             string strSQL1 = "select student.id,class.ref_graduation_plan_id from student inner join class on student.ref_class_id=class.id  where student.status in(1,2) and class.ref_graduation_plan_id is not null;";
@@ -91,10 +91,10 @@ namespace SHSchool.Retake.DAO
 
             foreach (StudentRecord stud in AllStudent)
             {
-                if (stud.Status == "一般" || stud.Status == "延修")                
-                    StudRecList.Add(stud);                
+                if (stud.Status == "一般" || stud.Status == "延修")
+                    StudRecList.Add(stud);
             }
-            
+
             // 填入學期科目成績(有過濾重讀)
             accessHelper.StudentHelper.FillSemesterSubjectScore(true, StudRecList);
 
@@ -108,42 +108,58 @@ namespace SHSchool.Retake.DAO
             Dictionary<string, string> studCurrentSelectCourse = GetStudCurrentSelectCourse();
 
             // 取得課程規劃
-            Dictionary<string,List<GraduationPlanSubject>> GraduationPlanDict =GetGraduationPlan();
+            Dictionary<string, List<GraduationPlanSubject>> GraduationPlanDict = GetGraduationPlan();
 
             foreach (StudentRecord studRec in StudRecList)
             {
                 // 年級+學期+科目名稱+級別
-                Dictionary<string,SemesterSubjectScoreInfo> studHasSubjectScoreDict = new Dictionary<string,SemesterSubjectScoreInfo> ();
+                Dictionary<string, SemesterSubjectScoreInfo> studHasSubjectScoreDict = new Dictionary<string, SemesterSubjectScoreInfo>();
                 List<string> studPassSubjectNameList = new List<string>();
                 List<SemesterSubjectScoreInfo> StudFailSubjectList = new List<SemesterSubjectScoreInfo>();
                 Dictionary<string, SemesterSubjectScoreInfo> studFailSubjectDict = new Dictionary<string, SemesterSubjectScoreInfo>();
                 List<GraduationPlanSubject> studReSubjectList = new List<GraduationPlanSubject>();
-                
+
+                // 課程規劃表需採計的年級
+                int gYear = 0;
+                // 課程規劃表需採計的學期
+                int sSemester = 0;
+
                 foreach (SemesterSubjectScoreInfo SemesterSubjectScore in studRec.SemesterSubjectScoreList)
-                { 
+                {
+                    //用學生有的學棋成績推算已完成的年級學期，作為課程規劃表判斷補修時採計的標準
+                    if (SemesterSubjectScore.GradeYear > gYear)
+                    {
+                        gYear = SemesterSubjectScore.GradeYear;
+                        sSemester = SemesterSubjectScore.Semester;
+                    }
+                    else if(SemesterSubjectScore.GradeYear == gYear && SemesterSubjectScore.Semester> sSemester)
+                    {
+                        sSemester = SemesterSubjectScore.Semester;
+                    }
+
                     // 需要計算學分
-                    if(SemesterSubjectScore.Detail.GetAttribute("不計學分") != "是")
+                    if (SemesterSubjectScore.Detail.GetAttribute("不計學分") != "是")
                     {
                         // 年級+學期+科目名稱+_+級別，給補修使用。
-                        string subjectNameKey = SemesterSubjectScore.GradeYear+"_"+SemesterSubjectScore.Semester+"_"+SemesterSubjectScore.Subject + "_" + SemesterSubjectScore.Level;
+                        string subjectNameKey = SemesterSubjectScore.GradeYear + "_" + SemesterSubjectScore.Semester + "_" + SemesterSubjectScore.Subject + "_" + SemesterSubjectScore.Level;
                         // 科目名稱+級別+學分數+，給重修使用。
-                        string subjNameRe = SemesterSubjectScore.Subject + "_" + SemesterSubjectScore.Level+"_"+SemesterSubjectScore.Credit;
-                        
+                        string subjNameRe = SemesterSubjectScore.Subject + "_" + SemesterSubjectScore.Level + "_" + SemesterSubjectScore.Credit;
+
                         // 有修過科目
-                        if(!studHasSubjectScoreDict.ContainsKey(subjectNameKey))
-                            studHasSubjectScoreDict.Add(subjectNameKey,SemesterSubjectScore);
+                        if (!studHasSubjectScoreDict.ContainsKey(subjectNameKey))
+                            studHasSubjectScoreDict.Add(subjectNameKey, SemesterSubjectScore);
 
                         // 有取得學分
                         if (SemesterSubjectScore.Pass)
                             studPassSubjectNameList.Add(subjNameRe);
                         else
                         {
-                            if(!studFailSubjectDict.ContainsKey(subjNameRe))
+                            if (!studFailSubjectDict.ContainsKey(subjNameRe))
                                 studFailSubjectDict.Add(subjNameRe, SemesterSubjectScore);
                         }
-                            
+
                     }
-                
+
                 }
                 // 檢查沒有獲得科目是否有在獲得中，表示有修過
                 foreach (KeyValuePair<string, SemesterSubjectScoreInfo> data in studFailSubjectDict)
@@ -154,19 +170,11 @@ namespace SHSchool.Retake.DAO
                     StudFailSubjectList.Add(data.Value);
                 }
 
-                
+
                 // 有修過的科目中檢查需要補修
                 if (StudGraduationPlanIDDict.ContainsKey(studRec.StudentID))
-                {                    
+                {
                     string gid = StudGraduationPlanIDDict[studRec.StudentID];
-                    
-                    // 取得學生班級年級
-                    int gYear = 0;
-                    if(studRec.RefClass !=null)
-                        int.TryParse(studRec.RefClass.GradeYear, out gYear);
-
-                    // 取得目前系統學期
-                    int sSemester = int.Parse(K12.Data.School.DefaultSemester);
 
                     if (GraduationPlanDict.ContainsKey(gid))
                     {
@@ -174,15 +182,15 @@ namespace SHSchool.Retake.DAO
                         {
                             string key = gps.GradeYear + "_" + gps.Semester + "_" + gps.SubjectName + "_" + gps.Level;
 
-                            if (gps.GradeYear<=gYear && gps.Semester<=sSemester)
+                            if (gps.GradeYear <= gYear && gps.Semester <= sSemester)
                             {
                                 if (!studHasSubjectScoreDict.ContainsKey(key))
-                                    studReSubjectList.Add(gps);                          
+                                    studReSubjectList.Add(gps);
                             }
                         }
-                    
+
                     }
-                
+
                 }
 
                 // 需要重修的科目
@@ -205,13 +213,13 @@ namespace SHSchool.Retake.DAO
                             row["年級"] = "";
                             row["班級"] = "";
                         }
-                                
+
                         row["學號"] = studRec.StudentNumber;
                         if (!string.IsNullOrEmpty(studRec.SeatNo))
                             row["座號"] = int.Parse(studRec.SeatNo);
 
                         row["姓名"] = studRec.StudentName;
-                        row["科目名稱"] = sss.Subject+GetNumber(sss.Level);
+                        row["科目名稱"] = sss.Subject + GetNumber(sss.Level);
                         if (sss.Require)
                             row["必選修"] = "必";
                         else
@@ -229,14 +237,14 @@ namespace SHSchool.Retake.DAO
                         retTable.Rows.Add(row);
                     }
                 }
-                                
+
 
                 // 需要補修科目
                 if (studReSubjectList.Count > 0)
-                {                
+                {
                     foreach (GraduationPlanSubject gps in studReSubjectList)
                     {
-                        
+
                         DataRow row = retTable.NewRow();
                         row["StudentID"] = studRec.StudentID;
                         //row["年級"] = gps.GradeYear;
@@ -256,8 +264,8 @@ namespace SHSchool.Retake.DAO
                             row["座號"] = int.Parse(studRec.SeatNo);
 
                         row["姓名"] = studRec.StudentName;
-                        row["科目名稱"] = gps.SubjectName+GetNumber(gps.Level);
-                        row["必選修"] = "必";                        
+                        row["科目名稱"] = gps.SubjectName + GetNumber(gps.Level);
+                        row["必選修"] = "必";
                         row["學期"] = gps.Semester;
                         row["學分"] = gps.Credit;
                         row["重補修"] = "補";
@@ -284,7 +292,7 @@ namespace SHSchool.Retake.DAO
 
             }
             retTable.DefaultView.Sort = "年級,科別,班級,學號,座號,姓名,科目名稱,必選修,成績,學分,學年度,學期,成績年級,重補修";
-            
+
             return retTable;
         }
 
@@ -321,7 +329,7 @@ namespace SHSchool.Retake.DAO
             retTable.Columns.Add("本學期修課");
             retTable.Columns.Add("學生狀態");
             QueryHelper qh1 = new QueryHelper();
-            string strSQL1 = "select student.id,class.grade_year,dept.name as deptname,class.class_name as classname,student.student_number,student.seat_no,student.name,$shschool.retake.suggest_list.subject_content from $shschool.retake.suggest_list join student on $shschool.retake.suggest_list.ref_student_id = student.id left join class on student.ref_class_id=class.id left join dept on class.ref_dept_id=dept.id where student.status in(1,2) and $shschool.retake.suggest_list.ref_time_list_id='" + UID + "';";
+            string strSQL1 = "select student.id,class.grade_year,dept.name as deptname,class.class_name as classname,student.student_number,student.seat_no,student.name,$shschool.retake.suggest_list.subject_content from $shschool.retake.suggest_list join student on $shschool.retake.suggest_list.ref_student_id = student.id left join class on student.ref_class_id=class.id left join dept on class.ref_dept_id=dept.id where student.status in(1,2) and $shschool.retake.suggest_list.ref_session_id='" + UID + "';";
             DataTable dt1 = qh1.Select(strSQL1);
 
             foreach (DataRow dr in dt1.Rows)
@@ -364,13 +372,13 @@ namespace SHSchool.Retake.DAO
 
                     row["學年度"] = elm.Attribute("SchoolYear").Value;
                     row["學期"] = elm.Attribute("Semester").Value;
-                    
-                    if(elm.Attribute("GradeYear")!=null)
+
+                    if (elm.Attribute("GradeYear") != null)
                         row["成績年級"] = elm.Attribute("GradeYear").Value;
                     row["重補修"] = elm.Attribute("Type").Value;
                     row["科目"] = elm.Attribute("Name").Value;
                     row["級別"] = elm.Attribute("Level").Value;
-                    if(elm.Attribute("CheckCourse1") !=null)
+                    if (elm.Attribute("CheckCourse1") != null)
                         row["本學期修課"] = elm.Attribute("CheckCourse1").Value;
 
                     if (elm.Attribute("StudentStatus") != null)
@@ -381,11 +389,11 @@ namespace SHSchool.Retake.DAO
             }
             retTable.DefaultView.Sort = "年級,科別,班級,學號,座號,姓名,科目名稱,必選修,成績,學分,學年度,學期,成績年級,重補修,學生狀態";
             return retTable;
-        
+
         }
         public static string GetNumber(string str)
         {
-            if (str == null || str=="")
+            if (str == null || str == "")
                 return "";
 
             string levelNumber;
@@ -428,12 +436,12 @@ namespace SHSchool.Retake.DAO
                 default:
                     levelNumber = "" + str;
                     break;
-                #endregion
+                    #endregion
             }
             return levelNumber;
         }
 
-        
+
         /// <summary>
         /// 取得系統內目前所在班級年級學期，學生狀態一般、延修的學生是否有修課
         /// </summary>
@@ -443,7 +451,7 @@ namespace SHSchool.Retake.DAO
             Dictionary<string, string> retVal = new Dictionary<string, string>();
             QueryHelper qh = new QueryHelper();
             string strSQL = "select student.id,class.grade_year,course.semester,course.subject,course.subj_level from student inner join sc_attend on student.id=sc_attend.ref_student_id inner join course on sc_attend.ref_course_id=course.id inner join class on student.ref_class_id=class.id where course.school_year=" + K12.Data.School.DefaultSchoolYear + " and course.semester=" + K12.Data.School.DefaultSemester + " and student.status in(1,2)";
-            DataTable dt = qh.Select(strSQL);            
+            DataTable dt = qh.Select(strSQL);
             foreach (DataRow dr in dt.Rows)
             {
                 string key = dr["id"].ToString() + dr["grade_year"].ToString() + dr["semester"].ToString() + dr["subject"].ToString() + dr["subj_level"].ToString();
@@ -458,8 +466,8 @@ namespace SHSchool.Retake.DAO
         /// 取得學生(一般、延修)、班級課程規劃，需要計算且必修科目
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<string,List<GraduationPlanSubject>> GetGraduationPlan()
-        {          
+        public static Dictionary<string, List<GraduationPlanSubject>> GetGraduationPlan()
+        {
             List<string> GraduationPlanIdList = new List<string>();
             Dictionary<string, List<GraduationPlanSubject>> retVal = new Dictionary<string, List<GraduationPlanSubject>>();
 
@@ -486,12 +494,12 @@ namespace SHSchool.Retake.DAO
             QueryHelper qh3 = new QueryHelper();
             List<List<string>> gpList = new List<List<string>>();
             gpList.Add(new List<string>());
-            
-            int idx = 0,count=1;
+
+            int idx = 0, count = 1;
             foreach (string str in GraduationPlanIdList)
             {
                 if (count > 30)
-                {                    
+                {
                     gpList.Add(new List<string>());
                     count = 1;
                     idx++;
@@ -500,13 +508,13 @@ namespace SHSchool.Retake.DAO
 
                 count++;
             }
-            
+
             foreach (List<string> da in gpList)
             {
                 if (da.Count > 0)
                 {
                     QueryHelper qhq = new QueryHelper();
-                    string strSQLq = "select id,content from graduation_plan where id in("+string.Join(",",da.ToArray())+");";
+                    string strSQLq = "select id,content from graduation_plan where id in(" + string.Join(",", da.ToArray()) + ");";
                     DataTable dtq = qhq.Select(strSQLq);
                     foreach (DataRow dr in dtq.Rows)
                     {
@@ -522,25 +530,25 @@ namespace SHSchool.Retake.DAO
                             // 要計算成績且必修
                             if (elm.Attribute("NotIncludedInCredit").Value == "False" && elm.Attribute("Required").Value == "必修")
                             {
-                                GraduationPlanSubject gps = new GraduationPlanSubject();                                
+                                GraduationPlanSubject gps = new GraduationPlanSubject();
                                 gps.GradeYear = int.Parse(elm.Attribute("GradeYear").Value);
                                 gps.Level = elm.Attribute("Level").Value;
                                 gps.Semester = int.Parse(elm.Attribute("Semester").Value);
                                 gps.SubjectName = elm.Attribute("SubjectName").Value;
                                 decimal dd;
-                                if (decimal.TryParse(elm.Attribute("Credit").Value,out dd))                                
+                                if (decimal.TryParse(elm.Attribute("Credit").Value, out dd))
                                     gps.Credit = dd;
-                                                                
+
                                 gps.strRequire = elm.Attribute("Required").Value;
                                 gps.def1 = elm.Attribute("RequiredBy").Value;
                                 gpsList.Add(gps);
                             }
                         }
-                        retVal.Add(id, gpsList);                        
+                        retVal.Add(id, gpsList);
                     }
                 }
             }
-            return retVal;                   
+            return retVal;
         }
 
 
@@ -552,7 +560,7 @@ namespace SHSchool.Retake.DAO
         {
             Dictionary<string, SuggestSubjectCount> ValDict = new Dictionary<string, SuggestSubjectCount>();
             QueryHelper qh1 = new QueryHelper();
-            string strSQL1 = "select dept.name,$shschool.retake.suggest_list.subject_content from $shschool.retake.time_list inner join $shschool.retake.suggest_list on $shschool.retake.time_list.uid=$shschool.retake.suggest_list.ref_time_list_id  inner join student on $shschool.retake.suggest_list.ref_student_id = student.id left join class on student.ref_class_id=class.id left join dept on class.ref_dept_id=dept.id where $shschool.retake.time_list.active='true';";
+            string strSQL1 = "select dept.name,$shschool.retake.suggest_list.subject_content from $shschool.retake.session inner join $shschool.retake.suggest_list on $shschool.retake.session.uid=$shschool.retake.suggest_list.ref_session_id  inner join student on $shschool.retake.suggest_list.ref_student_id = student.id left join class on student.ref_class_id=class.id left join dept on class.ref_dept_id=dept.id where $shschool.retake.session.active='true';";
             DataTable dt1 = qh1.Select(strSQL1);
             foreach (DataRow dr in dt1.Rows)
             {
@@ -563,22 +571,22 @@ namespace SHSchool.Retake.DAO
                 {
                     SuggestSubjectCount ssc = new SuggestSubjectCount();
                     ssc.DeptName = dpName;
-                    
+
                     int cc;
                     if (int.TryParse(elm.Attribute("Credit").Value, out cc))
                         ssc.Credit = cc;
 
                     ssc.SubjectName = elm.Attribute("Name").Value;
                     int ll;
-                    if(int.TryParse(elm.Attribute("Level").Value,out ll))
-                        ssc.Level=ll;
+                    if (int.TryParse(elm.Attribute("Level").Value, out ll))
+                        ssc.Level = ll;
 
-                    string key=ssc.GetKey();
+                    string key = ssc.GetKey();
 
-                    if(ValDict.ContainsKey(key))
+                    if (ValDict.ContainsKey(key))
                         ValDict[key].Count++;
                     else
-                        ValDict.Add(key,ssc);
+                        ValDict.Add(key, ssc);
                 }
             }
             return ValDict.Values.ToList();
@@ -597,7 +605,7 @@ namespace SHSchool.Retake.DAO
             DataTable dt1 = qh1.Select(strSQL1);
             foreach (DataRow dr in dt1.Rows)
             {
-                string deptName=dr[0].ToString();
+                string deptName = dr[0].ToString();
                 if (!retVal.Contains(deptName))
                     retVal.Add(deptName);
             }
@@ -620,7 +628,7 @@ namespace SHSchool.Retake.DAO
             // 比對使用科目名稱+級別
             // 取得正在期間的科目資料
             QueryHelper qh1 = new QueryHelper();
-            string strQry1 = "select $shschool.retake.subject.school_year,$shschool.retake.subject.semester,$shschool.retake.subject.month,subject_name,subject_level,dept_name,subject_type,course_timetable_id,credit,period_content from $shschool.retake.subject inner join $shschool.retake.time_list on $shschool.retake.subject.school_year=$shschool.retake.time_list.school_year and $shschool.retake.subject.semester=$shschool.retake.time_list.semester and $shschool.retake.subject.month=$shschool.retake.time_list.month where $shschool.retake.time_list.active='true';";
+            string strQry1 = "select $shschool.retake.subject.school_year,$shschool.retake.subject.semester,$shschool.retake.subject.month,subject_name,subject_level,dept_name,subject_type,course_timetable_id,credit,period_content from $shschool.retake.subject inner join $shschool.retake.session on $shschool.retake.subject.school_year=$shschool.retake.session.school_year and $shschool.retake.subject.semester=$shschool.retake.session.semester and $shschool.retake.subject.month=$shschool.retake.session.month where $shschool.retake.session.active='true';";
             DataTable dt1 = qh1.Select(strQry1);
             foreach (DataRow dr in dt1.Rows)
             {
@@ -643,7 +651,7 @@ namespace SHSchool.Retake.DAO
                 if (!string.IsNullOrWhiteSpace(dr["period_content"].ToString()))
                     scb.PeriodXml = XElement.Parse(dr["period_content"].ToString());
 
-                string key1="";
+                string key1 = "";
                 if (scb.SubjectLevel.HasValue)
                     key1 = scb.SubjectName + "_" + scb.SubjectLevel.Value;
                 else
@@ -653,34 +661,34 @@ namespace SHSchool.Retake.DAO
                     dataDict.Add(key1, scb);
             }
 
-            
+
             // 取得正在期間學生建議名單
             QueryHelper qh2 = new QueryHelper();
-            string strQry2 = "select ref_student_id,$shschool.retake.ssselect.subject_name,$shschool.retake.ssselect.subject_level from $shschool.retake.ssselect inner join $shschool.retake.time_list on $shschool.retake.ssselect.school_year=$shschool.retake.time_list.school_year and $shschool.retake.ssselect.semester=$shschool.retake.time_list.semester and $shschool.retake.ssselect.month=$shschool.retake.time_list.month where $shschool.retake.time_list.active='true';";
+            string strQry2 = "select ref_student_id,$shschool.retake.ssselect.subject_name,$shschool.retake.ssselect.subject_level from $shschool.retake.ssselect inner join $shschool.retake.session on $shschool.retake.ssselect.school_year=$shschool.retake.session.school_year and $shschool.retake.ssselect.semester=$shschool.retake.session.semester and $shschool.retake.ssselect.month=$shschool.retake.session.month where $shschool.retake.session.active='true';";
             DataTable dt2 = qh2.Select(strQry2);
             // 檢查是否重複加入
             Dictionary<string, List<int>> checkStudDict = new Dictionary<string, List<int>>();
             foreach (DataRow dr in dt2.Rows)
             {
                 int sid = int.Parse(dr["ref_student_id"].ToString());
-            
+
 
                 // 比對資料後加入StudentID                
-                string key2 =dr["subject_name"].ToString() +"_"+ dr["subject_level"].ToString();
+                string key2 = dr["subject_name"].ToString() + "_" + dr["subject_level"].ToString();
 
-                        if (dataDict.ContainsKey(key2))
-                        {
-                            if (!checkStudDict.ContainsKey(key2))
-                                checkStudDict.Add(key2, new List<int>());
+                if (dataDict.ContainsKey(key2))
+                {
+                    if (!checkStudDict.ContainsKey(key2))
+                        checkStudDict.Add(key2, new List<int>());
 
-                            if (!checkStudDict[key2].Contains(sid))
-                            {
-                                SubjectCourseStudentBase scsb = new SubjectCourseStudentBase();
-                                scsb.StudentID = sid;
-                                dataDict[key2].StudentIDList.Add(scsb);
-                                checkStudDict[key2].Add(sid);
-                            }
-                        }
+                    if (!checkStudDict[key2].Contains(sid))
+                    {
+                        SubjectCourseStudentBase scsb = new SubjectCourseStudentBase();
+                        scsb.StudentID = sid;
+                        dataDict[key2].StudentIDList.Add(scsb);
+                        checkStudDict[key2].Add(sid);
+                    }
+                }
             }
 
             foreach (SubjectCourseBase scb in dataDict.Values)
@@ -697,11 +705,11 @@ namespace SHSchool.Retake.DAO
         {
             Dictionary<string, string> retVal = new Dictionary<string, string>();
             QueryHelper qh = new QueryHelper();
-            string strQry = "select $shschool.retake.course.course_name,$shschool.retake.course.uid from $shschool.retake.time_list inner join $shschool.retake.course on $shschool.retake.time_list.school_year=$shschool.retake.course.school_year and $shschool.retake.time_list.semester=$shschool.retake.course.semester and $shschool.retake.time_list.month=$shschool.retake.course.month where active='true';";
+            string strQry = "select $shschool.retake.course.course_name,$shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.month=$shschool.retake.course.month where active='true';";
             DataTable dt = qh.Select(strQry);
             foreach (DataRow dr in dt.Rows)
-            { 
-                string key=dr[0].ToString();
+            {
+                string key = dr[0].ToString();
                 if (!retVal.ContainsKey(key))
                     retVal.Add(key, dr[1].ToString());
             }
@@ -715,8 +723,8 @@ namespace SHSchool.Retake.DAO
         public static List<string> GetCourseSelectActive1()
         {
             List<string> retVal = new List<string>();
-            QueryHelper qh = new QueryHelper();            
-            string strQry = "select $shschool.retake.course.uid from $shschool.retake.time_list inner join $shschool.retake.course on $shschool.retake.time_list.school_year=$shschool.retake.course.school_year and $shschool.retake.time_list.semester=$shschool.retake.course.semester and $shschool.retake.time_list.month=$shschool.retake.course.month where active='true';";
+            QueryHelper qh = new QueryHelper();
+            string strQry = "select $shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.month=$shschool.retake.course.month where active='true';";
             DataTable dt = qh.Select(strQry);
             foreach (DataRow dr in dt.Rows)
                 retVal.Add(dr[0].ToString());
@@ -737,7 +745,7 @@ namespace SHSchool.Retake.DAO
             foreach (DataRow dr in dt.Rows)
             {
                 int sid = int.Parse(dr[0].ToString());
-                string deptName = dr[1].ToString();               
+                string deptName = dr[1].ToString();
 
                 retVal.Add(sid, deptName);
             }
@@ -779,7 +787,7 @@ namespace SHSchool.Retake.DAO
             if (StudentIDList.Count > 0)
             {
                 QueryHelper qh = new QueryHelper();
-                string query = "select ref_student_id,ref_course_id  from $shschool.retake.scselect where ref_student_id in("+string.Join(",",StudentIDList.ToArray())+") and not_exam=true;";
+                string query = "select ref_student_id,ref_course_id  from $shschool.retake.scselect where ref_student_id in(" + string.Join(",", StudentIDList.ToArray()) + ") and not_exam=true;";
                 DataTable dt = qh.Select(query);
                 foreach (DataRow dr in dt.Rows)
                 {
