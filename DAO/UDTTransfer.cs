@@ -19,7 +19,7 @@ namespace SHSchool.Retake.DAO
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        public static List<UDTSuggestListDef> UDTSuggestListSelectByTimeListID(string UID)
+        public static List<UDTSuggestListDef> UDTSuggestListSelectBySessionID(string UID)
         {
             List<UDTSuggestListDef> retVal = new List<UDTSuggestListDef>();
             AccessHelper accessHelper = new AccessHelper();
@@ -62,11 +62,11 @@ namespace SHSchool.Retake.DAO
         /// 取得所以有重補修期間
         /// </summary>
         /// <returns></returns>
-        public static List<UDTTimeListDef> UDTTimeListSelectAll()
+        public static List<UDTSessionDef> UDTSessionSelectAll()
         {
-            List<UDTTimeListDef> retVal = new List<UDTTimeListDef>();
+            List<UDTSessionDef> retVal = new List<UDTSessionDef>();
             AccessHelper accessHelper = new AccessHelper();
-            retVal = accessHelper.Select<UDTTimeListDef>();
+            retVal = accessHelper.Select<UDTSessionDef>();
             return retVal;        
         }
 
@@ -74,7 +74,7 @@ namespace SHSchool.Retake.DAO
         /// 新增多筆重補修期間
         /// </summary>
         /// <param name="dataList"></param>
-        public static void UDTTimeListInsert(List<UDTTimeListDef> dataList)
+        public static void UDTSessionInsert(List<UDTSessionDef> dataList)
         {
             if (dataList.Count > 0)
             {
@@ -87,7 +87,7 @@ namespace SHSchool.Retake.DAO
         /// 更新多筆重補修期間
         /// </summary>
         /// <param name="dataList"></param>
-        public static void UDTTimeListUpdate(List<UDTTimeListDef> dataList)
+        public static void UDTSessionUpdate(List<UDTSessionDef> dataList)
         {
             if (dataList.Count > 0)
             {
@@ -100,14 +100,14 @@ namespace SHSchool.Retake.DAO
         /// 取得目前期間
         /// </summary>
         /// <returns></returns>
-        public static UDTTimeListDef UDTTimeListGetActiveTrue1()
+        public static UDTSessionDef UDTSessionGetActiveTrue1()
         {
-            UDTTimeListDef retVal = new UDTTimeListDef();
-            List<UDTTimeListDef> dataList = new List<UDTTimeListDef>();
+            UDTSessionDef retVal = new UDTSessionDef();
+            List<UDTSessionDef> dataList = new List<UDTSessionDef>();
             AccessHelper accessHelper = new AccessHelper();
             string qry = "active='true'";                
-            dataList = accessHelper.Select<UDTTimeListDef>(qry);
-            foreach (UDTTimeListDef data in dataList)
+            dataList = accessHelper.Select<UDTSessionDef>(qry);
+            foreach (UDTSessionDef data in dataList)
             {
                 if (data.Active)
                 {
@@ -123,11 +123,11 @@ namespace SHSchool.Retake.DAO
         /// 刪除多筆重補修期間
         /// </summary>
         /// <param name="dataList"></param>
-        public static void UDTTimeListDelete(List<UDTTimeListDef> dataList)
+        public static void UDTSessionDelete(List<UDTSessionDef> dataList)
         {
             if (dataList.Count > 0)
             {
-                foreach (UDTTimeListDef data in dataList)
+                foreach (UDTSessionDef data in dataList)
                     data.Deleted = true;
 
                 AccessHelper accessHelper = new AccessHelper();
@@ -140,18 +140,18 @@ namespace SHSchool.Retake.DAO
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        public static void UDTTimeListSetActiveTrue(string UID)
+        public static void UDTSessionSetActiveTrue(string UID)
         {
             // 更新目前學期：傳入需要修改UID編號，讀取所有資料將非UID編號Active全設成false，update 更新資料。
-            List<UDTTimeListDef> updateVal = new List<UDTTimeListDef>();
+            List<UDTSessionDef> updateVal = new List<UDTSessionDef>();
 
             // select 
             AccessHelper accSelect = new AccessHelper();
-            updateVal = accSelect.Select<UDTTimeListDef>();
+            updateVal = accSelect.Select<UDTSessionDef>();
 
             if (updateVal.Count > 0)
             {
-                foreach (UDTTimeListDef data in updateVal)
+                foreach (UDTSessionDef data in updateVal)
                 {
                     if (data.UID == UID)
                         data.Active = true;
@@ -843,7 +843,7 @@ namespace SHSchool.Retake.DAO
             Manager.SyncSchema(new UDTSsselectDef());
             Manager.SyncSchema(new UDTSubjectDef());
             Manager.SyncSchema(new UDTSuggestListDef());
-            Manager.SyncSchema(new UDTTimeListDef());
+            Manager.SyncSchema(new UDTSessionDef());
             Manager.SyncSchema(new UDTTimeSectionDef());
             Manager.SyncSchema(new UDTWeightProportionDef());            
         }

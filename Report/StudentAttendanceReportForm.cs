@@ -86,7 +86,7 @@ namespace SHSchool.Retake.Report
         List<rpt_StudentInfo> _StudentInfoList = new List<rpt_StudentInfo>();
 
         DataTable _dtTable = new DataTable();
-        
+
         /// <summary>
         /// 學生編號
         /// </summary>
@@ -95,7 +95,7 @@ namespace SHSchool.Retake.Report
         /// <summary>
         /// 使用者選的上課日期
         /// </summary>
-        List<DateTime> _SelectDateTimeList = new List<DateTime>();
+        List<DateTime> _SelectDateList = new List<DateTime>();
 
         private string _SelectMailName = "";
         private string _SelectMailAddress = "";
@@ -116,7 +116,7 @@ namespace SHSchool.Retake.Report
         public StudentAttendanceReportForm(List<string> CourseIDList)
         {
             InitializeComponent();
-            
+
             _SelectCourseIDList = CourseIDList;
             _bgLoadData = new BackgroundWorker();
             _bgLoadData.DoWork += new DoWorkEventHandler(_bgLoadData_DoWork);
@@ -191,7 +191,7 @@ namespace SHSchool.Retake.Report
 
             // 需要產生 Excel 學生名單
             if (chkExportStudInfo.Checked)
-            { 
+            {
                 // 班座排序
                 _StudentInfoList = (from data in _StudentInfoList orderby data.ClassName, data.SeatNo select data).ToList();
                 // 班級、座號、學號、學生姓名、收件人姓名、地址
@@ -202,7 +202,7 @@ namespace SHSchool.Retake.Report
                 foreach (rpt_StudentInfo data in _StudentInfoList)
                 {
                     wb.Worksheets[0].Cells[rowIdx, 0].PutValue(data.ClassName);
-                    if(data.SeatNo.HasValue)
+                    if (data.SeatNo.HasValue)
                         wb.Worksheets[0].Cells[rowIdx, 1].PutValue(data.SeatNo.Value);
 
                     wb.Worksheets[0].Cells[rowIdx, 2].PutValue(data.StudentNumber);
@@ -223,15 +223,15 @@ namespace SHSchool.Retake.Report
             AddTableColumn();
             Document doc = new Document();
             doc.Sections.Clear();
-            
+
             // 取得缺曠資料
             _SelectAttendanceList = UDTTransfer.UDTAttendanceSelectByCourseIDList(_SelectCourseIDList);
             // 取得課程修課
             _SelectSCList = UDTTransfer.UDTSCSelectByCourseIDList(_SelectCourseIDList);
             Dictionary<string, List<string>> _SCStudernDict = new Dictionary<string, List<string>>();
             foreach (UDTScselectDef data in _SelectSCList)
-            { 
-                string cid=data.CourseID.ToString();
+            {
+                string cid = data.CourseID.ToString();
 
                 if (!_SCStudernDict.ContainsKey(cid))
                     _SCStudernDict.Add(cid, new List<string>());
@@ -242,7 +242,7 @@ namespace SHSchool.Retake.Report
             _StudentDict.Clear();
             _AddressDict.Clear();
             _ParentDict.Clear();
-            
+
             // 取得有缺曠學生id
             foreach (UDTAttendanceDef data in _SelectAttendanceList)
             {
@@ -261,7 +261,7 @@ namespace SHSchool.Retake.Report
                 if (!_AddressDict.ContainsKey(rec.RefStudentID))
                     _AddressDict.Add(rec.RefStudentID, rec);
             }
-            
+
             // 家長資料
             foreach (ParentRecord rec in K12.Data.Parent.SelectByStudentIDs(_StudentIDList))
             {
@@ -277,9 +277,9 @@ namespace SHSchool.Retake.Report
                     continue;
 
                 string name = rec.Name;
-                if(!string.IsNullOrWhiteSpace(rec.Nickname))
-                    name="("+rec.Nickname+")";
-                
+                if (!string.IsNullOrWhiteSpace(rec.Nickname))
+                    name = "(" + rec.Nickname + ")";
+
                 _TeacherNameDict.Add(rec.ID, name);
             }
 
@@ -301,15 +301,15 @@ namespace SHSchool.Retake.Report
             {
                 _dtTable.Clear();
                 DataRow row = _dtTable.NewRow();
-                
-           // 處理 Word 資料合併
-            Document document = new Document();
-            document.Sections[0].PageSetup.PaperSize = PaperSize.A4;
-            NodeCollection doctables = _WordTemplate.GetChildNodes(NodeType.Table, true);
-            Node docdstNode = document.ImportNode(doctables[0], true, ImportFormatMode.KeepSourceFormatting);
-            document.LastSection.Body.AppendChild(docdstNode);
 
-            
+                // 處理 Word 資料合併
+                Document document = new Document();
+                document.Sections[0].PageSetup.PaperSize = PaperSize.A4;
+                NodeCollection doctables = _WordTemplate.GetChildNodes(NodeType.Table, true);
+                Node docdstNode = document.ImportNode(doctables[0], true, ImportFormatMode.KeepSourceFormatting);
+                document.LastSection.Body.AppendChild(docdstNode);
+
+
                 // 學校名稱
                 row["學校名稱"] = SchoolName;
                 // 學校地址
@@ -405,13 +405,13 @@ namespace SHSchool.Retake.Report
                         dt.Columns.Add("課程名稱");
                         dt.Columns.Add("缺曠統計");
                         dt.Columns.Add("缺曠明細");
-                        
+
                         string coid = atData.Key.ToString();
 
                         foreach (UDTCourseDef coData in _SelectCourseList.Where(x => x.UID == coid))
                         {
                             // 檢查有修課學生
-                            if(_SCStudernDict.ContainsKey(coid))
+                            if (_SCStudernDict.ContainsKey(coid))
                                 if (_SCStudernDict[coid].Contains(StudID))
                                 {
 
@@ -506,17 +506,17 @@ namespace SHSchool.Retake.Report
                 }
 
 
-                for (int i = 0; i < document.Sections.Count; i++)                                    
+                for (int i = 0; i < document.Sections.Count; i++)
                     doc.Sections.Add(doc.ImportNode(document.Sections[i], true));
-                
-            }            
+
+            }
 
             //doc.MailMerge.MergeField += new Aspose.Words.Reporting.MergeFieldEventHandler(MailMerge_MergeField);
             //doc.MailMerge.Execute(_dtTable);
             //doc.MailMerge.RemoveEmptyParagraphs = true;
             //doc.MailMerge.DeleteFields();
             _bgPrintData.ReportProgress(95);
-            e.Result = doc;            
+            e.Result = doc;
         }
 
         void MailMerge_MergeField(object sender, Aspose.Words.Reporting.MergeFieldEventArgs e)
@@ -540,7 +540,7 @@ namespace SHSchool.Retake.Report
                         double perWidth = width / (double)8;
                         double li = _builder.RowFormat.LeftIndent;
                         Table table = _builder.StartTable();
-                        
+
 
                         //_builder.RowFormat.HeightRule = HeightRule.Exactly;
                         //_builder.RowFormat.Height = 18.0;
@@ -553,7 +553,7 @@ namespace SHSchool.Retake.Report
                         tc1.CellFormat.Borders.Right.LineWidth = 1.0;
                         tc1.CellFormat.Borders.Bottom.LineWidth = 1.0;
                         tc1.CellFormat.Width = 60;
-                      
+
                         tc1.Paragraphs[0].ParagraphFormat.Alignment = ParagraphAlignment.Center;
                         _builder.Write("日期");
                         for (int i = 1; i <= 8; i++)
@@ -564,7 +564,7 @@ namespace SHSchool.Retake.Report
                             cc.CellFormat.Borders.Right.LineWidth = 1.0;
                             cc.CellFormat.Borders.Bottom.LineWidth = 1.0;
                             cc.CellFormat.Width = perWidth;
-                        
+
                             cc.Paragraphs[0].ParagraphFormat.Alignment = ParagraphAlignment.Center;
                             _builder.Write(i.ToString());
                         }
@@ -592,7 +592,7 @@ namespace SHSchool.Retake.Report
                                 cc.CellFormat.Borders.Right.LineWidth = 1.0;
                                 cc.CellFormat.Borders.Bottom.LineWidth = 1.0;
                                 cc.Paragraphs[0].ParagraphFormat.Alignment = ParagraphAlignment.Center;
-                                if(d1.Value.Contains(i))
+                                if (d1.Value.Contains(i))
                                     _builder.Write("缺課");
                                 else
                                     _builder.Write("");
@@ -602,7 +602,7 @@ namespace SHSchool.Retake.Report
 
                         _builder.EndTable();
 
-                        
+
                         // 清邊框
                         foreach (Aspose.Words.Cell c in table.FirstRow.Cells)
                             c.CellFormat.Borders.Top.LineStyle = LineStyle.None;
@@ -643,20 +643,20 @@ namespace SHSchool.Retake.Report
             else
                 rbUserDef.Checked = true;
 
-            chkExportStudInfo.Checked = _Config.GetBoolean("匯出學生清單", false);             
+            chkExportStudInfo.Checked = _Config.GetBoolean("匯出學生清單", false);
         }
 
         void _bgLoadData_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             btnPrint.Enabled = true;
             // 填入收件人預設值
-            cboMName.Items.AddRange(new string[] { "學生姓名","監護人姓名","父親姓名","母親姓名"}.ToArray());
-            cboMAddress.Items.AddRange(new string[] { "戶籍地址","聯絡地址","其他地址" }.ToArray());
+            cboMName.Items.AddRange(new string[] { "學生姓名", "監護人姓名", "父親姓名", "母親姓名" }.ToArray());
+            cboMAddress.Items.AddRange(new string[] { "戶籍地址", "聯絡地址", "其他地址" }.ToArray());
             // 讀取畫面設定預設值與設定畫面
             _Config = new ReportConfiguration(_ReportName);
             // 讀取並設定預設值
             SetDefaultTemplate();
-            
+
             // 讀取樣板
             // 使用預設
             if (rbDefault.Checked)
@@ -723,14 +723,14 @@ namespace SHSchool.Retake.Report
             foreach (ListViewItem lvi in lvwDate.CheckedItems)
             {
                 DateTime dt = (DateTime)lvi.Tag;
-                _SelectDateTimeList.Add(dt);
+                _SelectDateList.Add(dt);
             }
-            
+
             // 檢查列印所需資料
             _SelectMailName = cboMName.Text;
             _SelectMailAddress = cboMAddress.Text;
             _SelectExportStudInfo = chkExportStudInfo.Checked;
-            
+
             _StudentInfoList.Clear();
             _dtTable.Clear();
             btnPrint.Enabled = false;
@@ -738,10 +738,10 @@ namespace SHSchool.Retake.Report
             // 記錄面上所選
             _Config.SetString("收件人", cboMName.Text);
             _Config.SetString("收件地址", cboMAddress.Text);
-            if(rbDefault.Checked)
+            if (rbDefault.Checked)
                 _Config.SetString("範本", "預設");
 
-            if(rbUserDef.Checked)
+            if (rbUserDef.Checked)
                 _Config.SetString("範本", "自訂");
 
             _Config.SetBoolean("匯出學生清單", chkExportStudInfo.Checked);
@@ -775,7 +775,7 @@ namespace SHSchool.Retake.Report
         private void lnkUpload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             //if (rbUserDef.Checked)
-                UploadUserDefTemplate();
+            UploadUserDefTemplate();
         }
 
         /// <summary>

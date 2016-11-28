@@ -36,7 +36,7 @@ namespace SHSchool.Retake.Report
         /// <summary>
         /// 使用者所選上課時間
         /// </summary>
-        List<DateTime> _SelectDateTimeList = new List<DateTime>();
+        List<DateTime> _SelectDateSession = new List<DateTime>();
 
         /// <summary>
         /// 課程缺曠資料

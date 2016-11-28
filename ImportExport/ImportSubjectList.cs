@@ -77,12 +77,12 @@ namespace SHSchool.Retake
                 #endregion
 
                 #region 取得當前的工作學年度,學期,梯次
-                UDTTimeListDef data = UDTTransfer.UDTTimeListGetActiveTrue1();
+                UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
                 if (!string.IsNullOrEmpty(data.UID))
                 {
                     _SchoolYear = data.SchoolYear;
                     _Semester = data.Semester;
-                    _Month = data.Month;
+                    _Month = data.Round;
                 }
                 #endregion
 

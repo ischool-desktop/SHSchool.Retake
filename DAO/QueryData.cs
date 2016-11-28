@@ -293,7 +293,7 @@ namespace SHSchool.Retake.DAO
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        public static DataTable GetRetakeListByTimeListUID(string UID)
+        public static DataTable GetRetakeListBySessionUID(string UID)
         {
             DataTable retTable = new DataTable();
             retTable.Columns.Add("StudentID");

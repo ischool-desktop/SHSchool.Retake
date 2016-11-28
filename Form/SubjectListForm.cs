@@ -43,7 +43,7 @@ namespace SHSchool.Retake.Form
         {
             InitializeComponent();
             _isShowForm = true;
-            if (string.IsNullOrEmpty(GetCurrentTimeList()))
+            if (string.IsNullOrEmpty(GetCurrentSession()))
             {
                 FISCA.Presentation.Controls.MsgBox.Show("你必須由功能[建議重補修名單]\n指定一個目前工作名單!!");
                 _isShowForm = false;
@@ -176,7 +176,7 @@ namespace SHSchool.Retake.Form
 
         private void SubjectListForm_Load(object sender, EventArgs e)
         {
-            lblTitle.Text = GetCurrentTimeList();
+            lblTitle.Text = GetCurrentSession();
             this.Text = "畫面資料讀取中...";
             
             //Cloud 2014.1.9
@@ -213,19 +213,19 @@ namespace SHSchool.Retake.Form
         /// <summary>
         /// 取得目前期間,學年度： 學期： 月份：
         /// </summary>
-        private string GetCurrentTimeList()
+        private string GetCurrentSession()
         {
             string retVal = "";
-            UDTTimeListDef data = UDTTransfer.UDTTimeListGetActiveTrue1();
+            UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
             if (!string.IsNullOrEmpty(data.UID))
             {
                 retVal = data.SchoolYear + "學年度　";
                 retVal += "第" + data.Semester + "學期　";
-                retVal += data.Month + "梯次";
+                retVal += data.Round + "梯次";
 
                 _SchoolYear = data.SchoolYear;
                 _Semester = data.Semester;
-                _Month = data.Month;
+                _Month = data.Round;
             }
 
 

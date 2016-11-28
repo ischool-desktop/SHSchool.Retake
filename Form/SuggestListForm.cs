@@ -29,13 +29,13 @@ namespace SHSchool.Retake.Form
         /// <summary>
         /// 名冊
         /// </summary>
-        List<UDTTimeListDef> _UDTTimeListList = new List<UDTTimeListDef>();
+        List<UDTSessionDef> _UDTSessionList = new List<UDTSessionDef>();
 
         /// <summary>
         /// UDT 內有符合期間的建議重修名單
         /// </summary>
         List<UDTSuggestListDef> _CurrentHasSuggestList = new List<UDTSuggestListDef>();
-        UDTTimeListDef _currentTimeList = new UDTTimeListDef();
+        UDTSessionDef _currentSession = new UDTSessionDef();
         public SuggestListForm()
         {
             InitializeComponent();
@@ -57,14 +57,14 @@ namespace SHSchool.Retake.Form
                 return;
             }
                 dgData.DataSource = _dtTable;
-                lblMsg.Text = _currentTimeList.Name+" (共有" + dgData.Rows.Count + "筆)";
+                lblMsg.Text = _currentSession.Name+" (共有" + dgData.Rows.Count + "筆)";
         }
 
 
         void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             _dtTable.Clear();
-            _dtTable = QueryData.GetRetakeListByTimeListUID(_currentTimeList.UID);
+            _dtTable = QueryData.GetRetakeListBySessionUID(_currentSession.UID);
         }
 
 
@@ -98,11 +98,11 @@ namespace SHSchool.Retake.Form
                 dgData.DataSource = null;
                 dgData.Rows.Clear();
             }
-            _UDTTimeListList = UDTTransfer.UDTTimeListSelectAll();
+            _UDTSessionList = UDTTransfer.UDTSessionSelectAll();
             // 排序
-            //_UDTTimeListList = (from data in _UDTTimeListList where data.SchoolYear==SchoolYear orderby data.Active descending,data.SchoolYear, data.Semester, data.Month select data).ToList();
-            _UDTTimeListList = (from data in _UDTTimeListList where data.SchoolYear == SchoolYear orderby  data.SchoolYear, data.Semester, data.Month select data).ToList();
-            foreach (UDTTimeListDef data in _UDTTimeListList)
+            //_UDTSessionList = (from data in _UDTSessionList where data.SchoolYear==SchoolYear orderby data.Active descending,data.SchoolYear, data.Semester, data.Month select data).ToList();
+            _UDTSessionList = (from data in _UDTSessionList where data.SchoolYear == SchoolYear orderby  data.SchoolYear, data.Semester, data.Round select data).ToList();
+            foreach (UDTSessionDef data in _UDTSessionList)
             {
                 ButtonItem btnItem = new ButtonItem();
                 btnItem.Name = data.UID;
@@ -132,13 +132,13 @@ namespace SHSchool.Retake.Form
                 dgData.Rows.Clear();
                 ButtonItem item = itmPnlTimeName.SelectedItems[0] as ButtonItem;
 
-                UDTTimeListDef data = item.Tag as UDTTimeListDef;
+                UDTSessionDef data = item.Tag as UDTSessionDef;
                 lblMsg.Text = "資料讀取中..";
 
                 // 讀取元資料庫內資料
                 if (data != null)
                 {
-                    _currentTimeList = data;
+                    _currentSession = data;
                     if (_bgWorker.IsBusy)
                     {
                         _bgBusy = true;
@@ -231,7 +231,7 @@ namespace SHSchool.Retake.Form
         private void btnAdd_Click(object sender, EventArgs e)
         {
             btnAdd.Enabled = false;
-            Form.AddTimeListForm atlf = new AddTimeListForm();
+            Form.AddSessionForm atlf = new AddSessionForm();
             atlf.ShowDialog();
             LoadPanelData(iptSelectSchoolYear.Value,true);
             btnAdd.Enabled = true;
@@ -242,8 +242,8 @@ namespace SHSchool.Retake.Form
             if (itmPnlTimeName.SelectedItems.Count == 1)
             {
                 ButtonItem item = itmPnlTimeName.SelectedItems[0] as ButtonItem;
-                UDTTimeListDef data = item.Tag as UDTTimeListDef;
-                UDTTransfer.UDTTimeListSetActiveTrue(data.UID);
+                UDTSessionDef data = item.Tag as UDTSessionDef;
+                UDTTransfer.UDTSessionSetActiveTrue(data.UID);
                 LoadPanelData(iptSelectSchoolYear.Value,false);
                 FISCA.Presentation.Controls.MsgBox.Show("將工作名單設定為： " + data.Name);
             }
@@ -264,14 +264,14 @@ namespace SHSchool.Retake.Form
                     if (FISCA.Presentation.Controls.MsgBox.Show("請問是否刪除["+item.Text+"]?","刪除期間名冊", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
                     { 
                         // 刪除建議名單
-                        List<UDTSuggestListDef> delSuggestData = UDTTransfer.UDTSuggestListSelectByTimeListID(item.Name);
+                        List<UDTSuggestListDef> delSuggestData = UDTTransfer.UDTSuggestListSelectBySessionID(item.Name);
                         UDTTransfer.UDTSuggestListDelete(delSuggestData);
 
                         // 刪除名冊內容
-                        List<UDTTimeListDef> delList = new List<UDTTimeListDef>();
-                        UDTTimeListDef delData = item.Tag as UDTTimeListDef;
+                        List<UDTSessionDef> delList = new List<UDTSessionDef>();
+                        UDTSessionDef delData = item.Tag as UDTSessionDef;
                         delList.Add(delData);
-                        UDTTransfer.UDTTimeListDelete(delList);
+                        UDTTransfer.UDTSessionDelete(delList);
 
                         // 資料重整
                         LoadPanelData(iptSelectSchoolYear.Value,true);

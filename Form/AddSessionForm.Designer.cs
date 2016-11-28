@@ -1,6 +1,6 @@
 ﻿namespace SHSchool.Retake.Form
 {
-    partial class AddTimeListForm
+    partial class AddSessionForm
     {
         /// <summary>
         /// Required designer variable.
@@ -189,7 +189,7 @@
             this.labelX4.TabIndex = 14;
             this.labelX4.Text = "說明：\r\n本功能將會新增建議重補修名單\r\n您可以指定該名單的時間點戳記\r\n提供資料管理上的依據";
             // 
-            // AddTimeListForm
+            // AddSessionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -204,10 +204,10 @@
             this.Controls.Add(this.labelX2);
             this.Controls.Add(this.labelX1);
             this.DoubleBuffered = true;
-            this.Name = "AddTimeListForm";
+            this.Name = "AddSessionForm";
             this.Text = "建議重補修名單 - 新增";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AddTimeListForm_FormClosing);
-            this.Load += new System.EventHandler(this.AddTimeListForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AddSessionForm_FormClosing);
+            this.Load += new System.EventHandler(this.AddSessionForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iptSchoolYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptSemester)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptMonth)).EndInit();

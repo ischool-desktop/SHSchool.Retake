@@ -197,7 +197,7 @@
     <Compile Include="DAO\UDTSsselectDef.cs" />
     <Compile Include="DAO\UDTSubjectDef.cs" />
     <Compile Include="DAO\UDTSuggestListDef.cs" />
-    <Compile Include="DAO\UDTTimeListDef.cs" />
+    <Compile Include="DAO\UDTSessionDef.cs" />
     <Compile Include="DAO\UDTTimeSectionDef.cs" />
     <Compile Include="DAO\UDTTransfer.cs" />
     <Compile Include="DAO\UDTWeightProportionDef.cs" />
@@ -269,11 +269,11 @@
     <Compile Include="Form\AddCourse.Designer.cs">
       <DependentUpon>AddCourse.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form\AddTimeListForm.cs">
+    <Compile Include="Form\AddSessionForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\AddTimeListForm.Designer.cs">
-      <DependentUpon>AddTimeListForm.cs</DependentUpon>
+    <Compile Include="Form\AddSessionForm.Designer.cs">
+      <DependentUpon>AddSessionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\ClearingForm.cs">
       <SubType>Form</SubType>
@@ -511,8 +511,8 @@
     <EmbeddedResource Include="Form\AddCourse.resx">
       <DependentUpon>AddCourse.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form\AddTimeListForm.resx">
-      <DependentUpon>AddTimeListForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\AddSessionForm.resx">
+      <DependentUpon>AddSessionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\ClearingForm.resx">
       <DependentUpon>ClearingForm.cs</DependentUpon>

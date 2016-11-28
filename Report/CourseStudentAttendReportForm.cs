@@ -33,7 +33,7 @@ namespace SHSchool.Retake.Report
         /// <summary>
         /// 使用者所選上課時間
         /// </summary>
-        List<DateTime> _SelectDateTimeList = new List<DateTime>();
+        List<DateTime> _SelectDateSession = new List<DateTime>();
 
         /// <summary>
         /// 課程缺曠資料
@@ -202,7 +202,7 @@ namespace SHSchool.Retake.Report
                 int colIdx = 4;
                 foreach (UDTTimeSectionDef data in timeSection)
                 {
-                    if (_SelectDateTimeList.Contains(data.Date))
+                    if (_SelectDateSession.Contains(data.Date))
                     {
                         int tid = int.Parse(data.UID);
                         if (!timeSectionDict.ContainsKey(tid))
@@ -295,17 +295,17 @@ namespace SHSchool.Retake.Report
 
             // 檢查勾選是否超過樣板最大容納數
             // 讀取使用者勾選
-            _SelectDateTimeList.Clear();
+            _SelectDateSession.Clear();
             foreach (ListViewItem lvi in lvwData.CheckedItems)
             {
                 DateTime dt = (DateTime)lvi.Tag;
-                _SelectDateTimeList.Add(dt);
+                _SelectDateSession.Add(dt);
             }
 
             int count = 0;
             foreach (UDTTimeSectionDef data in _TimeSectionList)
             {
-                if (_SelectDateTimeList.Contains(data.Date))
+                if (_SelectDateSession.Contains(data.Date))
                     count++;
             }            
 

@@ -43,7 +43,7 @@
             this.rbUserDef = new System.Windows.Forms.RadioButton();
             this.rbDefault = new System.Windows.Forms.RadioButton();
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
-            this.cboTimeList = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.cboSession = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.groupPanel2.SuspendLayout();
             this.groupPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -306,24 +306,24 @@
             this.labelX1.TabIndex = 6;
             this.labelX1.Text = "梯次";
             // 
-            // cboTimeList
+            // cboSession
             // 
-            this.cboTimeList.DisplayMember = "Text";
-            this.cboTimeList.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cboTimeList.FormattingEnabled = true;
-            this.cboTimeList.ItemHeight = 19;
-            this.cboTimeList.Location = new System.Drawing.Point(164, 135);
-            this.cboTimeList.Name = "cboTimeList";
-            this.cboTimeList.Size = new System.Drawing.Size(178, 25);
-            this.cboTimeList.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.cboTimeList.TabIndex = 7;
+            this.cboSession.DisplayMember = "Text";
+            this.cboSession.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cboSession.FormattingEnabled = true;
+            this.cboSession.ItemHeight = 19;
+            this.cboSession.Location = new System.Drawing.Point(164, 135);
+            this.cboSession.Name = "cboSession";
+            this.cboSession.Size = new System.Drawing.Size(178, 25);
+            this.cboSession.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.cboSession.TabIndex = 7;
             // 
             // StudentCourseAttendanceRptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 173);
-            this.Controls.Add(this.cboTimeList);
+            this.Controls.Add(this.cboSession);
             this.Controls.Add(this.labelX1);
             this.Controls.Add(this.groupPanel1);
             this.Controls.Add(this.groupPanel2);
@@ -360,6 +360,6 @@
         private System.Windows.Forms.RadioButton rbUserDef;
         private System.Windows.Forms.RadioButton rbDefault;
         private DevComponents.DotNetBar.LabelX labelX1;
-        private DevComponents.DotNetBar.Controls.ComboBoxEx cboTimeList;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx cboSession;
     }
 }

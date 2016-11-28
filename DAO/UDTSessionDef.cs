@@ -9,9 +9,9 @@ namespace SHSchool.Retake.DAO
     /// <summary>
     /// 重補修期間
     /// </summary>
-    [TableName("shschool.retake.time_list")]
-    public class UDTTimeListDef:ActiveRecord
-    {    
+    [TableName("shschool.retake.session")]
+    public class UDTSessionDef : ActiveRecord
+    {
         ///<summary>
         /// 學年度
         ///</summary>
@@ -25,10 +25,10 @@ namespace SHSchool.Retake.DAO
         public int Semester { get; set; }
 
         ///<summary>
-        /// 月份
+        /// 梯次
         ///</summary>
-        [Field(Field = "month", Indexed = false)]
-        public int Month { get; set; }
+        [Field(Field = "round", Indexed = false)]
+        public int Round { get; set; }
 
         ///<summary>
         /// 名稱

@@ -21,8 +21,8 @@ namespace SHSchool.Retake.DAO
         ///<summary>
         /// 重補修期間編號
         ///</summary>
-        [Field(Field = "ref_time_list_id", Indexed = false)]
-        public int RefTimeListID { get; set; }
+        [Field(Field = "ref_session_id", Indexed = false)]
+        public int RefSessionID { get; set; }
         
         ///<summary>
         /// 科目內容

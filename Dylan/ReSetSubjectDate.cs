@@ -41,7 +41,7 @@ namespace SHSchool.Retake.Form
 
             //*如果這些課程已經有上課日期與節次資訊
             //則警告此操作,將會清除原有設定
-            //List<UDTTimeSectionDef> TimeList = _accessHelper.Select<UDTTimeSectionDef>(RetakeAdmin.Instance.SelectedSource);
+            //List<UDTTimeSectionDef> Session = _accessHelper.Select<UDTTimeSectionDef>(RetakeAdmin.Instance.SelectedSource);
             // 上課時間區間
             _hasTimeSectionDef = UDTTransfer.UDTTimeSectionSelectByCourseIDList(RetakeAdmin.Instance.SelectedSource);
             // 課程缺曠

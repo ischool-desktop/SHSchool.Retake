@@ -41,8 +41,8 @@ namespace SHSchool.Retake
         public RetakeAdmin()
         {
             Group = "重補修";
-            UDTTimeListDef dd = UDTTransfer.UDTTimeListGetActiveTrue1();
-            FilterCourseItem = dd.SchoolYear + " " + dd.Semester + " 第" + dd.Month + "梯次";
+            UDTSessionDef dd = UDTTransfer.UDTSessionGetActiveTrue1();
+            FilterCourseItem = dd.SchoolYear + " " + dd.Semester + " 第" + dd.Round + "梯次";
 
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);

@@ -14,15 +14,15 @@ namespace SHSchool.Retake.Form
     /// <summary>
     /// 新增重補修期間
     /// </summary>
-    public partial class AddTimeListForm : FISCA.Presentation.Controls.BaseForm
+    public partial class AddSessionForm : FISCA.Presentation.Controls.BaseForm
     {
         BackgroundWorker _bgWorker = new BackgroundWorker();
-        List<UDTTimeListDef> _AllUDTTimeList = new List<UDTTimeListDef>();
-        public AddTimeListForm()
+        List<UDTSessionDef> _AllUDTSession = new List<UDTSessionDef>();
+        public AddSessionForm()
         {
             InitializeComponent();
             // 取得UDT所有名冊設定
-            _AllUDTTimeList = UDTTransfer.UDTTimeListSelectAll();
+            _AllUDTSession = UDTTransfer.UDTSessionSelectAll();
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
         }
@@ -37,13 +37,13 @@ namespace SHSchool.Retake.Form
         void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // 取得目前期間
-            UDTTimeListDef actData = UDTTransfer.UDTTimeListGetActiveTrue1();
+            UDTSessionDef actData = UDTTransfer.UDTSessionGetActiveTrue1();
 
             // 新增建議名單
             InsertData(actData.UID);
         }
 
-        private void AddTimeListForm_Load(object sender, EventArgs e)
+        private void AddSessionForm_Load(object sender, EventArgs e)
         {
             this.MaximumSize = this.MinimumSize = this.Size;
             int dsc = int.Parse(K12.Data.School.DefaultSchoolYear);
@@ -64,32 +64,32 @@ namespace SHSchool.Retake.Form
 
             bool pass = true;
             // 檢查是否有相同名冊
-            foreach (UDTTimeListDef data in _AllUDTTimeList)
+            foreach (UDTSessionDef data in _AllUDTSession)
             {
                 // 先設成 false 確認可以新增時，更新狀態使用
                 data.Active = false;
 
-                if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Month == iptMonth.Value)
+                if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptMonth.Value)
                     pass = false;
             }
 
             if (pass)
             {
                 btnSave.Enabled = false;
-                List<UDTTimeListDef> dataList = new List<UDTTimeListDef>();
-                UDTTimeListDef newData = new UDTTimeListDef();
+                List<UDTSessionDef> dataList = new List<UDTSessionDef>();
+                UDTSessionDef newData = new UDTSessionDef();
                 newData.SchoolYear = iptSchoolYear.Value;
                 newData.Semester = iptSemester.Value;
-                newData.Month = iptMonth.Value;
+                newData.Round = iptMonth.Value;
                 newData.Name = name;
                 newData.Active = true;
                 dataList.Add(newData);
 
                 // 更新原有目前學期
-                UDTTransfer.UDTTimeListUpdate(_AllUDTTimeList);
+                //UDTTransfer.UDTSessionUpdate(_AllUDTSession);
 
                 // 新增資料
-                UDTTransfer.UDTTimeListInsert(dataList);
+                UDTTransfer.UDTSessionInsert(dataList);
                 // 新增資料
                 _bgWorker.RunWorkerAsync();
            
@@ -142,7 +142,7 @@ namespace SHSchool.Retake.Form
                 {
                     UDTSuggestListDef newData = new UDTSuggestListDef();
                     newData.RefStudentID = data.Key;
-                    newData.RefTimeListID = int.Parse(UID);
+                    newData.RefSessionID = int.Parse(UID);
                     newData.SubjectContent = data.Value.ToString();
                     insertDataList.Add(newData);
                 }
@@ -155,7 +155,7 @@ namespace SHSchool.Retake.Form
 
         }
 
-        private void AddTimeListForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void AddSessionForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (btnSave.Enabled == false)
                 e.Cancel = true;

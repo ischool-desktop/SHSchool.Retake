@@ -25,11 +25,11 @@ namespace SHSchool.Retake.Report
         private string _SelectMailName = "";
         private string _SelectMailAddress = "";
         private bool _SelectChkNotExam = false;
-        private string _SelectTimeList = "";
+        private string _SelectSession = "";
         private int _SelSchoolYear = 0, _SelSemester = 0, _SelMonth = 0;
         private string _ReportName = "新民學生重補修缺曠通知單";
 
-        List<UDTTimeListDef> _TimeList = new List<UDTTimeListDef>();
+        List<UDTSessionDef> _Session = new List<UDTSessionDef>();
         /// <summary>
         /// 設定檔
         /// </summary>
@@ -68,7 +68,7 @@ namespace SHSchool.Retake.Report
         /// <summary>
         /// 使用者所選上課時間
         /// </summary>
-        List<DateTime> _SelectDateTimeList = new List<DateTime>();
+        List<DateTime> _SelectDateSession = new List<DateTime>();
 
         /// <summary>
         /// 課程缺曠資料
@@ -91,7 +91,7 @@ namespace SHSchool.Retake.Report
         {
             InitializeComponent();
             _StudentIDList = StudentIDList;
-            _TimeList = UDTTransfer.UDTTimeListSelectAll();
+            _Session = UDTTransfer.UDTSessionSelectAll();
             _bgWork = new BackgroundWorker();
             _bgWork.DoWork += new DoWorkEventHandler(_bgWork_DoWork);
             _bgWork.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWork_RunWorkerCompleted);
@@ -685,7 +685,7 @@ namespace SHSchool.Retake.Report
                 return;
             }
 
-            if (string.IsNullOrEmpty(cboTimeList.Text))
+            if (string.IsNullOrEmpty(cboSession.Text))
             {
                 FISCA.Presentation.Controls.MsgBox.Show("請選擇梯次");
                 return;
@@ -694,13 +694,13 @@ namespace SHSchool.Retake.Report
             // 解析所選梯次
             _SelSchoolYear = _SelSemester = _SelMonth = 0;
 
-            foreach (UDTTimeListDef data in _TimeList)
+            foreach (UDTSessionDef data in _Session)
             {
-                if (data.Name == cboTimeList.Text)
+                if (data.Name == cboSession.Text)
                 {
                     _SelSchoolYear = data.SchoolYear;
                     _SelSemester = data.Semester;
-                    _SelMonth = data.Month;
+                    _SelMonth = data.Round;
                     break;
                 }            
             }
@@ -714,7 +714,7 @@ namespace SHSchool.Retake.Report
             // 檢查列印所需資料
             _SelectMailName = cboMName.Text;
             _SelectMailAddress = cboMAddress.Text;
-            _SelectTimeList = cboTimeList.Text;
+            _SelectSession = cboSession.Text;
             _SelectChkNotExam = chkNotExam.Checked;
             // 記錄面上所選
             _Config.SetString("收件人", cboMName.Text);
@@ -726,7 +726,7 @@ namespace SHSchool.Retake.Report
                 _Config.SetString("範本", "自訂");
 
             _Config.SetBoolean("只產生扣考", chkNotExam.Checked);
-            _Config.SetString("梯次名稱", cboTimeList.Text);
+            _Config.SetString("梯次名稱", cboSession.Text);
             _Config.Save();
             btnPrint.Enabled = false;
 
@@ -866,7 +866,7 @@ namespace SHSchool.Retake.Report
             // 讀取所有梯次
             List<string> tName = new List<string>();
 
-            foreach (UDTTimeListDef da in (from data in _TimeList orderby data.SchoolYear, data.Semester, data.Month, data.Name select data))
+            foreach (UDTSessionDef da in (from data in _Session orderby data.SchoolYear, data.Semester, data.Round, data.Name select data))
             {
                 tName.Add(da.Name);
                 if (da.Active)
@@ -876,7 +876,7 @@ namespace SHSchool.Retake.Report
             if(tiName!="")
                 this.Text=this.Text+" (目前梯次："+tiName+")";
 
-            cboTimeList.Items.AddRange(tName.ToArray());            
+            cboSession.Items.AddRange(tName.ToArray());            
 
             // 填入收件人預設值
             cboMName.Items.AddRange(new string[] { "學生姓名", "監護人姓名", "父親姓名", "母親姓名" }.ToArray());
@@ -923,7 +923,7 @@ namespace SHSchool.Retake.Report
                 rbUserDef.Checked = true;
 
             chkNotExam.Checked = _Config.GetBoolean("只產生扣考", false);
-            cboTimeList.Text = _Config.GetString("梯次名稱", "");
+            cboSession.Text = _Config.GetString("梯次名稱", "");
         }
     }
 }

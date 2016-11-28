@@ -15,7 +15,7 @@ namespace SHSchool.Retake.Form
         BackgroundWorker _bgWorkLoad;
         List<UDTCourseDef> _AllCourseList = new List<UDTCourseDef>();        
         ErrorProvider _errorP = new ErrorProvider();
-        List<UDTTimeListDef> _AllTimeList = new List<UDTTimeListDef>();
+        List<UDTSessionDef> _AllSession = new List<UDTSessionDef>();
         int _DefSchoolYear=0, _DefSemester=0, _Defmot = 0;
         public AddCourse()
         {
@@ -50,7 +50,7 @@ namespace SHSchool.Retake.Form
             _AllCourseList = UDTTransfer.UDTCourseSelectAllDict().Values.ToList();
             
             // 取得所有期間
-            _AllTimeList = UDTTransfer.UDTTimeListSelectAll();
+            _AllSession = UDTTransfer.UDTSessionSelectAll();
 
             // 取得學年度、學期、梯次
             if (CourseList.Count > 0)
@@ -61,13 +61,13 @@ namespace SHSchool.Retake.Form
             }
             else
             {
-                foreach (UDTTimeListDef data in _AllTimeList)
+                foreach (UDTSessionDef data in _AllSession)
                 {
                     if (data.Active)
                     {
                         _DefSchoolYear = data.SchoolYear;
                         _DefSemester = data.Semester;
-                        _Defmot = data.Month;
+                        _Defmot = data.Round;
                         break;
                     }
                 }
@@ -223,9 +223,9 @@ namespace SHSchool.Retake.Form
 
                     // 檢查名冊是否已有，沒有新增一筆
                     bool addData = true;
-                    foreach (UDTTimeListDef data in _AllTimeList)
+                    foreach (UDTSessionDef data in _AllSession)
                     {
-                        if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Month == iptMonth.Value)
+                        if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptMonth.Value)
                         {
                             addData = false;
                             break;
@@ -234,14 +234,14 @@ namespace SHSchool.Retake.Form
 
                     if (addData)
                     {
-                        List<UDTTimeListDef> addList = new List<UDTTimeListDef>();
-                        UDTTimeListDef da = new UDTTimeListDef();
+                        List<UDTSessionDef> addList = new List<UDTSessionDef>();
+                        UDTSessionDef da = new UDTSessionDef();
                         da.SchoolYear = iptSchoolYear.Value;
                         da.Semester = iptSemester.Value;
-                        da.Month = iptMonth.Value;
+                        da.Round = iptMonth.Value;
                         da.Name = iptSchoolYear.Value + "學年度第" + iptSemester.Value + "學期" + iptMonth.Value + "梯次";
                         addList.Add(da);
-                        UDTTransfer.UDTTimeListInsert(addList);
+                        UDTTransfer.UDTSessionInsert(addList);
                     }
 
                     FISCA.Presentation.Controls.MsgBox.Show("儲存完成.");
