@@ -178,7 +178,7 @@ namespace SHSchool.Retake.Form
         {
             lblTitle.Text = GetCurrentSession();
             this.Text = "畫面資料讀取中...";
-            
+
             //Cloud 2014.1.9
             _ChangeListener.StatusChanged += new EventHandler<Campus.Windows.ChangeEventArgs>(_ChangeListener_StatusChanged);
             _ChangeListener.Add(new Campus.Windows.DataGridViewSource(dgData));
@@ -637,6 +637,21 @@ namespace SHSchool.Retake.Form
                         cell.Value = phD.selectName;
                     }
                 }
+            }
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            List<int> rowIndex = new List<int>();
+
+            foreach (DataGridViewRow row in dgData.SelectedRows)
+            {
+                rowIndex.Add(row.Index);
+            }
+            foreach (DataGridViewCell cell in dgData.SelectedCells)
+            {
+                if (!rowIndex.Contains(cell.RowIndex))
+                    e.Cancel = true;
             }
         }
 

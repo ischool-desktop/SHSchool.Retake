@@ -508,7 +508,9 @@
     <EmbeddedResource Include="DetailContent\CourseStudentContent.resx">
       <DependentUpon>CourseStudentContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExportStudentV2.resx" />
+    <EmbeddedResource Include="ExportStudentV2.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\AddCourse.resx">
       <DependentUpon>AddCourse.cs</DependentUpon>
     </EmbeddedResource>
