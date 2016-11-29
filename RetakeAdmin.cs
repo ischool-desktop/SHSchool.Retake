@@ -298,7 +298,7 @@ namespace SHSchool.Retake
             _CourseFilterDict.Clear();
             foreach (UDTCourseDef data in _AllCourseDict.Values)
             {   
-                string key = data.SchoolYear + " " + data.Semester + " 第" + data.Month + "梯次";
+                string key = data.SchoolYear + " " + data.Semester + " 第" + data.Round + "梯次";
                 if (!_CourseFilterDict.ContainsKey(key))
                     _CourseFilterDict.Add(key, new List<string>());
 

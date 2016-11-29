@@ -20,7 +20,7 @@ namespace SHSchool.Retake
         private const string _CourseTimetable = "所屬課表";
         private const string _SubjectType = "科目類別";
         private string[] _Period = { "一", "二", "三", "四", "五", "六", "七", "八" };
-        private int _SchoolYear, _Semester, _Month;
+        private int _SchoolYear, _Semester, _Round;
         private List<string> _IDList = new List<string>(); //找得到組合鍵值的id清單
 
         Dictionary<string, string> _CourseTimetableDic = new Dictionary<string, string>(); //所屬課表ID對照字典(Name,UID)
@@ -82,12 +82,12 @@ namespace SHSchool.Retake
                 {
                     _SchoolYear = data.SchoolYear;
                     _Semester = data.Semester;
-                    _Month = data.Round;
+                    _Round = data.Round;
                 }
                 #endregion
 
                 #region 取得指定學年度,學期,梯次的科目對照字典
-                List<UDTSubjectDef> UDTSubjectList = UDTTransfer.UDTSubjectSelectByP1(_SchoolYear, _Semester, _Month);
+                List<UDTSubjectDef> UDTSubjectList = UDTTransfer.UDTSubjectSelectByP1(_SchoolYear, _Semester, _Round);
                 foreach (UDTSubjectDef elem in UDTSubjectList)
                 {
                     string uid = elem.UID;
@@ -96,7 +96,7 @@ namespace SHSchool.Retake
                     string subject_credit = elem.Credit.ToString();
                     string course_timetable_id = elem.CourseTimetableID.ToString();
 
-                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Month + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
 
                     if (!_SubjectDic.ContainsKey(subjectKey))
                         _SubjectDic.Add(subjectKey, uid);
@@ -131,7 +131,7 @@ namespace SHSchool.Retake
                     string subject_credit = Row.GetValue(_Credit);
                     string course_timetable_id = _CourseTimetableDic[Row.GetValue(_CourseTimetable)];
 
-                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Month + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
 
                     string uid = _SubjectDic.ContainsKey(subjectKey) ? _SubjectDic[subjectKey] : string.Empty;
 
@@ -158,7 +158,7 @@ namespace SHSchool.Retake
                         string subject_credit = Row.GetValue(_Credit);
                         string course_timetable_id = _CourseTimetableDic[Row.GetValue(_CourseTimetable)];
 
-                        string subjectKey = _SchoolYear + "," + _Semester + "," + _Month + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                        string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
 
                         int? subjectID = null;
                         UDTSubjectDef vSubjectExtension = null;
@@ -255,7 +255,7 @@ namespace SHSchool.Retake
 
                             vSubjectExtension.SchoolYear = _SchoolYear;
                             vSubjectExtension.Semester = _Semester;
-                            vSubjectExtension.Month = _Month;
+                            vSubjectExtension.Round = _Round;
 
                             InsertRecords.Add(vSubjectExtension);
                         }

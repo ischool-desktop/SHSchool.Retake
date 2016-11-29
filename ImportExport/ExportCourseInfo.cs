@@ -61,7 +61,7 @@ namespace SHSchool.Retake.ImportExport
                                 case "課程名稱": row.Add(field, "" + elem.CourseName); break;
                                 case "學年度": row.Add(field, "" + elem.SchoolYear); break;
                                 case "學期": row.Add(field, "" + elem.Semester); break;
-                                case "梯次": row.Add(field, "" + elem.Month); break;
+                                case "梯次": row.Add(field, "" + elem.Round); break;
                                 case "科目類別": row.Add(field, elem.SubjectType); break;
                                 case "科別": row.Add(field, elem.DeptName); break;
                                 case "科目名稱": row.Add(field, elem.SubjectName); break;
@@ -132,12 +132,12 @@ namespace SHSchool.Retake.ImportExport
         {
             string xx = x.SchoolYear.ToString().PadLeft(4, '0');
             xx += x.Semester.ToString().PadLeft(2, '0');
-            xx += x.Month.ToString().PadLeft(3, '0');
+            xx += x.Round.ToString().PadLeft(3, '0');
             xx += x.CourseName.PadLeft(20, '0');
 
             string yy = y.SchoolYear.ToString().PadLeft(4, '0');
             yy += y.Semester.ToString().PadLeft(2, '0');
-            yy += y.Month.ToString().PadLeft(3, '0');
+            yy += y.Round.ToString().PadLeft(3, '0');
             yy += y.CourseName.PadLeft(20, '0');
 
             return xx.CompareTo(yy);

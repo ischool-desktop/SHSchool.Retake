@@ -18,7 +18,7 @@ namespace SHSchool.Retake
         private const string constCourseName = "課程名稱";
         private const string constSchoolYear = "學年度";
         private const string constSemester = "學期";
-        private const string constMonth = "梯次";
+        private const string constRound = "梯次";
         private const string constSubjectType = "科目類別";
         private const string constSubject = "科目名稱";
         private const string constSubjectLevel = "科目級別";
@@ -65,7 +65,7 @@ namespace SHSchool.Retake
             {
                 QueryHelper Helper = new QueryHelper();
 
-                DataTable Table = Helper.Select("select uid,course_name,school_year,semester,month from $shschool.retake.course");
+                DataTable Table = Helper.Select("select uid,course_name,school_year,semester,round from $shschool.retake.course");
 
                 foreach (DataRow Row in Table.Rows)
                 {
@@ -73,8 +73,8 @@ namespace SHSchool.Retake
                     string CourseName = Row.Field<string>("course_name");
                     string SchoolYear = Row.Field<string>("school_year");
                     string Semester = Row.Field<string>("semester");
-                    string Month = Row.Field<string>("month");
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                    string Round = Row.Field<string>("round");
+                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
 
                     if (!mCourseNameIDs.ContainsKey(CourseKey))
                         mCourseNameIDs.Add(CourseKey, CourseID);
@@ -111,7 +111,7 @@ namespace SHSchool.Retake
                 mOption.SelectedKeyFields.Contains(constSchoolYear) &&
                 mOption.SelectedKeyFields.Contains(constSemester) &&
                 mOption.SelectedKeyFields.Contains(constCourseName) &&
-                mOption.SelectedKeyFields.Contains(constMonth))
+                mOption.SelectedKeyFields.Contains(constRound))
             {
                 #region 取得已存在的排課課程資料
                 List<UDTCourseDef> mCourseExtensions = new List<UDTCourseDef>();
@@ -122,10 +122,10 @@ namespace SHSchool.Retake
                     string CourseName = Row.GetValue(constCourseName);
                     string SchoolYear = Row.GetValue(constSchoolYear);
                     string Semester = Row.GetValue(constSemester);
-                    string Month = Row.GetValue(constMonth);
+                    string Round = Row.GetValue(constRound);
 
                     //根據課程名稱、學年度及學期尋找是否有對應的課程
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
                     string CourseID = mCourseNameIDs.ContainsKey(CourseKey) ? mCourseNameIDs[CourseKey] : string.Empty;
 
                     if (!string.IsNullOrEmpty(CourseID))
@@ -149,10 +149,10 @@ namespace SHSchool.Retake
                         string CourseName = Row.GetValue(constCourseName);
                         string SchoolYear = Row.GetValue(constSchoolYear);
                         string Semester = Row.GetValue(constSemester);
-                        string Month = Row.GetValue(constMonth);
+                        string Round = Row.GetValue(constRound);
 
                         //根據課程名稱、學年度及學期尋找是否有對應的課程
-                        string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                        string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
                         int? CourseID = null;
                         UDTCourseDef vCourseExtension = null;
                         if (mCourseNameIDs.ContainsKey(CourseKey))
@@ -198,7 +198,7 @@ namespace SHSchool.Retake
                             vCourseExtension = new UDTCourseDef();
                             vCourseExtension.SchoolYear = K12.Data.Int.Parse(Row.GetValue(constSchoolYear));
                             vCourseExtension.Semester = K12.Data.Int.Parse(Row.GetValue(constSemester));
-                            vCourseExtension.Month = K12.Data.Int.Parse(Row.GetValue(constMonth));
+                            vCourseExtension.Round = K12.Data.Int.Parse(Row.GetValue(constRound));
                             vCourseExtension.CourseName = Row.GetValue(constCourseName);
 
                             if (mOption.SelectedFields.Contains(constSubjectType))

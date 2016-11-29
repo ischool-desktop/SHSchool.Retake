@@ -207,17 +207,17 @@ namespace SHSchool.Retake.DAO
         }
 
         /// <summary>
-        /// 透過學年度、學期、月份，取得相關科目
+        /// 透過學年度、學期、梯次，取得相關科目
         /// </summary>
         /// <param name="SchoolYear"></param>
         /// <param name="Semester"></param>
-        /// <param name="Month"></param>
+        /// <param name="Round"></param>
         /// <returns></returns>
-        public static List<UDTSubjectDef> UDTSubjectSelectByP1(int SchoolYear, int Semester, int Month)
+        public static List<UDTSubjectDef> UDTSubjectSelectByP1(int SchoolYear, int Semester, int round)
         {
             List<UDTSubjectDef> retVal = new List<UDTSubjectDef>();
             AccessHelper accessHelper = new AccessHelper();
-            string qry = "school_year="+SchoolYear+" and semester="+Semester+" and month="+Month;
+            string qry = "school_year="+SchoolYear+" and semester="+Semester+ " and round=" + round;
             retVal = accessHelper.Select<UDTSubjectDef>(qry);
             return retVal;
         }
@@ -407,11 +407,11 @@ namespace SHSchool.Retake.DAO
         /// 取得課程,依學年度、學期、梯次
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<string, UDTCourseDef> UDTCourseSelectBySchoolYearSMDict(int SchoolYear,int Semester,int Month)
+        public static Dictionary<string, UDTCourseDef> UDTCourseSelectBySchoolYearSMDict(int SchoolYear,int Semester,int round)
         {
             Dictionary<string, UDTCourseDef> retVal = new Dictionary<string, UDTCourseDef>();
             AccessHelper accessHepler = new AccessHelper();
-            string qry = "school_year="+SchoolYear+" and semester="+Semester+" and month="+Month;
+            string qry = "school_year="+SchoolYear+" and semester="+Semester+ " and round=" + round;
             List<UDTCourseDef> dataList = accessHepler.Select<UDTCourseDef>(qry);
             foreach (UDTCourseDef data in dataList)
                 retVal.Add(data.UID, data);

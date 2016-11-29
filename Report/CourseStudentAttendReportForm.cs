@@ -184,7 +184,7 @@ namespace SHSchool.Retake.Report
                 // 複製樣板
                 // 標題
                 wb.Worksheets[0].Cells.CreateRange(RowTitleIdx, 1, false).Copy(R_Title);
-                string strTitle = courseRec.SchoolYear + "學年度 第" + courseRec.Semester + "學期 第" + courseRec.Month + "梯次 課程缺曠名單";
+                string strTitle = courseRec.SchoolYear + "學年度 第" + courseRec.Semester + "學期 第" + courseRec.Round + "梯次 課程缺曠名單";
                 wb.Worksheets[0].Cells[RowTitleIdx, 0].PutValue(strTitle);
 
                 // 課程名稱

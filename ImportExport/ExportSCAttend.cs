@@ -58,7 +58,7 @@ namespace SHSchool.Retake.ImportExport
                                 case "課程名稱": row.Add(field, "" + _CourseDic[elem.CourseID].CourseName); break;
                                 case "學年度": row.Add(field, "" + _CourseDic[elem.CourseID].SchoolYear); break;
                                 case "學期": row.Add(field, "" + _CourseDic[elem.CourseID].Semester); break;
-                                case "梯次": row.Add(field, "" + _CourseDic[elem.CourseID].Month); break;
+                                case "梯次": row.Add(field, "" + _CourseDic[elem.CourseID].Round); break;
                                 case "學號": row.Add(field, _StudDict[elem.StudentID].StudentNumber); break;
                                 case "姓名": row.Add(field, _StudDict[elem.StudentID].Name); break;
                                 case "課程座號": row.Add(field, "" + elem.SeatNo); break;
@@ -109,13 +109,13 @@ namespace SHSchool.Retake.ImportExport
         {
             string xx = _CourseDic[x.CourseID].SchoolYear.ToString().PadLeft(4, '0');
             xx += _CourseDic[x.CourseID].Semester.ToString().PadLeft(2, '0');
-            xx += _CourseDic[x.CourseID].Month.ToString().PadLeft(3, '0');
+            xx += _CourseDic[x.CourseID].Round.ToString().PadLeft(3, '0');
             xx += _CourseDic[x.CourseID].CourseName.PadLeft(20, '0');
             xx += x.SeatNo.ToString().PadLeft(3, '0');
 
             string yy = _CourseDic[y.CourseID].SchoolYear.ToString().PadLeft(4, '0');
             yy += _CourseDic[y.CourseID].Semester.ToString().PadLeft(2, '0');
-            yy += _CourseDic[y.CourseID].Month.ToString().PadLeft(3, '0');
+            yy += _CourseDic[y.CourseID].Round.ToString().PadLeft(3, '0');
             yy += _CourseDic[y.CourseID].CourseName.PadLeft(20, '0');
             yy += y.SeatNo.ToString().PadLeft(3, '0');
 

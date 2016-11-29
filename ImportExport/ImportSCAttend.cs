@@ -20,7 +20,7 @@ namespace SHSchool.Retake
         private const string constCourseName = "課程名稱";
         private const string constSchoolYear = "學年度";
         private const string constSemester = "學期";
-        private const string constMonth = "梯次";
+        private const string constRound = "梯次";
         private const string constStudentNumber = "學號";
         private const string constSeatNo = "課程座號";
         private const string constCourseType = "重補修";
@@ -63,10 +63,10 @@ namespace SHSchool.Retake
                     string CourseName = Row.GetValue(constCourseName);
                     string SchoolYear = Row.GetValue(constSchoolYear);
                     string Semester = Row.GetValue(constSemester);
-                    string Month = Row.GetValue(constMonth);
+                    string Round = Row.GetValue(constRound);
 
                     //根據課程名稱、學年度及學期尋找是否有對應的課程
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
                     string CourseID = mCourseNameIDs.ContainsKey(CourseKey) ? mCourseNameIDs[CourseKey] : string.Empty;
 
                     string StudentNumber = Row.GetValue(constStudentNumber);
@@ -89,10 +89,10 @@ namespace SHSchool.Retake
                     string CourseName = Row.GetValue(constCourseName);
                     string SchoolYear = Row.GetValue(constSchoolYear);
                     string Semester = Row.GetValue(constSemester);
-                    string Month = Row.GetValue(constMonth);
+                    string Round = Row.GetValue(constRound);
 
                     //根據課程名稱、學年度及學期尋找是否有對應的課程
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
                     int? CourseID = null;
                     if (mCourseNameIDs.ContainsKey(CourseKey))
                         CourseID = K12.Data.Int.ParseAllowNull(mCourseNameIDs[CourseKey]);
@@ -130,7 +130,7 @@ namespace SHSchool.Retake
 
             QueryHelper Helper = new QueryHelper();
 
-            DataTable Table = Helper.Select("select uid,course_name,school_year,semester,month from $shschool.retake.course");
+            DataTable Table = Helper.Select("select uid,course_name,school_year,semester,round from $shschool.retake.course");
 
             foreach (DataRow Row in Table.Rows)
             {
@@ -138,8 +138,8 @@ namespace SHSchool.Retake
                 string CourseName = Row.Field<string>("course_name");
                 string SchoolYear = Row.Field<string>("school_year");
                 string Semester = Row.Field<string>("semester");
-                string Month = Row.Field<string>("month");
-                string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                string Round = Row.Field<string>("round");
+                string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
 
                 if (!mCourseNameIDs.ContainsKey(CourseKey))
                     mCourseNameIDs.Add(CourseKey, CourseID);
@@ -199,7 +199,7 @@ namespace SHSchool.Retake
                 mOption.SelectedKeyFields.Contains(constSchoolYear) &&
                 mOption.SelectedKeyFields.Contains(constSemester) &&
                 mOption.SelectedKeyFields.Contains(constCourseName) &&
-                mOption.SelectedKeyFields.Contains(constMonth) &&
+                mOption.SelectedKeyFields.Contains(constRound) &&
                 mOption.SelectedKeyFields.Contains(constStudentNumber))
             {
    
@@ -214,10 +214,10 @@ namespace SHSchool.Retake
                         string CourseName = Row.GetValue(constCourseName);
                         string SchoolYear = Row.GetValue(constSchoolYear);
                         string Semester = Row.GetValue(constSemester);
-                        string Month = Row.GetValue(constMonth);
+                        string Round = Row.GetValue(constRound);
 
                         //根據課程名稱、學年度及學期尋找是否有對應的課程
-                        string CourseKey = CourseName + "," + SchoolYear + "," + Semester+","+Month;
+                        string CourseKey = CourseName + "," + SchoolYear + "," + Semester+","+Round;
                         int? CourseID = null;
                         if (mCourseNameIDs.ContainsKey(CourseKey))
                             CourseID = K12.Data.Int.ParseAllowNull(mCourseNameIDs[CourseKey]);

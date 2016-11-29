@@ -100,7 +100,7 @@ namespace SHSchool.Retake.DetailContent
             _ChangeListener.SuspendListen();
             // 設定預設選項
             SetDefaultSelectItem();
-            lblMsg.Text = _CourseData.SchoolYear + "學年度　第" + _CourseData.Semester + "學期　" + _CourseData.Month + "梯次";
+            lblMsg.Text = _CourseData.SchoolYear + "學年度　第" + _CourseData.Semester + "學期　" + _CourseData.Round + "梯次";
             txtCourseName.Text = _CourseData.CourseName;
             cbxCourseTeacher.Text = "";
             if (Global._TeacherIDNameDict.ContainsKey(_CourseData.RefTeacherID))
@@ -172,7 +172,7 @@ namespace SHSchool.Retake.DetailContent
             if(_CourseData.CourseName!=txtCourseName.Text)
             foreach (UDTCourseDef data in CourseList)
             {
-                if (data.SchoolYear == _CourseData.SchoolYear && data.Semester == _CourseData.Semester && data.Month ==_CourseData.Month && data.CourseName == txtCourseName.Text)
+                if (data.SchoolYear == _CourseData.SchoolYear && data.Semester == _CourseData.Semester && data.Round ==_CourseData.Round && data.CourseName == txtCourseName.Text)
                 {
                     _errorP.SetError(txtCourseName, "已有相同課程名稱無法儲存!");
                     pass = false;

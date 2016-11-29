@@ -49,10 +49,10 @@
             this.labelX3 = new DevComponents.DotNetBar.LabelX();
             this.iptSchoolYear = new DevComponents.Editors.IntegerInput();
             this.iptSemester = new DevComponents.Editors.IntegerInput();
-            this.iptMonth = new DevComponents.Editors.IntegerInput();
+            this.iptRound = new DevComponents.Editors.IntegerInput();
             ((System.ComponentModel.ISupportInitialize)(this.iptSchoolYear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptSemester)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iptMonth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iptRound)).BeginInit();
             this.SuspendLayout();
             // 
             // cbxDeptName
@@ -360,31 +360,31 @@
             this.iptSemester.Value = 1;
             this.iptSemester.ValueChanged += new System.EventHandler(this.iptSemester_ValueChanged);
             // 
-            // iptMonth
+            // iptRound
             // 
-            this.iptMonth.BackColor = System.Drawing.Color.Transparent;
+            this.iptRound.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.iptMonth.BackgroundStyle.Class = "DateTimeInputBackground";
-            this.iptMonth.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.iptMonth.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this.iptMonth.Location = new System.Drawing.Point(328, 15);
-            this.iptMonth.MaxValue = 300;
-            this.iptMonth.MinValue = 1;
-            this.iptMonth.Name = "iptMonth";
-            this.iptMonth.ShowUpDown = true;
-            this.iptMonth.Size = new System.Drawing.Size(61, 25);
-            this.iptMonth.TabIndex = 32;
-            this.iptMonth.Value = 1;
-            this.iptMonth.ValueChanged += new System.EventHandler(this.iptMonth_ValueChanged);
+            this.iptRound.BackgroundStyle.Class = "DateTimeInputBackground";
+            this.iptRound.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.iptRound.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.iptRound.Location = new System.Drawing.Point(328, 15);
+            this.iptRound.MaxValue = 300;
+            this.iptRound.MinValue = 1;
+            this.iptRound.Name = "iptRound";
+            this.iptRound.ShowUpDown = true;
+            this.iptRound.Size = new System.Drawing.Size(61, 25);
+            this.iptRound.TabIndex = 32;
+            this.iptRound.Value = 1;
+            this.iptRound.ValueChanged += new System.EventHandler(this.iptRound_ValueChanged);
             // 
             // AddCourse
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(506, 231);
-            this.Controls.Add(this.iptMonth);
+            this.Controls.Add(this.iptRound);
             this.Controls.Add(this.iptSemester);
             this.Controls.Add(this.iptSchoolYear);
             this.Controls.Add(this.labelX3);
@@ -412,7 +412,7 @@
             this.Load += new System.EventHandler(this.AddCourse_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iptSchoolYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptSemester)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iptMonth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iptRound)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -441,6 +441,6 @@
         private DevComponents.DotNetBar.LabelX labelX3;
         private DevComponents.Editors.IntegerInput iptSchoolYear;
         private DevComponents.Editors.IntegerInput iptSemester;
-        private DevComponents.Editors.IntegerInput iptMonth;
+        private DevComponents.Editors.IntegerInput iptRound;
     }
 }

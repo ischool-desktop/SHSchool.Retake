@@ -50,7 +50,7 @@ namespace SHSchool.Retake.Form
             int dss = int.Parse(K12.Data.School.DefaultSemester);
             iptSchoolYear.Value = dsc;
             iptSemester.Value = dss;
-            iptMonth.Value = 1;
+            iptRound.Value = 1;
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace SHSchool.Retake.Form
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            string name = iptSchoolYear.Value + "學年度第" + iptSemester.Value + "學期" + iptMonth.Value + "梯次";
+            string name = iptSchoolYear.Value + "學年度第" + iptSemester.Value + "學期" + iptRound.Value + "梯次";
 
             bool pass = true;
             // 檢查是否有相同名冊
@@ -69,7 +69,7 @@ namespace SHSchool.Retake.Form
                 // 先設成 false 確認可以新增時，更新狀態使用
                 data.Active = false;
 
-                if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptMonth.Value)
+                if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptRound.Value)
                     pass = false;
             }
 
@@ -80,7 +80,7 @@ namespace SHSchool.Retake.Form
                 UDTSessionDef newData = new UDTSessionDef();
                 newData.SchoolYear = iptSchoolYear.Value;
                 newData.Semester = iptSemester.Value;
-                newData.Round = iptMonth.Value;
+                newData.Round = iptRound.Value;
                 newData.Name = name;
                 newData.Active = true;
                 dataList.Add(newData);

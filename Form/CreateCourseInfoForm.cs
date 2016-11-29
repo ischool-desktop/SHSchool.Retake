@@ -142,7 +142,7 @@ namespace SHSchool.Retake.Form
                     UDTCourseDef data = new UDTCourseDef();
                     data.SchoolYear = scb.SchoolYear;
                     data.Semester = scb.Semester;
-                    data.Month = scb.Month;
+                    data.Round = scb.Round;
                     data.Credit = scb.Credit;
                     data.SubjectType = scb.SubjectType;
                     data.SubjectName = scb.SubjectName;

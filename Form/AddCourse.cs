@@ -57,7 +57,7 @@ namespace SHSchool.Retake.Form
             {
                 _DefSchoolYear = CourseList[0].SchoolYear;
                 _DefSemester = CourseList[0].Semester;
-                _Defmot = CourseList[0].Month;
+                _Defmot = CourseList[0].Round;
             }
             else
             {
@@ -99,9 +99,9 @@ namespace SHSchool.Retake.Form
                 iptSemester.Value = _DefSemester;
 
             if (_Defmot == 0)
-                iptMonth.Value = 1;
+                iptRound.Value = 1;
             else
-                iptMonth.Value = _Defmot;
+                iptRound.Value = _Defmot;
 
             if (cbxSubjectType.Items.Count == 0)
             {
@@ -136,9 +136,9 @@ namespace SHSchool.Retake.Form
                 pass = false;
             }
 
-            if (iptMonth.IsEmpty)
+            if (iptRound.IsEmpty)
             {
-                _errorP.SetError(iptMonth, "梯次不可空白");
+                _errorP.SetError(iptRound, "梯次不可空白");
                 pass = false;
             }
 
@@ -158,7 +158,7 @@ namespace SHSchool.Retake.Form
             // 檢查課程名稱是否重複
             foreach (UDTCourseDef data in _AllCourseList)
             {
-                if (data.SchoolYear==iptSchoolYear.Value && data.Semester==iptSemester.Value && data.Month==iptMonth.Value && data.CourseName == txtCourseName.Text)
+                if (data.SchoolYear==iptSchoolYear.Value && data.Semester==iptSemester.Value && data.Round==iptRound.Value && data.CourseName == txtCourseName.Text)
                 {
                     _errorP.SetError(txtCourseName, "學年度+學期+梯次+課程名稱，已有相同名稱無法新增!");
                     pass = false;
@@ -215,7 +215,7 @@ namespace SHSchool.Retake.Form
                     courseData.DeptName = cbxDeptName.Text;
                     courseData.SchoolYear = iptSchoolYear.Value;
                     courseData.Semester = iptSemester.Value;
-                    courseData.Month = iptMonth.Value;
+                    courseData.Round = iptRound.Value;
 
                     List<UDTCourseDef> dataList = new List<UDTCourseDef>();
                     dataList.Add(courseData);
@@ -225,7 +225,7 @@ namespace SHSchool.Retake.Form
                     bool addData = true;
                     foreach (UDTSessionDef data in _AllSession)
                     {
-                        if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptMonth.Value)
+                        if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptRound.Value)
                         {
                             addData = false;
                             break;
@@ -238,8 +238,8 @@ namespace SHSchool.Retake.Form
                         UDTSessionDef da = new UDTSessionDef();
                         da.SchoolYear = iptSchoolYear.Value;
                         da.Semester = iptSemester.Value;
-                        da.Round = iptMonth.Value;
-                        da.Name = iptSchoolYear.Value + "學年度第" + iptSemester.Value + "學期" + iptMonth.Value + "梯次";
+                        da.Round = iptRound.Value;
+                        da.Name = iptSchoolYear.Value + "學年度第" + iptSemester.Value + "學期" + iptRound.Value + "梯次";
                         addList.Add(da);
                         UDTTransfer.UDTSessionInsert(addList);
                     }
@@ -285,9 +285,9 @@ namespace SHSchool.Retake.Form
             _errorP.SetError(iptSemester, "");
         }
 
-        private void iptMonth_ValueChanged(object sender, EventArgs e)
+        private void iptRound_ValueChanged(object sender, EventArgs e)
         {
-            _errorP.SetError(iptMonth, "");
+            _errorP.SetError(iptRound, "");
         }
 
     }

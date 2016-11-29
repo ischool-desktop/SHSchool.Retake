@@ -25,15 +25,15 @@ namespace SHSchool.Retake
 
                 QueryHelper Helper = new QueryHelper();
 
-                DataTable Table = Helper.Select("select course_name,school_year,semester,month from $shschool.retake.course");
+                DataTable Table = Helper.Select("select course_name,school_year,semester,round from $shschool.retake.course");
 
                 foreach (DataRow Row in Table.Rows)
                 {
                     string CourseName = Row.Field<string>("course_name").Trim();
                     string SchoolYear = Row.Field<string>("school_year");
                     string Semester = Row.Field<string>("semester");
-                    string Month = Row.Field<string>("month");
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                    string Round = Row.Field<string>("round");
+                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
 
                     if (!mCourseNames.Contains(CourseKey))
                         mCourseNames.Add(CourseKey);
@@ -55,8 +55,8 @@ namespace SHSchool.Retake
                 string CourseName = Value.GetValue("課程名稱");
                 string SchoolYear = Value.GetValue("學年度");
                 string Semester = Value.GetValue("學期");
-                string Month = Value.GetValue("梯次");
-                string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Month;
+                string Round = Value.GetValue("梯次");
+                string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
 
                 mTask.Wait();
 

@@ -26,7 +26,7 @@ namespace SHSchool.Retake.Report
         private string _SelectMailAddress = "";
         private bool _SelectChkNotExam = false;
         private string _SelectSession = "";
-        private int _SelSchoolYear = 0, _SelSemester = 0, _SelMonth = 0;
+        private int _SelSchoolYear = 0, _SelSemester = 0, _SelRound = 0;
         private string _ReportName = "學生重補修缺曠通知單";
 
         List<UDTSessionDef> _Session = new List<UDTSessionDef>();
@@ -141,7 +141,7 @@ namespace SHSchool.Retake.Report
                     _ParentDict.Add(rec.RefStudentID, rec);
             }
 
-            Dictionary<string, UDTCourseDef> SelCourseDict = UDTTransfer.UDTCourseSelectBySchoolYearSMDict(_SelSchoolYear, _SelSemester, _SelMonth);
+            Dictionary<string, UDTCourseDef> SelCourseDict = UDTTransfer.UDTCourseSelectBySchoolYearSMDict(_SelSchoolYear, _SelSemester, _SelRound);
             
             _CourseAllDict.Clear();
             foreach (KeyValuePair<string, UDTCourseDef> data in SelCourseDict)
@@ -359,8 +359,8 @@ namespace SHSchool.Retake.Report
                         if (!ssL.Contains(_CourseAllDict[cid].Semester))
                             ssL.Add(_CourseAllDict[cid].Semester);
 
-                        if (!smL.Contains(_CourseAllDict[cid].Month))
-                            smL.Add(_CourseAllDict[cid].Month);
+                        if (!smL.Contains(_CourseAllDict[cid].Round))
+                            smL.Add(_CourseAllDict[cid].Round);
 
 
                         int SumCount = 0;
@@ -692,7 +692,7 @@ namespace SHSchool.Retake.Report
             }
 
             // 解析所選梯次
-            _SelSchoolYear = _SelSemester = _SelMonth = 0;
+            _SelSchoolYear = _SelSemester = _SelRound = 0;
 
             foreach (UDTSessionDef data in _Session)
             {
@@ -700,7 +700,7 @@ namespace SHSchool.Retake.Report
                 {
                     _SelSchoolYear = data.SchoolYear;
                     _SelSemester = data.Semester;
-                    _SelMonth = data.Round;
+                    _SelRound = data.Round;
                     break;
                 }            
             }

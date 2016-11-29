@@ -628,14 +628,14 @@ namespace SHSchool.Retake.DAO
             // 比對使用科目名稱+級別
             // 取得正在期間的科目資料
             QueryHelper qh1 = new QueryHelper();
-            string strQry1 = "select $shschool.retake.subject.school_year,$shschool.retake.subject.semester,$shschool.retake.subject.month,subject_name,subject_level,dept_name,subject_type,course_timetable_id,credit,period_content from $shschool.retake.subject inner join $shschool.retake.session on $shschool.retake.subject.school_year=$shschool.retake.session.school_year and $shschool.retake.subject.semester=$shschool.retake.session.semester and $shschool.retake.subject.month=$shschool.retake.session.month where $shschool.retake.session.active='true';";
+            string strQry1 = "select $shschool.retake.subject.school_year,$shschool.retake.subject.semester,$shschool.retake.subject.round,subject_name,subject_level,dept_name,subject_type,course_timetable_id,credit,period_content from $shschool.retake.subject inner join $shschool.retake.session on $shschool.retake.subject.school_year=$shschool.retake.session.school_year and $shschool.retake.subject.semester=$shschool.retake.session.semester and $shschool.retake.subject.round=$shschool.retake.session.round where $shschool.retake.session.active='true';";
             DataTable dt1 = qh1.Select(strQry1);
             foreach (DataRow dr in dt1.Rows)
             {
                 SubjectCourseBase scb = new SubjectCourseBase();
                 scb.SchoolYear = int.Parse(dr["school_year"].ToString());
                 scb.Semester = int.Parse(dr["semester"].ToString());
-                scb.Month = int.Parse(dr["month"].ToString());
+                scb.Round = int.Parse(dr["round"].ToString());
                 scb.SubjectName = dr["subject_name"].ToString();
                 if (dr["subject_level"] != null && dr["subject_level"].ToString() != "")
                     scb.SubjectLevel = int.Parse(dr["subject_level"].ToString());
@@ -664,7 +664,7 @@ namespace SHSchool.Retake.DAO
 
             // 取得正在期間學生建議名單
             QueryHelper qh2 = new QueryHelper();
-            string strQry2 = "select ref_student_id,$shschool.retake.ssselect.subject_name,$shschool.retake.ssselect.subject_level from $shschool.retake.ssselect inner join $shschool.retake.session on $shschool.retake.ssselect.school_year=$shschool.retake.session.school_year and $shschool.retake.ssselect.semester=$shschool.retake.session.semester and $shschool.retake.ssselect.month=$shschool.retake.session.month where $shschool.retake.session.active='true';";
+            string strQry2 = "select ref_student_id,$shschool.retake.ssselect.subject_name,$shschool.retake.ssselect.subject_level from $shschool.retake.ssselect inner join $shschool.retake.session on $shschool.retake.ssselect.school_year=$shschool.retake.session.school_year and $shschool.retake.ssselect.semester=$shschool.retake.session.semester and $shschool.retake.ssselect.round=$shschool.retake.session.round where $shschool.retake.session.active='true';";
             DataTable dt2 = qh2.Select(strQry2);
             // 檢查是否重複加入
             Dictionary<string, List<int>> checkStudDict = new Dictionary<string, List<int>>();
@@ -705,7 +705,7 @@ namespace SHSchool.Retake.DAO
         {
             Dictionary<string, string> retVal = new Dictionary<string, string>();
             QueryHelper qh = new QueryHelper();
-            string strQry = "select $shschool.retake.course.course_name,$shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.month=$shschool.retake.course.month where active='true';";
+            string strQry = "select $shschool.retake.course.course_name,$shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.round=$shschool.retake.course.round where active='true';";
             DataTable dt = qh.Select(strQry);
             foreach (DataRow dr in dt.Rows)
             {
@@ -724,7 +724,7 @@ namespace SHSchool.Retake.DAO
         {
             List<string> retVal = new List<string>();
             QueryHelper qh = new QueryHelper();
-            string strQry = "select $shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.month=$shschool.retake.course.month where active='true';";
+            string strQry = "select $shschool.retake.course.uid from $shschool.retake.session inner join $shschool.retake.course on $shschool.retake.session.school_year=$shschool.retake.course.school_year and $shschool.retake.session.semester=$shschool.retake.course.semester and $shschool.retake.session.round=$shschool.retake.course.round where active='true';";
             DataTable dt = qh.Select(strQry);
             foreach (DataRow dr in dt.Rows)
                 retVal.Add(dr[0].ToString());

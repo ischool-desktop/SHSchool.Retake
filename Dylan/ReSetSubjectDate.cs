@@ -34,7 +34,7 @@ namespace SHSchool.Retake.Form
                 row.Tag = def;
                 row.Cells[0].Value = "" + def.SchoolYear;
                 row.Cells[1].Value = "" + def.Semester;
-                row.Cells[2].Value = "" + def.Month;
+                row.Cells[2].Value = "" + def.Round;
                 row.Cells[3].Value = "" + def.CourseName;
                 dgData.Rows.Add(row);
             }

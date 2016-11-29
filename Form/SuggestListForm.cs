@@ -100,7 +100,6 @@ namespace SHSchool.Retake.Form
             }
             _UDTSessionList = UDTTransfer.UDTSessionSelectAll();
             // 排序
-            //_UDTSessionList = (from data in _UDTSessionList where data.SchoolYear==SchoolYear orderby data.Active descending,data.SchoolYear, data.Semester, data.Month select data).ToList();
             _UDTSessionList = (from data in _UDTSessionList where data.SchoolYear == SchoolYear orderby  data.SchoolYear, data.Semester, data.Round select data).ToList();
             foreach (UDTSessionDef data in _UDTSessionList)
             {

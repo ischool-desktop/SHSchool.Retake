@@ -24,7 +24,7 @@ namespace SHSchool.Retake.DAO
         /// <summary>
         /// 月份
         /// </summary>
-        public int Month { get; set; }
+        public int Round { get; set; }
 
         /// <summary>
         /// 科目名稱

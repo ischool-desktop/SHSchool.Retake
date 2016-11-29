@@ -11,7 +11,7 @@ namespace SHSchool.Retake
     {
         private List<string> mSubjectNames; //全部組合鍵值清單
         private Dictionary<string, string> _CourseTimetableDic; //所屬課表ID對照字典
-        private int _SchoolYear, _Semester, _Month;
+        private int _SchoolYear, _Semester, _Round;
         private Task mTask;
 
         public SubjectListCheck()
@@ -23,18 +23,18 @@ namespace SHSchool.Retake
                 QueryHelper Helper = new QueryHelper();
 
                 #region 取得組合鍵值清單
-                DataTable Table = Helper.Select("select school_year,semester,month,subject_name,subject_level,credit,course_timetable_id from $shschool.retake.subject");
+                DataTable Table = Helper.Select("select school_year,semester,round,subject_name,subject_level,credit,course_timetable_id from $shschool.retake.subject");
 
                 foreach (DataRow Row in Table.Rows)
                 {
                     string school_year = Row.Field<string>("school_year");
                     string semester = Row.Field<string>("semester");
-                    string month = Row.Field<string>("month");
+                    string round = Row.Field<string>("round");
                     string subject_name = Row.Field<string>("subject_name");
                     string subject_level = Row.Field<string>("subject_level");
                     string subject_credit = Row.Field<string>("credit");
                     string course_timetable_id = Row.Field<string>("course_timetable_id");
-                    string SubjectKey = school_year + "," + semester + "," + month + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                    string SubjectKey = school_year + "," + semester + "," + round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
 
                     if (!mSubjectNames.Contains(SubjectKey))
                         mSubjectNames.Add(SubjectKey);
@@ -61,7 +61,7 @@ namespace SHSchool.Retake
                 {
                     _SchoolYear = data.SchoolYear;
                     _Semester = data.Semester;
-                    _Month = data.Round;
+                    _Round = data.Round;
                 }
 
             });
@@ -88,7 +88,7 @@ namespace SHSchool.Retake
                     course_timetable_id = "";
                 }
 
-                string SubjectKey = _SchoolYear + "," + _Semester + "," + _Month + "," + subject_name + "," + subject_level + "," + subjec_credit + "," + course_timetable_id;
+                string SubjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subjec_credit + "," + course_timetable_id;
 
                 return mSubjectNames.Contains(SubjectKey);
             }

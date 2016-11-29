@@ -33,13 +33,13 @@
             this.labelX3 = new DevComponents.DotNetBar.LabelX();
             this.iptSchoolYear = new DevComponents.Editors.IntegerInput();
             this.iptSemester = new DevComponents.Editors.IntegerInput();
-            this.iptMonth = new DevComponents.Editors.IntegerInput();
+            this.iptRound = new DevComponents.Editors.IntegerInput();
             this.btnSave = new DevComponents.DotNetBar.ButtonX();
             this.btnExit = new DevComponents.DotNetBar.ButtonX();
             this.labelX4 = new DevComponents.DotNetBar.LabelX();
             ((System.ComponentModel.ISupportInitialize)(this.iptSchoolYear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptSemester)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iptMonth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iptRound)).BeginInit();
             this.SuspendLayout();
             // 
             // labelX1
@@ -128,25 +128,25 @@
             this.iptSemester.TabIndex = 7;
             this.iptSemester.Value = 1;
             // 
-            // iptMonth
+            // iptRound
             // 
-            this.iptMonth.BackColor = System.Drawing.Color.Transparent;
+            this.iptRound.BackColor = System.Drawing.Color.Transparent;
             // 
             // 
             // 
-            this.iptMonth.BackgroundStyle.Class = "DateTimeInputBackground";
-            this.iptMonth.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.iptMonth.ButtonFreeText.Checked = true;
-            this.iptMonth.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this.iptMonth.FreeTextEntryMode = true;
-            this.iptMonth.Location = new System.Drawing.Point(305, 19);
-            this.iptMonth.MaxValue = 120;
-            this.iptMonth.MinValue = 1;
-            this.iptMonth.Name = "iptMonth";
-            this.iptMonth.ShowUpDown = true;
-            this.iptMonth.Size = new System.Drawing.Size(58, 25);
-            this.iptMonth.TabIndex = 8;
-            this.iptMonth.Value = 1;
+            this.iptRound.BackgroundStyle.Class = "DateTimeInputBackground";
+            this.iptRound.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.iptRound.ButtonFreeText.Checked = true;
+            this.iptRound.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
+            this.iptRound.FreeTextEntryMode = true;
+            this.iptRound.Location = new System.Drawing.Point(305, 19);
+            this.iptRound.MaxValue = 120;
+            this.iptRound.MinValue = 1;
+            this.iptRound.Name = "iptRound";
+            this.iptRound.ShowUpDown = true;
+            this.iptRound.Size = new System.Drawing.Size(58, 25);
+            this.iptRound.TabIndex = 8;
+            this.iptRound.Value = 1;
             // 
             // btnSave
             // 
@@ -197,7 +197,7 @@
             this.Controls.Add(this.labelX4);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.iptMonth);
+            this.Controls.Add(this.iptRound);
             this.Controls.Add(this.iptSemester);
             this.Controls.Add(this.iptSchoolYear);
             this.Controls.Add(this.labelX3);
@@ -210,7 +210,7 @@
             this.Load += new System.EventHandler(this.AddSessionForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.iptSchoolYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iptSemester)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.iptMonth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iptRound)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -223,7 +223,7 @@
         private DevComponents.DotNetBar.LabelX labelX3;
         private DevComponents.Editors.IntegerInput iptSchoolYear;
         private DevComponents.Editors.IntegerInput iptSemester;
-        private DevComponents.Editors.IntegerInput iptMonth;
+        private DevComponents.Editors.IntegerInput iptRound;
         private DevComponents.DotNetBar.ButtonX btnSave;
         private DevComponents.DotNetBar.ButtonX btnExit;
         private DevComponents.DotNetBar.LabelX labelX4;

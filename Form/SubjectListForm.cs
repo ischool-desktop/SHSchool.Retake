@@ -25,7 +25,7 @@ namespace SHSchool.Retake.Form
 
         BackgroundWorker _bgWorker = new BackgroundWorker();
         List<UDTSubjectDef> _UDTSubjectList = new List<UDTSubjectDef>();
-        int _SchoolYear = 0, _Semester = 0, _Month = 0;
+        int _SchoolYear = 0, _Semester = 0, _Round = 0;
         Dictionary<string, UDTSubjectDef> _checkCanAddDict = new Dictionary<string, UDTSubjectDef>();
         List<string> _AllDeptNameList = new List<string>();
         List<CourseTableDept> _AllCourseTableDeptList = new List<CourseTableDept>();
@@ -130,7 +130,7 @@ namespace SHSchool.Retake.Form
 
         void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            _UDTSubjectList = UDTTransfer.UDTSubjectSelectByP1(_SchoolYear, _Semester, _Month);
+            _UDTSubjectList = UDTTransfer.UDTSubjectSelectByP1(_SchoolYear, _Semester, _Round);
             _AllDeptNameList = QueryData.GetAllDeptName();
 
             _CourseTableNameDict.Clear();
@@ -225,7 +225,7 @@ namespace SHSchool.Retake.Form
 
                 _SchoolYear = data.SchoolYear;
                 _Semester = data.Semester;
-                _Month = data.Round;
+                _Round = data.Round;
             }
 
 
@@ -237,7 +237,7 @@ namespace SHSchool.Retake.Form
             UDTSubjectDef newData = new UDTSubjectDef();
             newData.SchoolYear = _SchoolYear;
             newData.Semester = _Semester;
-            newData.Month = _Month;
+            newData.Round = _Round;
             newData.Credit = sData.Credit;
             newData.SubjectName = sData.SubjectName;
             newData.SubjecLevel = sData.Level;
@@ -344,7 +344,7 @@ namespace SHSchool.Retake.Form
 
                     data.SchoolYear = _SchoolYear;
                     data.Semester = _Semester;
-                    data.Month = _Month;
+                    data.Round = _Round;
 
                     if (row.Cells[colDept.Index].Value != null)
                         data.DeptName = row.Cells[colDept.Index].Value.ToString();
@@ -658,7 +658,7 @@ namespace SHSchool.Retake.Form
         private void buttonX1_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.FileName = "匯出重補修科目管理" + _SchoolYear + "_" + _Semester + "_" + _Month;
+            saveFileDialog1.FileName = "匯出重補修科目管理" + _SchoolYear + "_" + _Semester + "_" + _Round;
             saveFileDialog1.Filter = "Excel (*.xls)|*.xls";
             if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
 

@@ -26,8 +26,8 @@ namespace SHSchool.Retake.DAO
         ///<summary>
         /// 月份
         ///</summary>
-        [Field(Field = "month", Indexed = false)]
-        public int Month { get; set; }
+        [Field(Field = "round", Indexed = false)]
+        public int Round { get; set; }
 
         ///<summary>
         /// 課程名稱

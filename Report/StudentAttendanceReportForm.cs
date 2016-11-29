@@ -420,7 +420,7 @@ namespace SHSchool.Retake.Report
 
                                     dt_row["學年度"] = coData.SchoolYear;
                                     dt_row["學期"] = coData.Semester;
-                                    dt_row["梯次"] = coData.Month;
+                                    dt_row["梯次"] = coData.Round;
                                     // 班級
                                     if (_ClassNameDict.ContainsKey(_StudentDict[StudID].RefClassID))
                                         dt_row["班級"] = _ClassNameDict[_StudentDict[StudID].RefClassID];
