@@ -636,6 +636,7 @@ namespace SHSchool.Retake.Form
                     {
                         cell.Value = phD.selectName;
                     }
+                    dgData_CellEndEdit(this, new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
                 }
             }
         }
