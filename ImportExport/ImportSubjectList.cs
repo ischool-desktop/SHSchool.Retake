@@ -196,24 +196,24 @@ namespace SHSchool.Retake
                                 if (mOption.SelectedFields.Contains(_SubjectType))
                                     vSubjectExtension.SubjectType = Row.GetValue(_SubjectType);
 
-                                XmlElement Elem = new XmlDocument().CreateElement("Periods");
-                                for (int i = 0; i < _Period.Length; i++)
-                                {
-                                    if (mOption.SelectedFields.Contains(_Period[i]))
-                                    {
-                                        if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
-                                        {
-                                            XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
-                                            elem.InnerText = (i + 1).ToString();
-                                            Elem.AppendChild(elem);
-                                        }
-                                    }
-                                }
+                                //XmlElement Elem = new XmlDocument().CreateElement("Periods");
+                                //for (int i = 0; i < _Period.Length; i++)
+                                //{
+                                //    if (mOption.SelectedFields.Contains(_Period[i]))
+                                //    {
+                                //        if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
+                                //        {
+                                //            XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
+                                //            elem.InnerText = (i + 1).ToString();
+                                //            Elem.AppendChild(elem);
+                                //        }
+                                //    }
+                                //}
 
-                                if (Elem.SelectNodes("//Period").Count > 0)
-                                    vSubjectExtension.PeriodContent = Elem.OuterXml;
-                                else
-                                    vSubjectExtension.PeriodContent = null;
+                                //if (Elem.SelectNodes("//Period").Count > 0)
+                                //    vSubjectExtension.PeriodContent = Elem.OuterXml;
+                                //else
+                                //    vSubjectExtension.PeriodContent = null;
 
                                 UpdateRecords.Add(vSubjectExtension);
                             }
@@ -234,24 +234,24 @@ namespace SHSchool.Retake
                             if (mOption.SelectedFields.Contains(_SubjectType))
                                 vSubjectExtension.SubjectType = Row.GetValue(_SubjectType);
 
-                            XmlElement Elem = new XmlDocument().CreateElement("Periods");
-                            for (int i = 0; i < _Period.Length; i++)
-                            {
-                                if (mOption.SelectedFields.Contains(_Period[i]))
-                                {
-                                    if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
-                                    {
-                                        XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
-                                        elem.InnerText = (i + 1).ToString();
-                                        Elem.AppendChild(elem);
-                                    }
-                                }
-                            }
+                            //XmlElement Elem = new XmlDocument().CreateElement("Periods");
+                            //for (int i = 0; i < _Period.Length; i++)
+                            //{
+                            //    if (mOption.SelectedFields.Contains(_Period[i]))
+                            //    {
+                            //        if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
+                            //        {
+                            //            XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
+                            //            elem.InnerText = (i + 1).ToString();
+                            //            Elem.AppendChild(elem);
+                            //        }
+                            //    }
+                            //}
 
-                            if (Elem.SelectNodes("//Period").Count > 0)
-                                vSubjectExtension.PeriodContent = Elem.OuterXml;
-                            else
-                                vSubjectExtension.PeriodContent = null;
+                            //if (Elem.SelectNodes("//Period").Count > 0)
+                            //    vSubjectExtension.PeriodContent = Elem.OuterXml;
+                            //else
+                            //    vSubjectExtension.PeriodContent = null;
 
                             vSubjectExtension.SchoolYear = _SchoolYear;
                             vSubjectExtension.Semester = _Semester;

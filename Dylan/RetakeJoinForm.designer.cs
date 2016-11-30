@@ -37,6 +37,7 @@
             this.tbEndDateTime = new DevComponents.DotNetBar.Controls.TextBoxX();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider2 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.labelX3 = new DevComponents.DotNetBar.LabelX();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
             this.SuspendLayout();
@@ -46,8 +47,8 @@
             this.btnSave.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnSave.BackColor = System.Drawing.Color.Transparent;
             this.btnSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnSave.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F);
-            this.btnSave.Location = new System.Drawing.Point(200, 85);
+            this.btnSave.Font = new System.Drawing.Font("微軟正黑體", 9.75F);
+            this.btnSave.Location = new System.Drawing.Point(211, 111);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 5;
@@ -59,8 +60,8 @@
             this.btnClose.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnClose.BackColor = System.Drawing.Color.Transparent;
             this.btnClose.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnClose.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F);
-            this.btnClose.Location = new System.Drawing.Point(281, 85);
+            this.btnClose.Font = new System.Drawing.Font("微軟正黑體", 9.75F);
+            this.btnClose.Location = new System.Drawing.Point(292, 111);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 6;
@@ -76,7 +77,7 @@
             // 
             this.labelX1.BackgroundStyle.Class = "";
             this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(22, 13);
+            this.labelX1.Location = new System.Drawing.Point(33, 39);
             this.labelX1.Name = "labelX1";
             this.labelX1.Size = new System.Drawing.Size(87, 21);
             this.labelX1.TabIndex = 1;
@@ -91,7 +92,7 @@
             // 
             this.labelX2.BackgroundStyle.Class = "";
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(199, 13);
+            this.labelX2.Location = new System.Drawing.Point(210, 39);
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(87, 21);
             this.labelX2.TabIndex = 3;
@@ -104,7 +105,7 @@
             // 
             this.tbStartDateTime.Border.Class = "TextBoxBorder";
             this.tbStartDateTime.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.tbStartDateTime.Location = new System.Drawing.Point(22, 44);
+            this.tbStartDateTime.Location = new System.Drawing.Point(33, 70);
             this.tbStartDateTime.Name = "tbStartDateTime";
             this.tbStartDateTime.Size = new System.Drawing.Size(157, 25);
             this.tbStartDateTime.TabIndex = 2;
@@ -119,7 +120,7 @@
             // 
             this.tbEndDateTime.Border.Class = "TextBoxBorder";
             this.tbEndDateTime.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.tbEndDateTime.Location = new System.Drawing.Point(199, 44);
+            this.tbEndDateTime.Location = new System.Drawing.Point(210, 70);
             this.tbEndDateTime.Name = "tbEndDateTime";
             this.tbEndDateTime.Size = new System.Drawing.Size(157, 25);
             this.tbEndDateTime.TabIndex = 4;
@@ -135,11 +136,27 @@
             // 
             this.errorProvider2.ContainerControl = this;
             // 
+            // labelX3
+            // 
+            this.labelX3.AutoSize = true;
+            this.labelX3.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX3.BackgroundStyle.Class = "";
+            this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX3.Location = new System.Drawing.Point(33, 12);
+            this.labelX3.Name = "labelX3";
+            this.labelX3.Size = new System.Drawing.Size(114, 21);
+            this.labelX3.TabIndex = 7;
+            this.labelX3.Text = "選課梯次尚未設定";
+            // 
             // RetakeJoinForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(379, 120);
+            this.ClientSize = new System.Drawing.Size(379, 144);
+            this.Controls.Add(this.labelX3);
             this.Controls.Add(this.tbEndDateTime);
             this.Controls.Add(this.tbStartDateTime);
             this.Controls.Add(this.labelX2);
@@ -167,5 +184,6 @@
         private DevComponents.DotNetBar.Controls.TextBoxX tbEndDateTime;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.ErrorProvider errorProvider2;
+        private DevComponents.DotNetBar.LabelX labelX3;
     }
 }

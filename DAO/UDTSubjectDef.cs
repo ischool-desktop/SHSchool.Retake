@@ -79,11 +79,11 @@ namespace SHSchool.Retake.DAO
         //[Field(Field = "date_content", Indexed = false)]
         //public string DateContent { get; set; }
 
-        /// <summary>
-        /// 節次內容(XML)
-        /// </summary>
-        [Field(Field = "period_content", Indexed = false)]
-        public string PeriodContent { get; set; }
+        ///// <summary>
+        ///// 節次內容(XML)
+        ///// </summary>
+        //[Field(Field = "period_content", Indexed = false)]
+        //public string PeriodContent { get; set; }
 
     }
 }

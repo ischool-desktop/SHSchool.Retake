@@ -102,25 +102,25 @@ namespace SHSchool.Retake.Form
                     dgData.Rows[rowIdx].Cells[colCourseTimetable.Index].Value = _CourseTableNameDict[data.CourseTimetableID];
 
                 dgData.Rows[rowIdx].Cells[colSubjectType.Index].Value = data.SubjectType;
-                // 解析節次
-                if (!string.IsNullOrWhiteSpace(data.PeriodContent))
-                {
-                    XElement elmRoot = XElement.Parse(data.PeriodContent);
-                    foreach (XElement elm in elmRoot.Elements("Period"))
-                    {
-                        switch (elm.Value)
-                        {
-                            case "1": dgData.Rows[rowIdx].Cells[colWp1.Index].Value = "V"; break;
-                            case "2": dgData.Rows[rowIdx].Cells[colWp2.Index].Value = "V"; break;
-                            case "3": dgData.Rows[rowIdx].Cells[colWp3.Index].Value = "V"; break;
-                            case "4": dgData.Rows[rowIdx].Cells[colWp4.Index].Value = "V"; break;
-                            case "5": dgData.Rows[rowIdx].Cells[colWp5.Index].Value = "V"; break;
-                            case "6": dgData.Rows[rowIdx].Cells[colWp6.Index].Value = "V"; break;
-                            case "7": dgData.Rows[rowIdx].Cells[colWp7.Index].Value = "V"; break;
-                            case "8": dgData.Rows[rowIdx].Cells[colWp8.Index].Value = "V"; break;
-                        }
-                    }
-                }
+                //// 解析節次
+                //if (!string.IsNullOrWhiteSpace(data.PeriodContent))
+                //{
+                //    XElement elmRoot = XElement.Parse(data.PeriodContent);
+                //    foreach (XElement elm in elmRoot.Elements("Period"))
+                //    {
+                //        switch (elm.Value)
+                //        {
+                //            case "1": dgData.Rows[rowIdx].Cells[colWp1.Index].Value = "V"; break;
+                //            case "2": dgData.Rows[rowIdx].Cells[colWp2.Index].Value = "V"; break;
+                //            case "3": dgData.Rows[rowIdx].Cells[colWp3.Index].Value = "V"; break;
+                //            case "4": dgData.Rows[rowIdx].Cells[colWp4.Index].Value = "V"; break;
+                //            case "5": dgData.Rows[rowIdx].Cells[colWp5.Index].Value = "V"; break;
+                //            case "6": dgData.Rows[rowIdx].Cells[colWp6.Index].Value = "V"; break;
+                //            case "7": dgData.Rows[rowIdx].Cells[colWp7.Index].Value = "V"; break;
+                //            case "8": dgData.Rows[rowIdx].Cells[colWp8.Index].Value = "V"; break;
+                //        }
+                //    }
+                //}
 
 
                 CheckCanAddData(data);
@@ -367,24 +367,24 @@ namespace SHSchool.Retake.Form
                         foreach (CourseTableDept cc in _AllCourseTableDeptList.Where(x => x.CourseTableName == row.Cells[colCourseTimetable.Index].Value.ToString()))
                             data.CourseTimetableID = cc.CourseTableID;
 
-                    // 處理節次
-                    XElement elmRoot = new XElement("Periods");
-                    int per = 1;
-                    for (int i = colWp1.Index; i <= colWp8.Index; i++)
-                    {
-                        if (row.Cells[i].Value != null && row.Cells[i].Value.ToString() != "")
-                        {
-                            XElement elm = new XElement("Period");
-                            elm.SetValue(per);
-                            elmRoot.Add(elm);
-                        }
-                        per++;
-                    }
-                    data.PeriodContent = "";
-                    if (elmRoot.Elements().Count() > 0)
-                    {
-                        data.PeriodContent = elmRoot.ToString();
-                    }
+                    //// 處理節次
+                    //XElement elmRoot = new XElement("Periods");
+                    //int per = 1;
+                    //for (int i = colWp1.Index; i <= colWp8.Index; i++)
+                    //{
+                    //    if (row.Cells[i].Value != null && row.Cells[i].Value.ToString() != "")
+                    //    {
+                    //        XElement elm = new XElement("Period");
+                    //        elm.SetValue(per);
+                    //        elmRoot.Add(elm);
+                    //    }
+                    //    per++;
+                    //}
+                    //data.PeriodContent = "";
+                    //if (elmRoot.Elements().Count() > 0)
+                    //{
+                    //    data.PeriodContent = elmRoot.ToString();
+                    //}
 
                     if (string.IsNullOrEmpty(data.UID))
                         _InsertDataList.Add(data);

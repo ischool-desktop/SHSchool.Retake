@@ -30,10 +30,17 @@ namespace SHSchool.Retake.Form
         }
 
         private void RetakeJoinDateTime_Load(object sender, EventArgs e)
-        {       
-
+        {
             //將對應年級的時間填入。
             FillTimes();
+
+            UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
+            if (!string.IsNullOrEmpty(data.UID))
+            {
+                labelX3.Text = "目前梯次：" + data.SchoolYear + "學年度　";
+                labelX3.Text += "第" + data.Semester + "學期　";
+                labelX3.Text += "第" + data.Round + "梯次";
+            }
         }
 
         private void FillTimes()
