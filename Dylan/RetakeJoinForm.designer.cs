@@ -47,6 +47,7 @@
             this.btnSave.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnSave.BackColor = System.Drawing.Color.Transparent;
             this.btnSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnSave.Enabled = false;
             this.btnSave.Font = new System.Drawing.Font("微軟正黑體", 9.75F);
             this.btnSave.Location = new System.Drawing.Point(211, 111);
             this.btnSave.Name = "btnSave";
@@ -105,6 +106,7 @@
             // 
             this.tbStartDateTime.Border.Class = "TextBoxBorder";
             this.tbStartDateTime.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.tbStartDateTime.Enabled = false;
             this.tbStartDateTime.Location = new System.Drawing.Point(33, 70);
             this.tbStartDateTime.Name = "tbStartDateTime";
             this.tbStartDateTime.Size = new System.Drawing.Size(157, 25);
@@ -120,6 +122,7 @@
             // 
             this.tbEndDateTime.Border.Class = "TextBoxBorder";
             this.tbEndDateTime.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.tbEndDateTime.Enabled = false;
             this.tbEndDateTime.Location = new System.Drawing.Point(210, 70);
             this.tbEndDateTime.Name = "tbEndDateTime";
             this.tbEndDateTime.Size = new System.Drawing.Size(157, 25);

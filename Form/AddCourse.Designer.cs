@@ -67,6 +67,7 @@
             this.cbxDeptName.Size = new System.Drawing.Size(167, 25);
             this.cbxDeptName.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.cbxDeptName.TabIndex = 7;
+            this.cbxDeptName.TextChanged += new System.EventHandler(this.cbxDeptName_TextChanged);
             // 
             // cbxSubjectType
             // 
@@ -157,7 +158,7 @@
             this.labelX10.Name = "labelX10";
             this.labelX10.Size = new System.Drawing.Size(60, 21);
             this.labelX10.TabIndex = 26;
-            this.labelX10.Text = "科　　別";
+            this.labelX10.Text = "開課科別";
             // 
             // labelX9
             // 

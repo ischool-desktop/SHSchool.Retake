@@ -184,8 +184,6 @@
     <Compile Include="DAO\StudentItem.cs" />
     <Compile Include="DAO\StudentPassGroup.cs" />
     <Compile Include="DAO\StudentResult.cs" />
-    <Compile Include="DAO\SubjectCourseBase.cs" />
-    <Compile Include="DAO\SubjectCourseStudentBase.cs" />
     <Compile Include="DAO\SubjectDatePeriod.cs" />
     <Compile Include="DAO\SuggestSubjectCount.cs" />
     <Compile Include="DAO\UDTAttendanceDef.cs" />
@@ -287,12 +285,6 @@
     </Compile>
     <Compile Include="Form\CourseTimetableForm.Designer.cs">
       <DependentUpon>CourseTimetableForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Form\CreateCourseInfoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form\CreateCourseInfoForm.designer.cs">
-      <DependentUpon>CreateCourseInfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\GradingProjectConfigForm.cs">
       <SubType>Form</SubType>
@@ -522,9 +514,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\CourseTimetableForm.resx">
       <DependentUpon>CourseTimetableForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form\CreateCourseInfoForm.resx">
-      <DependentUpon>CreateCourseInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\GradingProjectConfigForm.resx">
       <DependentUpon>GradingProjectConfigForm.cs</DependentUpon>

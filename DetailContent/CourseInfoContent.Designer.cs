@@ -141,7 +141,7 @@
             this.labelX10.Name = "labelX10";
             this.labelX10.Size = new System.Drawing.Size(60, 21);
             this.labelX10.TabIndex = 9;
-            this.labelX10.Text = "科　　別";
+            this.labelX10.Text = "開課科別";
             // 
             // txtCourseName
             // 

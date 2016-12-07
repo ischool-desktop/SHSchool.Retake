@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using FISCA.Presentation.Controls;
 
-namespace SHSchool.Retake.Dylan
+namespace SHSchool.Retake.Form
 {
     public partial class phChangeData : BaseForm
     {

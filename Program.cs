@@ -72,30 +72,45 @@ namespace SHSchool.Retake
                     DeleteCourse();
                 };
             }
-            {
-                // 重補修開課
-                Catalog catalog04 = RoleAclSource.Instance["重補修"]["編輯"];
-                catalog04.Add(new RibbonFeature("SHSchool.Retake.CreateCourseInfoForm", "開課"));
+            //{ 
+            //    // 重補修開課
+            //    Catalog catalog04 = RoleAclSource.Instance["重補修"]["編輯"];
+            //    catalog04.Add(new RibbonFeature("SHSchool.Retake.CreateCourseInfoForm", "開課"));
 
-                RibbonBarItem item04 = RetakeAdmin.Instance.RibbonBarItems["編輯"];
-                item04["批次開課"].Image = Properties.Resources.開課;
-                item04["批次開課"].Size = RibbonBarButton.MenuButtonSize.Medium;
-                item04["批次開課"].Enable = UserAcl.Current["SHSchool.Retake.CourseTimetableForm"].Executable;
-                item04["批次開課"].Click += delegate
+            //    RibbonBarItem item04 = RetakeAdmin.Instance.RibbonBarItems["編輯"];
+            //    item04["批次開課"].Image = Properties.Resources.開課;
+            //    item04["批次開課"].Size = RibbonBarButton.MenuButtonSize.Medium;
+            //    item04["批次開課"].Enable = UserAcl.Current["SHSchool.Retake.CourseTimetableForm"].Executable;
+            //    item04["批次開課"].Click += delegate
+            //    {
+            //        Form.CreateCourseInfoForm ccif = new Form.CreateCourseInfoForm();
+            //        ccif.ShowDialog();
+            //    };
+            //}
+            {
+                // 重補修課表管理
+                Catalog catalog03 = RoleAclSource.Instance["重補修"]["編輯"];
+                catalog03.Add(new RibbonFeature("SHSchool.Retake.CourseTimetableForm", "開課科別管理"));
+
+                RibbonBarItem item03 = RetakeAdmin.Instance.RibbonBarItems["編輯"];
+                item03["開課科別管理"].Image = Properties.Resources.重補修課表管理_schedule_write_64;
+                item03["開課科別管理"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item03["開課科別管理"].Enable = UserAcl.Current["SHSchool.Retake.CourseTimetableForm"].Executable;
+                item03["開課科別管理"].Click += delegate
                 {
-                    Form.CreateCourseInfoForm ccif = new Form.CreateCourseInfoForm();
-                    ccif.ShowDialog();
+                    Form.CourseTimetableForm ctf = new Form.CourseTimetableForm();
+                    ctf.ShowDialog();
                 };
             }
             {
                 //時間表設定
                 Catalog catalog21 = RoleAclSource.Instance["重補修"]["編輯"];
-                catalog21.Add(new RibbonFeature("SHSchool.Retake.ReSetSubjectDate", "時間表設定"));
+                catalog21.Add(new RibbonFeature("SHSchool.Retake.ReSetSubjectDate", "課程時間表設定"));
                 RibbonBarItem item11 = RetakeAdmin.Instance.RibbonBarItems["編輯"];
-                item11["時間表設定"].Enable = UserAcl.Current["SHSchool.Retake.ReSetSubjectDate"].Executable;
-                item11["時間表設定"].Size = RibbonBarButton.MenuButtonSize.Medium;
-                item11["時間表設定"].Image = Properties.Resources.lesson_planning_clock_64;
-                item11["時間表設定"].Click += delegate
+                item11["課程時間表設定"].Enable = UserAcl.Current["SHSchool.Retake.ReSetSubjectDate"].Executable;
+                item11["課程時間表設定"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item11["課程時間表設定"].Image = Properties.Resources.lesson_planning_clock_64;
+                item11["課程時間表設定"].Click += delegate
                 {
                     if (RetakeAdmin.Instance.SelectedSource.Count > 0)
                     {
@@ -121,21 +136,6 @@ namespace SHSchool.Retake
                 {
                     Form.SuggestListForm slf = new Form.SuggestListForm();
                     slf.ShowDialog();
-                };
-            }
-            {
-                // 重補修課表管理
-                Catalog catalog03 = RoleAclSource.Instance["重補修"]["重補修選課"];
-                catalog03.Add(new RibbonFeature("SHSchool.Retake.CourseTimetableForm", "課表管理"));
-
-                RibbonBarItem item03 = RetakeAdmin.Instance.RibbonBarItems["重補修選課"];
-                item03["選課課表管理"].Image = Properties.Resources.重補修課表管理_schedule_write_64;
-                item03["選課課表管理"].Size = RibbonBarButton.MenuButtonSize.Medium;
-                item03["選課課表管理"].Enable = UserAcl.Current["SHSchool.Retake.CourseTimetableForm"].Executable;
-                item03["選課課表管理"].Click += delegate
-                {
-                    Form.CourseTimetableForm ctf = new Form.CourseTimetableForm();
-                    ctf.ShowDialog();
                 };
             }
             {
@@ -172,7 +172,155 @@ namespace SHSchool.Retake
                     ccif.ShowDialog();
                 };
             }
+            {
 
+                //匯出選課結果
+                Catalog catalog05 = RoleAclSource.Instance["重補修"]["重補修選課"];
+                catalog05.Add(new RibbonFeature("D087192D-9B83-4D25-B5F5-A337E4F4A907", "匯出選課結果"));
+
+                RibbonBarItem item05 = RetakeAdmin.Instance.RibbonBarItems["重補修選課"];
+                item05["匯出選課結果"].Enable = UserAcl.Current["D087192D-9B83-4D25-B5F5-A337E4F4A907"].Executable;
+                item05["匯出選課結果"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item05["匯出選課結果"].Image = Properties.Resources.匯出;
+                item05["匯出選課結果"].Click += delegate
+                {
+                    FISCA.Data.QueryHelper queryHelper = new FISCA.Data.QueryHelper();
+                    var dt = queryHelper.Select(@"
+SELECT dept.stu_dept, class.grade_year, class.class_name, student.seat_no, student.student_number, student.name
+	, scourse.subject_name, scourse.subject_level, scourse.credit
+	, session.school_year, session.semester, session.round
+	, CASE WHEN cscourse.subject_type is null THEN sscourse.subject_type ELSE cscourse.subject_type END
+	, cscourse.course_name
+	, sscourse.uid as select_subject_id, cscourse.uid as attend_course_id
+FROM (
+		SELECT csselect.ref_student_id, course.subject_name, course.subject_level, course.credit, course.school_year, course.semester, course.round
+		FROM $shschool.retake.scselect csselect
+			LEFT OUTER JOIN $shschool.retake.course course on course.uid = csselect.ref_course_id
+		UNION
+		SELECT ssselect.ref_student_id, subject.subject_name, subject.subject_level, subject.credit, subject.school_year, subject.semester, subject.round
+		FROM $shschool.retake.ssselect ssselect
+			LEFT OUTER JOIN $shschool.retake.subject subject on ssselect.ref_subject_id = subject.uid
+	) as scourse
+	LEFt OUTER JOIN student on student.id = scourse.ref_student_id
+	LEFt OUTER JOIN class on class.id = student.ref_class_id
+	LEFT OUTER JOIN (
+		SELECT s.id as ref_student_id, CASE WHEN d1.name is null THEN d2.name ELSE d1.name END as stu_dept
+		FROM student s
+			LEFT OUTER JOIN class c on c.id = s.ref_class_id
+			LEFT OUTER JOIN dept d1 on d1.id = s.ref_dept_id
+			LEFT OUTER JOIN dept d2 on d2.id = c.ref_dept_id
+	) as dept on student.id = dept.ref_student_id
+	LEFT OUTER JOIN $shschool.retake.session session on scourse.school_year=session.school_year and scourse.semester=session.semester and scourse.round=session.round
+	LEFT OUTER JOIN (
+		SELECT ssselect.ref_student_id, subject.subject_name, subject.subject_level, subject.credit, subject.school_year, subject.semester, subject.round
+			, subject.subject_type, subject.uid
+		FROM $shschool.retake.ssselect ssselect
+			LEFT OUTER JOIN $shschool.retake.subject subject on ssselect.ref_subject_id = subject.uid
+	) as sscourse on sscourse.ref_student_id = scourse.ref_student_id 
+		AND sscourse.subject_name = scourse.subject_name 
+		AND (
+			sscourse.subject_level = scourse.subject_level  
+			OR (
+				sscourse.subject_level is null
+				AND
+				scourse.subject_level is null
+			)
+		)
+		AND sscourse.credit = scourse.credit
+		AND sscourse.school_year = scourse.school_year
+		AND sscourse.semester = scourse.semester
+		AND sscourse.round = scourse.round 
+	LEFT OUTER JOIN (
+		SELECT csselect.ref_student_id, course.subject_name, course.subject_level, course.credit, course.school_year, course.semester, course.round
+			, course.course_name, course.subject_type, course.uid
+		FROM $shschool.retake.scselect csselect
+			LEFT OUTER JOIN $shschool.retake.course course on course.uid = csselect.ref_course_id
+	) as cscourse on cscourse.ref_student_id = scourse.ref_student_id 
+		AND cscourse.subject_name = scourse.subject_name 
+		AND (
+			cscourse.subject_level = scourse.subject_level  
+			OR (
+				cscourse.subject_level is null
+				AND
+				scourse.subject_level is null
+			)
+		)
+		AND cscourse.credit = scourse.credit
+		AND cscourse.school_year = scourse.school_year
+		AND cscourse.semester = scourse.semester
+		AND cscourse.round = scourse.round
+WHERE 
+	session.active = true
+ORDER BY session.school_year desc, session.semester desc, session.round desc, stu_dept, class.grade_year, class.display_order, class.class_name, student.seat_no, student.id, scourse.subject_name, scourse.subject_level
+");
+                    Aspose.Cells.Workbook wb = new Aspose.Cells.Workbook();
+                    int colIndex, rowIndex;
+                    rowIndex = 0;
+                    colIndex = 0;
+                    {
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("科別");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("年級");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("班級");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("座號");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("學號");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("姓名");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("科目");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("級別");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("學分數");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("學年度");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("學期");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("梯次");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("科目類別");
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("重補修課程名稱");
+                        rowIndex++;
+                    }
+
+                    foreach (System.Data.DataRow row in dt.Rows)
+                    {
+                        colIndex = 0;
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["stu_dept"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["grade_year"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["class_name"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["seat_no"]); 
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["student_number"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["name"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["subject_name"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["subject_level"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["credit"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["school_year"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["semester"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["round"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["subject_type"]);
+                        wb.Worksheets[0].Cells[rowIndex, colIndex++].PutValue("" + row["course_name"]);
+                        rowIndex++;
+                    }
+                    wb.Worksheets[0].AutoFitColumns();
+
+
+                    SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                    saveFileDialog1.FileName = "匯出重補修學生選課結果";
+                    saveFileDialog1.Filter = "Excel (*.xls)|*.xls";
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        wb.Save(saveFileDialog1.FileName);
+                        System.Diagnostics.Process.Start(saveFileDialog1.FileName);
+                    }
+                };
+            }
+            {
+                //選課開放時間
+                Catalog catalog05 = RoleAclSource.Instance["重補修"]["重補修選課"];
+                catalog05.Add(new RibbonFeature("A754CBCD-F002-40BB-BDD7-86A8B259E613", "課程自動分發"));
+
+                RibbonBarItem item05 = RetakeAdmin.Instance.RibbonBarItems["重補修選課"];
+                item05["課程自動分發"].Enable = UserAcl.Current["A754CBCD-F002-40BB-BDD7-86A8B259E613"].Executable;
+                item05["課程自動分發"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item05["課程自動分發"].Image = Properties.Resources.time_frame_refresh_128;
+                item05["課程自動分發"].Click += delegate
+                {
+                    MsgBox.Show("功能尚未完成");
+                };
+            }
             {
                 //匯入課程
                 Catalog catalog09 = RoleAclSource.Instance["重補修"]["資料統計"];
@@ -551,8 +699,7 @@ namespace SHSchool.Retake
             if (UserPermission.Editable)
                 RetakeAdmin.Instance.AddDetailBulider(new DetailBulider<DetailContent.CourseTimeSectionViewContent>());
 
-
-
+            
             // 資料項目權限註冊
             Catalog detailItem = RoleAclSource.Instance["重補修"]["資料項目"];
             detailItem.Add(new DetailItemFeature("SHSchool.Retake.DetailContent.CourseInfoContent", "課程基本資料"));

@@ -38,7 +38,6 @@ namespace SHSchool.Retake.Form
         string[] strSubjType = new string[] { "專業", "實習", "共同" };
 
         public bool _isShowForm = true;
-        Dictionary<int, string> _CourseTableNameDict = new Dictionary<int, string>();
         public SubjectListForm()
         {
             InitializeComponent();
@@ -61,11 +60,6 @@ namespace SHSchool.Retake.Form
         void _bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.Text = "重補修科目管理";
-            colCourseTimetable.Items.Clear();
-            foreach (string each in _CourseTableNameDict.Values)
-            {
-                colCourseTimetable.Items.Add(each);
-            }
             LoadDataToDataGrid();
 
             //紀錄修改前畫面資料筆數
@@ -98,30 +92,7 @@ namespace SHSchool.Retake.Form
 
                 dgData.Rows[rowIdx].Cells[colCredit.Index].Value = data.Credit;
                 dgData.Rows[rowIdx].Cells[colDept.Index].Value = data.DeptName;
-                if (_CourseTableNameDict.ContainsKey(data.CourseTimetableID))
-                    dgData.Rows[rowIdx].Cells[colCourseTimetable.Index].Value = _CourseTableNameDict[data.CourseTimetableID];
-
                 dgData.Rows[rowIdx].Cells[colSubjectType.Index].Value = data.SubjectType;
-                //// 解析節次
-                //if (!string.IsNullOrWhiteSpace(data.PeriodContent))
-                //{
-                //    XElement elmRoot = XElement.Parse(data.PeriodContent);
-                //    foreach (XElement elm in elmRoot.Elements("Period"))
-                //    {
-                //        switch (elm.Value)
-                //        {
-                //            case "1": dgData.Rows[rowIdx].Cells[colWp1.Index].Value = "V"; break;
-                //            case "2": dgData.Rows[rowIdx].Cells[colWp2.Index].Value = "V"; break;
-                //            case "3": dgData.Rows[rowIdx].Cells[colWp3.Index].Value = "V"; break;
-                //            case "4": dgData.Rows[rowIdx].Cells[colWp4.Index].Value = "V"; break;
-                //            case "5": dgData.Rows[rowIdx].Cells[colWp5.Index].Value = "V"; break;
-                //            case "6": dgData.Rows[rowIdx].Cells[colWp6.Index].Value = "V"; break;
-                //            case "7": dgData.Rows[rowIdx].Cells[colWp7.Index].Value = "V"; break;
-                //            case "8": dgData.Rows[rowIdx].Cells[colWp8.Index].Value = "V"; break;
-                //        }
-                //    }
-                //}
-
 
                 CheckCanAddData(data);
             }
@@ -132,12 +103,7 @@ namespace SHSchool.Retake.Form
         {
             _UDTSubjectList = UDTTransfer.UDTSubjectSelectByP1(_SchoolYear, _Semester, _Round);
             _AllDeptNameList = QueryData.GetAllDeptName();
-
-            _CourseTableNameDict.Clear();
-            // 取得課表名稱
-            foreach (UDTCourseTimetableDef data in UDTTransfer.UDTCourseTimetableSelectAll())
-                _CourseTableNameDict.Add(int.Parse(data.UID), data.Name);
-
+            
             _AllCourseTableDeptList = UDTTransfer.GetAllCourseTableDeptList();
 
             _UDTSubjectList.Sort(UDTSubjectListSort); //資料排序 Cloud 2014/1/8
@@ -150,14 +116,12 @@ namespace SHSchool.Retake.Form
             xx += x.SubjecLevel.ToString().PadLeft(3, '0');
             xx += x.Credit.ToString().PadLeft(3, '0');
             xx += x.DeptName.PadLeft(20, '0');
-            xx += _CourseTableNameDict[x.CourseTimetableID].PadLeft(20, '0');
             xx += x.SubjectType.PadLeft(10, '0');
 
             String yy = y.SubjectName.PadLeft(20, '0');
             yy += y.SubjecLevel.ToString().PadLeft(3, '0');
             yy += y.Credit.ToString().PadLeft(3, '0');
             yy += y.DeptName.PadLeft(20, '0');
-            yy += _CourseTableNameDict[y.CourseTimetableID].PadLeft(20, '0');
             yy += y.SubjectType.PadLeft(10, '0');
 
             return xx.CompareTo(yy);
@@ -216,7 +180,7 @@ namespace SHSchool.Retake.Form
         private string GetCurrentSession()
         {
             string retVal = "";
-            UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
+            UDTSessionDef data = UDTTransfer.UDTSessionGetActiveSession();
             if (!string.IsNullOrEmpty(data.UID))
             {
                 retVal = data.SchoolYear + "學年度　";
@@ -298,14 +262,6 @@ namespace SHSchool.Retake.Form
                                 cell.ErrorText = "請輸入資料!";
 
                         }
-
-                        // 檢查課表
-                        if (cell.ColumnIndex == colCourseTimetable.Index)
-                        {
-                            if (cell.Value == null || cell.Value.ToString() == "")
-                                dgData.Rows[cell.RowIndex].ErrorText = "所屬課表必填!";
-                        }
-
                     }
 
                 }
@@ -362,30 +318,7 @@ namespace SHSchool.Retake.Form
 
                     if (row.Cells[colSubjectType.Index].Value != null)
                         data.SubjectType = row.Cells[colSubjectType.Index].Value.ToString();
-
-                    if (row.Cells[colCourseTimetable.Index].Value != null)
-                        foreach (CourseTableDept cc in _AllCourseTableDeptList.Where(x => x.CourseTableName == row.Cells[colCourseTimetable.Index].Value.ToString()))
-                            data.CourseTimetableID = cc.CourseTableID;
-
-                    //// 處理節次
-                    //XElement elmRoot = new XElement("Periods");
-                    //int per = 1;
-                    //for (int i = colWp1.Index; i <= colWp8.Index; i++)
-                    //{
-                    //    if (row.Cells[i].Value != null && row.Cells[i].Value.ToString() != "")
-                    //    {
-                    //        XElement elm = new XElement("Period");
-                    //        elm.SetValue(per);
-                    //        elmRoot.Add(elm);
-                    //    }
-                    //    per++;
-                    //}
-                    //data.PeriodContent = "";
-                    //if (elmRoot.Elements().Count() > 0)
-                    //{
-                    //    data.PeriodContent = elmRoot.ToString();
-                    //}
-
+                    
                     if (string.IsNullOrEmpty(data.UID))
                         _InsertDataList.Add(data);
                     else
@@ -429,17 +362,6 @@ namespace SHSchool.Retake.Form
         {
             if (!dgData.Rows[e.RowIndex].IsNewRow)
             {
-                if (e.ColumnIndex >= colWp1.Index && e.ColumnIndex <= colWp8.Index)
-                {
-                    DataGridViewCell cell = dgData.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                    if (cell.Value != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(cell.Value.ToString()))
-                            cell.Value = "V";
-                    }
-                    else
-                        cell.Value = "V";
-                }
                 dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "";
                 dgData.Rows[e.RowIndex].ErrorText = "";
                 // 檢查必填
@@ -448,16 +370,6 @@ namespace SHSchool.Retake.Form
                     if (dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value == null || dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "")
                     {
                         dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "必填!";
-                        return;
-                    }
-                }
-
-                // 檢查課表必填
-                if (e.ColumnIndex == colCourseTimetable.Index)
-                {
-                    if (dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value == null || dgData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "")
-                    {
-                        dgData.Rows[e.RowIndex].ErrorText = "所屬課表必填!";
                         return;
                     }
                 }
@@ -537,38 +449,7 @@ namespace SHSchool.Retake.Form
             //        cell.Value = "V";
             //}
         }
-
-        private void dgData_KeyDown(object sender, KeyEventArgs e)
-        {
-            // 使用者所選範圍內
-            foreach (DataGridViewCell cell in dgData.SelectedCells)
-            {
-                if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
-                    return;
-                // 當不在節次範圍內
-                if (cell.ColumnIndex >= colWp1.Index && cell.ColumnIndex <= colWp8.Index)
-                {
-                    // 按 tab 鍵跳過
-                    if (e.KeyCode == Keys.Tab)
-                        continue;
-
-                    if (e.KeyCode == Keys.V)
-                    {
-                        cell.Value = "V";
-                    }
-                    else if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Space)
-                    {
-                        cell.Value = "";
-                    }
-                    else
-                    {
-                        // 不處理
-                    }
-                }
-            }
-
-        }
-
+        
         private void dgData_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (_DeleteRowCount == 0)
@@ -614,11 +495,6 @@ namespace SHSchool.Retake.Form
             PubSetValue("請選擇科別名稱", _AllDeptNameList, colDept.Index);
         }
 
-        private void 批次修改所屬課表ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PubSetValue("請選擇所屬課表", _CourseTableNameDict.Values.ToList(), colCourseTimetable.Index);
-        }
-
         private void 批次修改科目類別ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PubSetValue("請選擇科目類別", strSubjType.ToList(), colSubjectType.Index);
@@ -626,7 +502,7 @@ namespace SHSchool.Retake.Form
 
         private void PubSetValue(string name, List<string> list, int Columnindex)
         {
-            Dylan.phChangeData phD = new Dylan.phChangeData(name, list);
+            phChangeData phD = new phChangeData(name, list);
             if (phD.ShowDialog() == System.Windows.Forms.DialogResult.Yes)
             {
                 //填入選取資料

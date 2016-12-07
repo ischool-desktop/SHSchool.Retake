@@ -118,12 +118,14 @@
             this.btnDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDel.BackColor = System.Drawing.Color.Transparent;
             this.btnDel.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnDel.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Strikeout, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnDel.Location = new System.Drawing.Point(176, 185);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(75, 25);
             this.btnDel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.btnDel.TabIndex = 3;
             this.btnDel.Text = "刪除";
+            this.btnDel.Visible = false;
             this.btnDel.Click += new System.EventHandler(this.btnDel_Click);
             // 
             // btnExit
@@ -152,7 +154,7 @@
             this.Controls.Add(this.dgData);
             this.DoubleBuffered = true;
             this.Name = "CourseTimetableForm";
-            this.Text = "選課課表管理";
+            this.Text = "開課科別管理";
             this.Load += new System.EventHandler(this.CourseTimetableForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).EndInit();
             this.ResumeLayout(false);

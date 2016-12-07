@@ -100,7 +100,7 @@ namespace SHSchool.Retake.DAO
         /// 取得目前期間
         /// </summary>
         /// <returns></returns>
-        public static UDTSessionDef UDTSessionGetActiveTrue1()
+        public static UDTSessionDef UDTSessionGetActiveSession()
         {
             UDTSessionDef retVal = new UDTSessionDef();
             List<UDTSessionDef> dataList = new List<UDTSessionDef>();

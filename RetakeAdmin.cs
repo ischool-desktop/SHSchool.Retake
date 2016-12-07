@@ -17,13 +17,14 @@ namespace SHSchool.Retake
     /// <summary>
     /// 主要控制重補修資料
     /// </summary>
-    public class RetakeAdmin:NLDPanel
+    public class RetakeAdmin : NLDPanel
     {
         BackgroundWorker _bgWorker = new BackgroundWorker();
         bool _isBusy = false;
         Dictionary<string, UDTCourseDef> _AllCourseDict = new Dictionary<string, UDTCourseDef>();
         Dictionary<string, List<string>> _CourseFilterDict = new Dictionary<string, List<string>>();
-        
+        private Dictionary<string, int> _CourseTimetableDic = new Dictionary<string, int>(); //所屬課表ID對照字典(Name,UID)
+
         /// <summary>
         ///搜尋
         /// </summary>
@@ -41,7 +42,7 @@ namespace SHSchool.Retake
         public RetakeAdmin()
         {
             Group = "重補修";
-            UDTSessionDef dd = UDTTransfer.UDTSessionGetActiveTrue1();
+            UDTSessionDef dd = UDTTransfer.UDTSessionGetActiveSession();
             FilterCourseItem = dd.SchoolYear + " " + dd.Semester + " 第" + dd.Round + "梯次";
 
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
@@ -50,7 +51,7 @@ namespace SHSchool.Retake
             RetakeEvents.RetakeChanged += new EventHandler(RetakeEvents_RetakeChanged);
 
             ListPaneField Field01 = new ListPaneField("課程名稱");
-            Field01.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field01.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
                     e.Value = _AllCourseDict[e.Key].CourseName;
@@ -58,7 +59,7 @@ namespace SHSchool.Retake
             this.AddListPaneField(Field01);
 
             ListPaneField Field02 = new ListPaneField("科目名稱");
-            Field02.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field02.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
                 {
@@ -66,13 +67,13 @@ namespace SHSchool.Retake
                         e.Value = _AllCourseDict[e.Key].SubjectName + QueryData.GetNumber(_AllCourseDict[e.Key].SubjectLevel.Value.ToString());
                     else
                         e.Value = _AllCourseDict[e.Key].SubjectName;
-                    
+
                 }
             };
             this.AddListPaneField(Field02);
 
             ListPaneField Field03 = new ListPaneField("級別");
-            Field03.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field03.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
                     if (_AllCourseDict[e.Key].SubjectLevel.HasValue)
@@ -83,7 +84,7 @@ namespace SHSchool.Retake
             this.AddListPaneField(Field03);
 
             ListPaneField Field04 = new ListPaneField("學分數");
-            Field04.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field04.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
                     e.Value = _AllCourseDict[e.Key].Credit;
@@ -91,35 +92,60 @@ namespace SHSchool.Retake
             this.AddListPaneField(Field04);
 
             ListPaneField Field05 = new ListPaneField("科目類別");
-            Field05.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field05.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
                     e.Value = _AllCourseDict[e.Key].SubjectType;
             };
             this.AddListPaneField(Field05);
 
-            ListPaneField Field06 = new ListPaneField("科別");
-            Field06.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            ListPaneField Field06 = new ListPaneField("開課科別");
+            Field06.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
-                    e.Value = _AllCourseDict[e.Key].DeptName;
+                {
+
+                    if (!_CourseTimetableDic.ContainsValue(_AllCourseDict[e.Key].CourseTimetableID))
+                    {
+                        //取得開課科別
+                        _CourseTimetableDic.Clear();
+                        FISCA.Data.QueryHelper Helper = new FISCA.Data.QueryHelper();
+                        System.Data.DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
+
+                        foreach (System.Data.DataRow row in Table.Rows)
+                        {
+                            int uid = int.Parse(row["uid"].ToString());
+                            string name = row["name"].ToString();
+                            if (!_CourseTimetableDic.ContainsKey(name))
+                            {
+                                _CourseTimetableDic.Add(name, uid);
+                            }
+                        }
+                    }
+
+                    foreach (var item in _CourseTimetableDic.Keys)
+                    {
+                        if (_CourseTimetableDic[item] == _AllCourseDict[e.Key].CourseTimetableID)
+                            e.Value = item;
+                    }
+                }
             };
             this.AddListPaneField(Field06);
 
             ListPaneField Field07 = new ListPaneField("授課教師名稱");
-            Field07.GetVariable += delegate(object sender, GetVariableEventArgs e)
+            Field07.GetVariable += delegate (object sender, GetVariableEventArgs e)
             {
                 if (_AllCourseDict.ContainsKey(e.Key))
-                    if(Global._TeacherIDNameDict.ContainsKey(_AllCourseDict[e.Key].RefTeacherID))
+                    if (Global._TeacherIDNameDict.ContainsKey(_AllCourseDict[e.Key].RefTeacherID))
                         e.Value = Global._TeacherIDNameDict[_AllCourseDict[e.Key].RefTeacherID];
             };
             this.AddListPaneField(Field07);
 
             // 設定搜尋欄位
             ConfigData cd = Config.User["SHSchool.Retake.SearchOption"];
-           SearchCourseName = SetSearchButton("課程名稱", "SearchCourseName", cd);
-           SearchSubjectName = SetSearchButton("科目名稱","SearchSubjectName", cd);
-           SearchSubjectType = SetSearchButton("科目類別", "SearchSubjectType", cd);
+            SearchCourseName = SetSearchButton("課程名稱", "SearchCourseName", cd);
+            SearchSubjectName = SetSearchButton("科目名稱", "SearchSubjectName", cd);
+            SearchSubjectType = SetSearchButton("科目類別", "SearchSubjectType", cd);
 
             FilterMenu.SupposeHasChildern = true;
             FilterMenu.PopupOpen += new EventHandler<PopupOpenEventArgs>(FilterMenu_PopupOpen);
@@ -147,12 +173,12 @@ namespace SHSchool.Retake
             {
                 cd[BoolName] = SearchName.Checked.ToString();
                 BackgroundWorker async = new BackgroundWorker();
-                async.DoWork += delegate(object sender, DoWorkEventArgs e)
+                async.DoWork += delegate (object sender, DoWorkEventArgs e)
                 {
                     (e.Argument as ConfigData).Save();
                     async.RunWorkerAsync(cd);
                 };
-            
+
             };
             return SearchName;
         }
@@ -185,7 +211,7 @@ namespace SHSchool.Retake
                     mb.AutoCollapseOnClick = true;
                     mb.Checked = (item == FilterCourseItem);
                     mb.Tag = item;
-                    mb.CheckedChanged += delegate(object sender1, EventArgs e1)
+                    mb.CheckedChanged += delegate (object sender1, EventArgs e1)
                     {
                         MenuButton mb1 = sender1 as MenuButton;
                         SetRetakeList(mb1.Text);
@@ -194,12 +220,12 @@ namespace SHSchool.Retake
                     };
                 }
             }
-            else 
+            else
             {
                 e.Cancel = true;
                 e.VirtualButtons.Text = "資料下載中..";
             }
-         
+
         }
 
         private void ProcessSearch(MessageArgs args)
@@ -238,7 +264,7 @@ namespace SHSchool.Retake
                             results.Add(key);
                 }
             }
-           
+
         }
 
         void _bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -278,7 +304,7 @@ namespace SHSchool.Retake
             }
             else
                 _bgWorker.RunWorkerAsync();
-            
+
         }
 
         /// <summary>
@@ -293,11 +319,11 @@ namespace SHSchool.Retake
 
             // 取得重補修課程資料
             _AllCourseDict = UDTTransfer.UDTCourseSelectAllDict();
-            
-          
+
+
             _CourseFilterDict.Clear();
             foreach (UDTCourseDef data in _AllCourseDict.Values)
-            {   
+            {
                 string key = data.SchoolYear + " " + data.Semester + " 第" + data.Round + "梯次";
                 if (!_CourseFilterDict.ContainsKey(key))
                     _CourseFilterDict.Add(key, new List<string>());
@@ -311,7 +337,7 @@ namespace SHSchool.Retake
 
         public static RetakeAdmin Instance
         {
-            get 
+            get
             {
                 if (_RetakeAdmin == null)
                     _RetakeAdmin = new RetakeAdmin();

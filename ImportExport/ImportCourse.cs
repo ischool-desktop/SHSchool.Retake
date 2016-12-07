@@ -23,7 +23,8 @@ namespace SHSchool.Retake
         private const string constSubject = "科目名稱";
         private const string constSubjectLevel = "科目級別";
         private const string constCredit = "學分數";
-        private const string constDept = "科別";
+        //private const string constDept = "科別";
+        private const string _CourseTimetable = "開課科別";
         private const string constTeacherName = "授課教師";
 
         private StringBuilder mstrLog = new StringBuilder();
@@ -32,6 +33,7 @@ namespace SHSchool.Retake
         private Dictionary<string, string> mTeacherNameIDs = new Dictionary<string, string>();
         private Task mTask;
         private AccessHelper mHelper;
+        private Dictionary<string, string> _CourseTimetableDic = new Dictionary<string, string>(); //所屬課表ID對照字典(Name,UID)
 
         /// <summary>
         /// 取得驗證規則
@@ -65,32 +67,50 @@ namespace SHSchool.Retake
             {
                 QueryHelper Helper = new QueryHelper();
 
-                DataTable Table = Helper.Select("select uid,course_name,school_year,semester,round from $shschool.retake.course");
-
-                foreach (DataRow Row in Table.Rows)
                 {
-                    string CourseID = Row.Field<string>("uid");
-                    string CourseName = Row.Field<string>("course_name");
-                    string SchoolYear = Row.Field<string>("school_year");
-                    string Semester = Row.Field<string>("semester");
-                    string Round = Row.Field<string>("round");
-                    string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
+                    #region 取得所屬課表ID對照字典
+                    DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
 
-                    if (!mCourseNameIDs.ContainsKey(CourseKey))
-                        mCourseNameIDs.Add(CourseKey, CourseID);
+                    foreach (DataRow row in Table.Rows)
+                    {
+                        string uid = row["uid"].ToString();
+                        string name = row["name"].ToString();
+                        if (!_CourseTimetableDic.ContainsKey(name))
+                        {
+                            _CourseTimetableDic.Add(name, uid);
+                        }
+                    }
+                    #endregion
                 }
 
-                Table = Helper.Select("select id,teacher_name,nickname from teacher");
-
-                foreach (DataRow Row in Table.Rows)
                 {
-                    string TeacherID = Row.Field<string>("id");
-                    string TeacherName = Row.Field<string>("teacher_name");
-                    string TeacherNickname = Row.Field<string>("nickname");
-                    string TeacherKey = string.IsNullOrWhiteSpace(TeacherNickname) ? TeacherName : TeacherName + "(" + TeacherNickname + ")";
+                    DataTable Table = Helper.Select("select uid,course_name,school_year,semester,round from $shschool.retake.course");
 
-                    if (!mTeacherNameIDs.ContainsKey(TeacherKey))
-                        mTeacherNameIDs.Add(TeacherKey, TeacherID);
+                    foreach (DataRow Row in Table.Rows)
+                    {
+                        string CourseID = Row.Field<string>("uid");
+                        string CourseName = Row.Field<string>("course_name");
+                        string SchoolYear = Row.Field<string>("school_year");
+                        string Semester = Row.Field<string>("semester");
+                        string Round = Row.Field<string>("round");
+                        string CourseKey = CourseName + "," + SchoolYear + "," + Semester + "," + Round;
+
+                        if (!mCourseNameIDs.ContainsKey(CourseKey))
+                            mCourseNameIDs.Add(CourseKey, CourseID);
+                    }
+
+                    Table = Helper.Select("select id,teacher_name,nickname from teacher");
+
+                    foreach (DataRow Row in Table.Rows)
+                    {
+                        string TeacherID = Row.Field<string>("id");
+                        string TeacherName = Row.Field<string>("teacher_name");
+                        string TeacherNickname = Row.Field<string>("nickname");
+                        string TeacherKey = string.IsNullOrWhiteSpace(TeacherNickname) ? TeacherName : TeacherName + "(" + TeacherNickname + ")";
+
+                        if (!mTeacherNameIDs.ContainsKey(TeacherKey))
+                            mTeacherNameIDs.Add(TeacherKey, TeacherID);
+                    }
                 }
             }
             );
@@ -177,9 +197,14 @@ namespace SHSchool.Retake
 
                                 if (mOption.SelectedFields.Contains(constCredit))
                                     vCourseExtension.Credit = K12.Data.Int.Parse(Row.GetValue(constCredit));
-
-                                if (mOption.SelectedFields.Contains(constDept))
-                                    vCourseExtension.DeptName = Row.GetValue(constDept);
+                                
+                                if (mOption.SelectedFields.Contains(_CourseTimetable))
+                                {
+                                    if (_CourseTimetableDic.ContainsKey(Row.GetValue(_CourseTimetable)))
+                                    {
+                                        vCourseExtension.CourseTimetableID = int.Parse(_CourseTimetableDic[Row.GetValue(_CourseTimetable)]);
+                                    }
+                                }
 
                                 if (mOption.SelectedFields.Contains(constTeacherName))
                                 {
@@ -190,7 +215,7 @@ namespace SHSchool.Retake
 
                                 UpdateRecords.Add(vCourseExtension);
                             }
-                    #endregion
+                            #endregion
                         }
                         #region 新增CourseExtension
                         else
@@ -213,8 +238,13 @@ namespace SHSchool.Retake
                             if (mOption.SelectedFields.Contains(constCredit))
                                 vCourseExtension.Credit = K12.Data.Int.Parse(Row.GetValue(constCredit));
 
-                            if (mOption.SelectedFields.Contains(constDept))
-                                vCourseExtension.DeptName = Row.GetValue(constDept);
+                            if (mOption.SelectedFields.Contains(_CourseTimetable))
+                            {
+                                if (_CourseTimetableDic.ContainsKey(Row.GetValue(_CourseTimetable)))
+                                {
+                                    vCourseExtension.CourseTimetableID = int.Parse(_CourseTimetableDic[Row.GetValue(_CourseTimetable)]);
+                                }
+                            }
 
                             if (mOption.SelectedFields.Contains(constTeacherName))
                             {

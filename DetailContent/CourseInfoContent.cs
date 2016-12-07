@@ -25,24 +25,25 @@ namespace SHSchool.Retake.DetailContent
         UDTCourseDef _CourseData = new UDTCourseDef();
         List<string> _CourseID = new List<string>();
         List<UDTCourseDef> CourseList;
+        private Dictionary<string, int> _CourseTimetableDic = new Dictionary<string, int>(); //所屬課表ID對照字典(Name,UID)
 
         private ChangeListener _ChangeListener = new ChangeListener();
         ErrorProvider _errorP = new ErrorProvider();
         public CourseInfoContent()
-        {            
+        {
             InitializeComponent();
             this.Group = "課程基本資料";
             CourseList = new List<UDTCourseDef>();
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
-            RetakeEvents.RetakeChanged += new EventHandler(RetakeEvents_RetakeChanged);         
+            RetakeEvents.RetakeChanged += new EventHandler(RetakeEvents_RetakeChanged);
 
             // 加入控制項變動檢查            
             _ChangeListener.Add(new TextBoxSource(txtCourseName));
             _ChangeListener.Add(new TextBoxSource(txtSubjectName));
             _ChangeListener.Add(new TextBoxSource(txtSubjectLevel));
             _ChangeListener.Add(new TextBoxSource(txtCredit));
-            _ChangeListener.Add(new ComboBoxSource(cbxCourseTeacher,ComboBoxSource.ListenAttribute.Text));
+            _ChangeListener.Add(new ComboBoxSource(cbxCourseTeacher, ComboBoxSource.ListenAttribute.Text));
             _ChangeListener.Add(new ComboBoxSource(cbxDeptName, ComboBoxSource.ListenAttribute.Text));
             _ChangeListener.Add(new ComboBoxSource(cbxSubjectType, ComboBoxSource.ListenAttribute.Text));
 
@@ -63,10 +64,8 @@ namespace SHSchool.Retake.DetailContent
                 string[] strType = new string[] { "專業", "實習", "共同" };
                 cbxSubjectType.Items.AddRange(strType.ToArray());
             }
-            if(cbxCourseTeacher.Items.Count==0)
+            if (cbxCourseTeacher.Items.Count == 0)
                 cbxCourseTeacher.Items.AddRange(Global._TeacherNameIDDict.Keys.ToArray());
-            if(cbxDeptName.Items.Count==0)
-                cbxDeptName.Items.AddRange(QueryData.GetAllDeptName().ToArray());
         }
 
         void RetakeEvents_RetakeChanged(object sender, EventArgs e)
@@ -82,7 +81,7 @@ namespace SHSchool.Retake.DetailContent
                 _bgWorker.RunWorkerAsync();
                 return;
             }
-            LoadData();    
+            LoadData();
         }
 
         protected override void OnPrimaryKeyChanged(EventArgs e)
@@ -112,13 +111,40 @@ namespace SHSchool.Retake.DetailContent
                 txtSubjectLevel.Text = "";
             txtCredit.Text = _CourseData.Credit.ToString();
             cbxSubjectType.Text = _CourseData.SubjectType;
-            cbxDeptName.Text = _CourseData.DeptName;
+            //cbxDeptName.Text = _CourseData.DeptName;
+            if (!_CourseTimetableDic.ContainsValue(_CourseData.CourseTimetableID))
+            {
+                //取得開課科別
+                _CourseTimetableDic.Clear();
+                FISCA.Data.QueryHelper Helper = new FISCA.Data.QueryHelper();
+                DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
+
+                foreach (DataRow row in Table.Rows)
+                {
+                    int uid = int.Parse(row["uid"].ToString());
+                    string name = row["name"].ToString();
+                    if (!_CourseTimetableDic.ContainsKey(name))
+                    {
+                        _CourseTimetableDic.Add(name, uid);
+                    }
+                }
+                cbxDeptName.Items.Clear();
+                foreach (var item in _CourseTimetableDic.Keys)
+                {
+                    cbxDeptName.Items.Add(item);
+                }
+            }
+            foreach (var item in _CourseTimetableDic.Keys)
+            {
+                if (_CourseTimetableDic[item] == _CourseData.CourseTimetableID)
+                    cbxDeptName.Text = item;
+            }
 
             _ChangeListener.Reset();
             _ChangeListener.ResumeListen();
             this.Loading = false;
 
-        
+
         }
 
         protected override void OnCancelButtonClick(EventArgs e)
@@ -143,7 +169,7 @@ namespace SHSchool.Retake.DetailContent
 
                 _CourseData.Credit = int.Parse(txtCredit.Text);
                 _CourseData.SubjectType = cbxSubjectType.Text;
-                _CourseData.DeptName = cbxDeptName.Text;
+                _CourseData.CourseTimetableID = _CourseTimetableDic[cbxDeptName.Text];
 
                 List<UDTCourseDef> dataList = new List<UDTCourseDef>();
                 dataList.Add(_CourseData);
@@ -169,15 +195,15 @@ namespace SHSchool.Retake.DetailContent
             }
 
             // 檢查課程名稱是否重複
-            if(_CourseData.CourseName!=txtCourseName.Text)
-            foreach (UDTCourseDef data in CourseList)
-            {
-                if (data.SchoolYear == _CourseData.SchoolYear && data.Semester == _CourseData.Semester && data.Round ==_CourseData.Round && data.CourseName == txtCourseName.Text)
+            if (_CourseData.CourseName != txtCourseName.Text)
+                foreach (UDTCourseDef data in CourseList)
                 {
-                    _errorP.SetError(txtCourseName, "已有相同課程名稱無法儲存!");
-                    pass = false;
+                    if (data.SchoolYear == _CourseData.SchoolYear && data.Semester == _CourseData.Semester && data.Round == _CourseData.Round && data.CourseName == txtCourseName.Text)
+                    {
+                        _errorP.SetError(txtCourseName, "已有相同課程名稱無法儲存!");
+                        pass = false;
+                    }
                 }
-            }          
 
             if (string.IsNullOrWhiteSpace(txtSubjectName.Text))
             {
@@ -217,7 +243,6 @@ namespace SHSchool.Retake.DetailContent
         {
             foreach (UDTCourseDef data in UDTTransfer.UDTCourseSelectUIDs(_CourseID))
                 _CourseData = data;
-                       
 
             // 取得課程
             CourseList = UDTTransfer.UDTCourseSelectAllDict().Values.ToList();
@@ -231,7 +256,7 @@ namespace SHSchool.Retake.DetailContent
             {
                 this.Loading = true;
                 _bgWorker.RunWorkerAsync();
-            }        
+            }
         }
 
         private void txtCourseName_TextChanged(object sender, EventArgs e)
@@ -253,6 +278,6 @@ namespace SHSchool.Retake.DetailContent
         {
             _errorP.SetError(txtCredit, "");
         }
-             
+
     }
 }

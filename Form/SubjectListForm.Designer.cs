@@ -31,9 +31,13 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgData = new DevComponents.DotNetBar.Controls.DataGridViewX();
+            this.colSubjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colSubjectLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colCredit = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDept = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
+            this.colSubjectType = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.批次修改科別ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.批次修改所屬課表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.批次修改科目類別ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblTitle = new DevComponents.DotNetBar.LabelX();
             this.btnGetSuggestSubject = new DevComponents.DotNetBar.ButtonX();
@@ -43,20 +47,6 @@
             this.buttonX1 = new DevComponents.DotNetBar.ButtonX();
             this.buttonX2 = new DevComponents.DotNetBar.ButtonX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
-            this.colSubjectName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colSubjectLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colCredit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDept = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
-            this.colCourseTimetable = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
-            this.colSubjectType = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
-            this.colWp1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colWp8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -74,16 +64,7 @@
             this.colSubjectLevel,
             this.colCredit,
             this.colDept,
-            this.colCourseTimetable,
-            this.colSubjectType,
-            this.colWp1,
-            this.colWp2,
-            this.colWp3,
-            this.colWp4,
-            this.colWp5,
-            this.colWp6,
-            this.colWp7,
-            this.colWp8});
+            this.colSubjectType});
             this.dgData.ContextMenuStrip = this.contextMenuStrip1;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
@@ -102,16 +83,65 @@
             this.dgData.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgData_CellEndEdit);
             this.dgData.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgData_CellMouseDoubleClick);
             this.dgData.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgData_UserDeletingRow);
-            this.dgData.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgData_KeyDown);
+            // 
+            // colSubjectName
+            // 
+            this.colSubjectName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colSubjectName.HeaderText = "科目名稱";
+            this.colSubjectName.Name = "colSubjectName";
+            // 
+            // colSubjectLevel
+            // 
+            this.colSubjectLevel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colSubjectLevel.HeaderText = "級別";
+            this.colSubjectLevel.Name = "colSubjectLevel";
+            this.colSubjectLevel.Width = 59;
+            // 
+            // colCredit
+            // 
+            this.colCredit.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.colCredit.HeaderText = "學分數";
+            this.colCredit.Name = "colCredit";
+            this.colCredit.Width = 72;
+            // 
+            // colDept
+            // 
+            this.colDept.DisplayMember = "Text";
+            this.colDept.DropDownHeight = 106;
+            this.colDept.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.colDept.DropDownWidth = 121;
+            this.colDept.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.colDept.HeaderText = "科別";
+            this.colDept.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.colDept.IntegralHeight = false;
+            this.colDept.ItemHeight = 17;
+            this.colDept.Name = "colDept";
+            this.colDept.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colDept.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.colDept.Width = 115;
+            // 
+            // colSubjectType
+            // 
+            this.colSubjectType.DisplayMember = "Text";
+            this.colSubjectType.DropDownHeight = 106;
+            this.colSubjectType.DropDownWidth = 121;
+            this.colSubjectType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.colSubjectType.HeaderText = "科目類別";
+            this.colSubjectType.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.colSubjectType.IntegralHeight = false;
+            this.colSubjectType.ItemHeight = 17;
+            this.colSubjectType.Name = "colSubjectType";
+            this.colSubjectType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colSubjectType.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.colSubjectType.Width = 85;
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.批次修改科別ToolStripMenuItem,
-            this.批次修改所屬課表ToolStripMenuItem,
             this.批次修改科目類別ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 48);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // 批次修改科別ToolStripMenuItem
@@ -120,13 +150,6 @@
             this.批次修改科別ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.批次修改科別ToolStripMenuItem.Text = "批次修改科別";
             this.批次修改科別ToolStripMenuItem.Click += new System.EventHandler(this.批次修改科別ToolStripMenuItem_Click);
-            // 
-            // 批次修改所屬課表ToolStripMenuItem
-            // 
-            this.批次修改所屬課表ToolStripMenuItem.Name = "批次修改所屬課表ToolStripMenuItem";
-            this.批次修改所屬課表ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.批次修改所屬課表ToolStripMenuItem.Text = "批次修改所屬課表";
-            this.批次修改所屬課表ToolStripMenuItem.Click += new System.EventHandler(this.批次修改所屬課表ToolStripMenuItem_Click);
             // 
             // 批次修改科目類別ToolStripMenuItem
             // 
@@ -255,136 +278,6 @@
             this.labelX2.TabIndex = 12;
             this.labelX2.Text = "選取整列可用Delete刪除、或右鍵選單批次修改";
             // 
-            // colSubjectName
-            // 
-            this.colSubjectName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colSubjectName.HeaderText = "科目名稱";
-            this.colSubjectName.Name = "colSubjectName";
-            // 
-            // colSubjectLevel
-            // 
-            this.colSubjectLevel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colSubjectLevel.HeaderText = "級別";
-            this.colSubjectLevel.Name = "colSubjectLevel";
-            this.colSubjectLevel.Width = 59;
-            // 
-            // colCredit
-            // 
-            this.colCredit.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.colCredit.HeaderText = "學分數";
-            this.colCredit.Name = "colCredit";
-            this.colCredit.Width = 72;
-            // 
-            // colDept
-            // 
-            this.colDept.DisplayMember = "Text";
-            this.colDept.DropDownHeight = 106;
-            this.colDept.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.colDept.DropDownWidth = 121;
-            this.colDept.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colDept.HeaderText = "科別";
-            this.colDept.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.colDept.IntegralHeight = false;
-            this.colDept.ItemHeight = 17;
-            this.colDept.Name = "colDept";
-            this.colDept.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colDept.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.colDept.Width = 115;
-            // 
-            // colCourseTimetable
-            // 
-            this.colCourseTimetable.DisplayMember = "Text";
-            this.colCourseTimetable.DropDownHeight = 106;
-            this.colCourseTimetable.DropDownWidth = 121;
-            this.colCourseTimetable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colCourseTimetable.HeaderText = "所屬課表";
-            this.colCourseTimetable.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.colCourseTimetable.IntegralHeight = false;
-            this.colCourseTimetable.ItemHeight = 20;
-            this.colCourseTimetable.Name = "colCourseTimetable";
-            this.colCourseTimetable.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colCourseTimetable.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // colSubjectType
-            // 
-            this.colSubjectType.DisplayMember = "Text";
-            this.colSubjectType.DropDownHeight = 106;
-            this.colSubjectType.DropDownWidth = 121;
-            this.colSubjectType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colSubjectType.HeaderText = "科目類別";
-            this.colSubjectType.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.colSubjectType.IntegralHeight = false;
-            this.colSubjectType.ItemHeight = 17;
-            this.colSubjectType.Name = "colSubjectType";
-            this.colSubjectType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colSubjectType.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.colSubjectType.Width = 85;
-            // 
-            // colWp1
-            // 
-            this.colWp1.FillWeight = 50F;
-            this.colWp1.HeaderText = "一";
-            this.colWp1.Name = "colWp1";
-            this.colWp1.ReadOnly = true;
-            this.colWp1.Visible = false;
-            this.colWp1.Width = 30;
-            // 
-            // colWp2
-            // 
-            this.colWp2.HeaderText = "二";
-            this.colWp2.Name = "colWp2";
-            this.colWp2.ReadOnly = true;
-            this.colWp2.Visible = false;
-            this.colWp2.Width = 30;
-            // 
-            // colWp3
-            // 
-            this.colWp3.HeaderText = "三";
-            this.colWp3.Name = "colWp3";
-            this.colWp3.ReadOnly = true;
-            this.colWp3.Visible = false;
-            this.colWp3.Width = 30;
-            // 
-            // colWp4
-            // 
-            this.colWp4.HeaderText = "四";
-            this.colWp4.Name = "colWp4";
-            this.colWp4.ReadOnly = true;
-            this.colWp4.Visible = false;
-            this.colWp4.Width = 30;
-            // 
-            // colWp5
-            // 
-            this.colWp5.HeaderText = "五";
-            this.colWp5.Name = "colWp5";
-            this.colWp5.ReadOnly = true;
-            this.colWp5.Visible = false;
-            this.colWp5.Width = 30;
-            // 
-            // colWp6
-            // 
-            this.colWp6.HeaderText = "六";
-            this.colWp6.Name = "colWp6";
-            this.colWp6.ReadOnly = true;
-            this.colWp6.Visible = false;
-            this.colWp6.Width = 30;
-            // 
-            // colWp7
-            // 
-            this.colWp7.HeaderText = "七";
-            this.colWp7.Name = "colWp7";
-            this.colWp7.ReadOnly = true;
-            this.colWp7.Visible = false;
-            this.colWp7.Width = 30;
-            // 
-            // colWp8
-            // 
-            this.colWp8.HeaderText = "八";
-            this.colWp8.Name = "colWp8";
-            this.colWp8.ReadOnly = true;
-            this.colWp8.Visible = false;
-            this.colWp8.Width = 30;
-            // 
             // SubjectListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
@@ -422,7 +315,6 @@
         private DevComponents.DotNetBar.LabelX lblCount;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 批次修改科別ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 批次修改所屬課表ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 批次修改科目類別ToolStripMenuItem;
         private DevComponents.DotNetBar.ButtonX buttonX1;
         private DevComponents.DotNetBar.ButtonX buttonX2;
@@ -431,15 +323,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colSubjectLevel;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCredit;
         private DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn colDept;
-        private DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn colCourseTimetable;
         private DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn colSubjectType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp7;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colWp8;
     }
 }

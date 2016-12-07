@@ -37,7 +37,7 @@ namespace SHSchool.Retake.Form
         void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // 取得目前期間
-            UDTSessionDef actData = UDTTransfer.UDTSessionGetActiveTrue1();
+            UDTSessionDef actData = UDTTransfer.UDTSessionGetActiveSession();
 
             // 新增建議名單
             InsertData(actData.UID);
@@ -76,20 +76,19 @@ namespace SHSchool.Retake.Form
             if (pass)
             {
                 btnSave.Enabled = false;
-                List<UDTSessionDef> dataList = new List<UDTSessionDef>();
                 UDTSessionDef newData = new UDTSessionDef();
                 newData.SchoolYear = iptSchoolYear.Value;
                 newData.Semester = iptSemester.Value;
                 newData.Round = iptRound.Value;
                 newData.Name = name;
                 newData.Active = true;
-                dataList.Add(newData);
+                _AllUDTSession.Add(newData);
 
                 // 更新原有目前學期
                 //UDTTransfer.UDTSessionUpdate(_AllUDTSession);
 
-                // 新增資料
-                UDTTransfer.UDTSessionInsert(dataList);
+                // 儲存變更
+                _AllUDTSession.SaveAll();
                 // 新增資料
                 _bgWorker.RunWorkerAsync();
            

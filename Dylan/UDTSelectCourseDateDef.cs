@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FISCA.UDT;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using FISCA.UDT;
 
-namespace SHSchool.Retake.DAO
-{
-    /// <summary>
-    /// 重補修開始選課時間
-    /// </summary>
-    [TableName("shschool.retake.select_course_date")]
-    public class UDTSelectCourseDateDef : ActiveRecord    
-    {
-        ///<summary>
-        /// 開始時間
-        ///</summary>
-        [Field(Field = "start_date", Indexed = false)]
-        public DateTime? StartDate { get; set; }
+//namespace SHSchool.Retake.DAO
+//{
+//    /// <summary>
+//    /// 重補修開始選課時間
+//    /// </summary>
+//    [TableName("shschool.retake.select_course_date")]
+//    public class UDTSelectCourseDateDef : ActiveRecord    
+//    {
+//        ///<summary>
+//        /// 開始時間
+//        ///</summary>
+//        [Field(Field = "start_date", Indexed = false)]
+//        public DateTime? StartDate { get; set; }
 
-        ///<summary>
-        /// 結束時間
-        ///</summary>
-        [Field(Field = "end_date", Indexed = false)]
-        public DateTime? EndDate { get; set; }
-    }
-}
+//        ///<summary>
+//        /// 結束時間
+//        ///</summary>
+//        [Field(Field = "end_date", Indexed = false)]
+//        public DateTime? EndDate { get; set; }
+//    }
+//}

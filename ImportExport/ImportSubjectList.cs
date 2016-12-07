@@ -17,13 +17,10 @@ namespace SHSchool.Retake
         private const string _SubjectLevel = "級別";
         private const string _Credit = "學分數";
         private const string _DeptName = "科別";
-        private const string _CourseTimetable = "所屬課表";
         private const string _SubjectType = "科目類別";
-        private string[] _Period = { "一", "二", "三", "四", "五", "六", "七", "八" };
         private int _SchoolYear, _Semester, _Round;
         private List<string> _IDList = new List<string>(); //找得到組合鍵值的id清單
-
-        Dictionary<string, string> _CourseTimetableDic = new Dictionary<string, string>(); //所屬課表ID對照字典(Name,UID)
+        
         Dictionary<string, string> _SubjectDic = new Dictionary<string, string>(); //科目ID對照字典(組合鍵值,UID)
 
         private StringBuilder mstrLog = new StringBuilder();
@@ -62,22 +59,8 @@ namespace SHSchool.Retake
             {
                 QueryHelper Helper = new QueryHelper();
 
-                #region 取得所屬課表ID對照字典
-                DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
-
-                foreach (DataRow row in Table.Rows)
-                {
-                    string uid = row["uid"].ToString();
-                    string name = row["name"].ToString();
-                    if (!_CourseTimetableDic.ContainsKey(name))
-                    {
-                        _CourseTimetableDic.Add(name, uid);
-                    }
-                }
-                #endregion
-
                 #region 取得當前的工作學年度,學期,梯次
-                UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
+                UDTSessionDef data = UDTTransfer.UDTSessionGetActiveSession();
                 if (!string.IsNullOrEmpty(data.UID))
                 {
                     _SchoolYear = data.SchoolYear;
@@ -92,11 +75,11 @@ namespace SHSchool.Retake
                 {
                     string uid = elem.UID;
                     string subject_name = elem.SubjectName;
-                    string subject_level = elem.SubjecLevel.ToString();
-                    string subject_credit = elem.Credit.ToString();
-                    string course_timetable_id = elem.CourseTimetableID.ToString();
+                    string subject_level = ""+elem.SubjecLevel;
+                    string subject_credit = ""+elem.Credit;
+                    string dept = elem.DeptName;
 
-                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + dept;
 
                     if (!_SubjectDic.ContainsKey(subjectKey))
                         _SubjectDic.Add(subjectKey, uid);
@@ -121,7 +104,7 @@ namespace SHSchool.Retake
                 mOption.SelectedKeyFields.Contains(_SubjectName) &&
                 mOption.SelectedKeyFields.Contains(_SubjectLevel) &&
                 mOption.SelectedKeyFields.Contains(_Credit) &&
-                mOption.SelectedKeyFields.Contains(_CourseTimetable))
+                mOption.SelectedKeyFields.Contains(_DeptName))
             {
                 List<UDTSubjectDef> mSubjectExtensions = new List<UDTSubjectDef>(); //需要更新的record清單
                 foreach (IRowStream Row in Rows)
@@ -129,9 +112,9 @@ namespace SHSchool.Retake
                     string subject_name = Row.GetValue(_SubjectName);
                     string subject_level = Row.GetValue(_SubjectLevel);
                     string subject_credit = Row.GetValue(_Credit);
-                    string course_timetable_id = _CourseTimetableDic[Row.GetValue(_CourseTimetable)];
+                    string subject_dept = Row.GetValue(_DeptName);
 
-                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                    string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + subject_dept;
 
                     string uid = _SubjectDic.ContainsKey(subjectKey) ? _SubjectDic[subjectKey] : string.Empty;
 
@@ -156,9 +139,9 @@ namespace SHSchool.Retake
                         string subject_name = Row.GetValue(_SubjectName);
                         string subject_level = Row.GetValue(_SubjectLevel);
                         string subject_credit = Row.GetValue(_Credit);
-                        string course_timetable_id = _CourseTimetableDic[Row.GetValue(_CourseTimetable)];
+                        string subject_dept = Row.GetValue(_DeptName);
 
-                        string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + course_timetable_id;
+                        string subjectKey = _SchoolYear + "," + _Semester + "," + _Round + "," + subject_name + "," + subject_level + "," + subject_credit + "," + subject_dept;
 
                         int? subjectID = null;
                         UDTSubjectDef vSubjectExtension = null;
@@ -185,36 +168,9 @@ namespace SHSchool.Retake
                                 if (mOption.SelectedFields.Contains(_DeptName))
                                     vSubjectExtension.DeptName = Row.GetValue(_DeptName);
 
-                                if (mOption.SelectedFields.Contains(_CourseTimetable))
-                                {
-                                    if (_CourseTimetableDic.ContainsKey(Row.GetValue(_CourseTimetable)))
-                                    {
-                                        vSubjectExtension.CourseTimetableID = int.Parse(_CourseTimetableDic[Row.GetValue(_CourseTimetable)]);
-                                    }
-                                }
-
                                 if (mOption.SelectedFields.Contains(_SubjectType))
                                     vSubjectExtension.SubjectType = Row.GetValue(_SubjectType);
-
-                                //XmlElement Elem = new XmlDocument().CreateElement("Periods");
-                                //for (int i = 0; i < _Period.Length; i++)
-                                //{
-                                //    if (mOption.SelectedFields.Contains(_Period[i]))
-                                //    {
-                                //        if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
-                                //        {
-                                //            XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
-                                //            elem.InnerText = (i + 1).ToString();
-                                //            Elem.AppendChild(elem);
-                                //        }
-                                //    }
-                                //}
-
-                                //if (Elem.SelectNodes("//Period").Count > 0)
-                                //    vSubjectExtension.PeriodContent = Elem.OuterXml;
-                                //else
-                                //    vSubjectExtension.PeriodContent = null;
-
+                                
                                 UpdateRecords.Add(vSubjectExtension);
                             }
                         }
@@ -223,7 +179,6 @@ namespace SHSchool.Retake
                             vSubjectExtension = new UDTSubjectDef();
                             vSubjectExtension.SubjectName = Row.GetValue(_SubjectName);
                             vSubjectExtension.SubjecLevel = K12.Data.Int.ParseAllowNull(Row.GetValue(_SubjectLevel));
-                            vSubjectExtension.CourseTimetableID = int.Parse(_CourseTimetableDic[Row.GetValue(_CourseTimetable)]);
 
                             if (mOption.SelectedFields.Contains(_Credit))
                                 vSubjectExtension.Credit = int.Parse(Row.GetValue(_Credit));
@@ -233,26 +188,7 @@ namespace SHSchool.Retake
 
                             if (mOption.SelectedFields.Contains(_SubjectType))
                                 vSubjectExtension.SubjectType = Row.GetValue(_SubjectType);
-
-                            //XmlElement Elem = new XmlDocument().CreateElement("Periods");
-                            //for (int i = 0; i < _Period.Length; i++)
-                            //{
-                            //    if (mOption.SelectedFields.Contains(_Period[i]))
-                            //    {
-                            //        if (Row.GetValue(_Period[i]) == "V" || Row.GetValue(_Period[i]) == "v")
-                            //        {
-                            //            XmlElement elem = Elem.OwnerDocument.CreateElement("Period");
-                            //            elem.InnerText = (i + 1).ToString();
-                            //            Elem.AppendChild(elem);
-                            //        }
-                            //    }
-                            //}
-
-                            //if (Elem.SelectNodes("//Period").Count > 0)
-                            //    vSubjectExtension.PeriodContent = Elem.OuterXml;
-                            //else
-                            //    vSubjectExtension.PeriodContent = null;
-
+                            
                             vSubjectExtension.SchoolYear = _SchoolYear;
                             vSubjectExtension.Semester = _Semester;
                             vSubjectExtension.Round = _Round;

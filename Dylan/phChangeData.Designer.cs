@@ -1,4 +1,4 @@
-﻿namespace SHSchool.Retake.Dylan
+﻿namespace SHSchool.Retake.Form
 {
     partial class phChangeData
     {

@@ -13,10 +13,12 @@ namespace SHSchool.Retake.Form
     public partial class AddCourse : FISCA.Presentation.Controls.BaseForm
     {
         BackgroundWorker _bgWorkLoad;
-        List<UDTCourseDef> _AllCourseList = new List<UDTCourseDef>();        
+        List<UDTCourseDef> _AllCourseList = new List<UDTCourseDef>();
         ErrorProvider _errorP = new ErrorProvider();
         List<UDTSessionDef> _AllSession = new List<UDTSessionDef>();
-        int _DefSchoolYear=0, _DefSemester=0, _Defmot = 0;
+        private Dictionary<string, string> _CourseTimetableDic = new Dictionary<string, string>(); //所屬課表ID對照字典(Name,UID)
+        int _DefSchoolYear = 0, _DefSemester = 0, _Defmot = 0;
+
         public AddCourse()
         {
             InitializeComponent();
@@ -25,30 +27,31 @@ namespace SHSchool.Retake.Form
             _bgWorkLoad.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorkLoad_RunWorkerCompleted);
             _bgWorkLoad.RunWorkerAsync();
         }
-        
+
         void _bgWorkLoad_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
-            if (_DefSchoolYear == 0 || _DefSemester == 0 || _Defmot==0)
+            if (_DefSchoolYear == 0 || _DefSemester == 0 || _Defmot == 0)
             {
-                FISCA.Presentation.Controls.MsgBox.Show("請先設定目前正在學年度、學期、梯次.");                
+                FISCA.Presentation.Controls.MsgBox.Show("請先設定目前正在學年度、學期、梯次.");
             }
-            else {
+            else
+            {
                 SetDefaultSelectItem();
-                this.ShowDialog();            
+                this.ShowDialog();
             }
         }
 
         void _bgWorkLoad_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<string> courseIDList=QueryData.GetCourseSelectActive1();
-            
+            List<string> courseIDList = QueryData.GetCourseSelectActive1();
+
             // 取得目前正在
-            List<UDTCourseDef> CourseList=UDTTransfer.UDTCourseSelectUIDs(courseIDList);
+            List<UDTCourseDef> CourseList = UDTTransfer.UDTCourseSelectUIDs(courseIDList);
 
             // 取得所有課程
             _AllCourseList = UDTTransfer.UDTCourseSelectAllDict().Values.ToList();
-            
+
             // 取得所有期間
             _AllSession = UDTTransfer.UDTSessionSelectAll();
 
@@ -73,7 +76,7 @@ namespace SHSchool.Retake.Form
                 }
             }
 
-        }     
+        }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
@@ -82,7 +85,7 @@ namespace SHSchool.Retake.Form
 
         private void AddCourse_Load(object sender, EventArgs e)
         {
-            this.MaximumSize = this.MinimumSize = this.Size;         
+            this.MaximumSize = this.MinimumSize = this.Size;
         }
 
         private void SetDefaultSelectItem()
@@ -111,9 +114,26 @@ namespace SHSchool.Retake.Form
             if (cbxCourseTeacher.Items.Count == 0)
                 cbxCourseTeacher.Items.AddRange(Global._TeacherNameIDDict.Keys.ToArray());
             if (cbxDeptName.Items.Count == 0)
-                cbxDeptName.Items.AddRange(QueryData.GetAllDeptName().ToArray());
+            {
+                #region 取得所屬課表ID對照字典
+                _CourseTimetableDic.Clear();
+                FISCA.Data.QueryHelper Helper = new FISCA.Data.QueryHelper();
+                DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
 
-           
+                foreach (DataRow row in Table.Rows)
+                {
+                    string uid = row["uid"].ToString();
+                    string name = row["name"].ToString();
+                    if (!_CourseTimetableDic.ContainsKey(name))
+                    {
+                        _CourseTimetableDic.Add(name, uid);
+                    }
+                    cbxDeptName.Items.Add(name);
+                }
+                #endregion
+            }
+
+
         }
 
         /// <summary>
@@ -158,14 +178,14 @@ namespace SHSchool.Retake.Form
             // 檢查課程名稱是否重複
             foreach (UDTCourseDef data in _AllCourseList)
             {
-                if (data.SchoolYear==iptSchoolYear.Value && data.Semester==iptSemester.Value && data.Round==iptRound.Value && data.CourseName == txtCourseName.Text)
+                if (data.SchoolYear == iptSchoolYear.Value && data.Semester == iptSemester.Value && data.Round == iptRound.Value && data.CourseName == txtCourseName.Text)
                 {
                     _errorP.SetError(txtCourseName, "學年度+學期+梯次+課程名稱，已有相同名稱無法新增!");
                     pass = false;
                 }
-            }          
+            }
 
-            if (string.IsNullOrWhiteSpace(txtCredit.Text) || txtCredit.Text=="")
+            if (string.IsNullOrWhiteSpace(txtCredit.Text) || txtCredit.Text == "")
             {
                 _errorP.SetError(txtCredit, "學分數不可空白");
                 pass = false;
@@ -190,6 +210,14 @@ namespace SHSchool.Retake.Form
                     pass = false;
                 }
             }
+
+
+            if (string.IsNullOrWhiteSpace(cbxDeptName.Text))
+            {
+                _errorP.SetError(cbxDeptName, "開課科別不可空白");
+                pass = false;
+            }
+
             return pass;
         }
 
@@ -212,7 +240,7 @@ namespace SHSchool.Retake.Form
 
                     courseData.Credit = int.Parse(txtCredit.Text);
                     courseData.SubjectType = cbxSubjectType.Text;
-                    courseData.DeptName = cbxDeptName.Text;
+                    courseData.CourseTimetableID = int.Parse(_CourseTimetableDic[cbxDeptName.Text]);
                     courseData.SchoolYear = iptSchoolYear.Value;
                     courseData.Semester = iptSemester.Value;
                     courseData.Round = iptRound.Value;
@@ -251,7 +279,7 @@ namespace SHSchool.Retake.Form
             }
             catch (Exception ex)
             {
-                FISCA.Presentation.Controls.MsgBox.Show("新增課程過程發生錯誤"+ex.Message);
+                FISCA.Presentation.Controls.MsgBox.Show("新增課程過程發生錯誤" + ex.Message);
             }
         }
 
@@ -278,6 +306,11 @@ namespace SHSchool.Retake.Form
         private void iptSchoolYear_ValueChanged(object sender, EventArgs e)
         {
             _errorP.SetError(iptSchoolYear, "");
+        }
+
+        private void cbxDeptName_TextChanged(object sender, EventArgs e)
+        {
+            _errorP.SetError(cbxDeptName, "");
         }
 
         private void iptSemester_ValueChanged(object sender, EventArgs e)

@@ -16,13 +16,8 @@ namespace SHSchool.Retake.Form
 {
     public partial class RetakeJoinForm : BaseForm
     {
-        //2012/7/23
-        //group by出目前系統的年級資料
-        //取得 DTClub ,並且判斷其開始與結束時間
-        private const string DateTimeFormat = "yyyy/MM/dd HH:mm";
+        private UDTSessionDef _ActiveSession;
         AccessHelper _AccessHelper = new AccessHelper();
-        QueryHelper _QueryHelper = new QueryHelper();
-        List<UDTSelectCourseDateDef> Low_DTClubList = new List<UDTSelectCourseDateDef>();
 
         public RetakeJoinForm()
         {
@@ -31,31 +26,20 @@ namespace SHSchool.Retake.Form
 
         private void RetakeJoinDateTime_Load(object sender, EventArgs e)
         {
-            //將對應年級的時間填入。
-            FillTimes();
-
-            UDTSessionDef data = UDTTransfer.UDTSessionGetActiveTrue1();
-            if (!string.IsNullOrEmpty(data.UID))
+            _ActiveSession = UDTTransfer.UDTSessionGetActiveSession();
+            if (!string.IsNullOrEmpty(_ActiveSession.UID))
             {
-                labelX3.Text = "目前梯次：" + data.SchoolYear + "學年度　";
-                labelX3.Text += "第" + data.Semester + "學期　";
-                labelX3.Text += "第" + data.Round + "梯次";
-            }
-        }
+                labelX3.Text = "目前梯次：" + _ActiveSession.SchoolYear + "學年度　";
+                labelX3.Text += "第" + _ActiveSession.Semester + "學期　";
+                labelX3.Text += "第" + _ActiveSession.Round + "梯次";
 
-        private void FillTimes()
-        {
-            Low_DTClubList = _AccessHelper.Select<UDTSelectCourseDateDef>();
-
-            if (Low_DTClubList.Count >= 1)
-            {
-                UDTSelectCourseDateDef each = Low_DTClubList[0];
-
-                string startTime = each.StartDate.HasValue ? each.StartDate.Value.ToString(DateTimeFormat) : "";
-                string endTime = each.EndDate.HasValue ? each.EndDate.Value.ToString(DateTimeFormat) : "";
+                string startTime = _ActiveSession.RegistrationOpen.HasValue ? _ActiveSession.RegistrationOpen.Value.ToString("yyyy/MM/dd HH:mm:ss") : "";
+                string endTime = _ActiveSession.RegistrationClose.HasValue ? _ActiveSession.RegistrationClose.Value.ToString("yyyy/MM/dd HH:mm:ss") : "";
 
                 tbStartDateTime.Text = startTime;
                 tbEndDateTime.Text = endTime;
+
+                btnSave.Enabled = tbStartDateTime.Enabled = tbEndDateTime.Enabled = true;
             }
         }
 
@@ -65,15 +49,9 @@ namespace SHSchool.Retake.Form
             {
                 if (!Compare())
                 {
-                    //刪掉原有資料
-                    _AccessHelper.DeletedValues(Low_DTClubList);
-
-                    List<UDTSelectCourseDateDef> list = new List<UDTSelectCourseDateDef>();
-                    UDTSelectCourseDateDef each = new UDTSelectCourseDateDef();
-                    each.StartDate = DateTime.Parse(tbStartDateTime.Text);
-                    each.EndDate = DateTime.Parse(tbEndDateTime.Text);
-                    list.Add(each);
-                    _AccessHelper.InsertValues(list);
+                    _ActiveSession.RegistrationOpen = DateTime.Parse(tbStartDateTime.Text);
+                    _ActiveSession.RegistrationClose = DateTime.Parse(tbEndDateTime.Text);
+                    _ActiveSession.Save();
                     MsgBox.Show("儲存成功!!");
                     this.Close();
                 }
@@ -167,7 +145,7 @@ namespace SHSchool.Retake.Form
             if (DateTimeParseStart())
             {
                 DateTime? objStart = DateTimeHelper.ParseGregorian(tbStartDateTime.Text, PaddingMethod.First);
-                tbStartDateTime.Text = objStart.Value.ToString(DateTimeFormat);
+                tbStartDateTime.Text = objStart.Value.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
@@ -176,7 +154,7 @@ namespace SHSchool.Retake.Form
             if (DateTimeParseEnd())
             {
                 DateTime? objStart = DateTimeHelper.ParseGregorian(tbEndDateTime.Text, PaddingMethod.First);
-                tbEndDateTime.Text = objStart.Value.ToString(DateTimeFormat);
+                tbEndDateTime.Text = objStart.Value.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 

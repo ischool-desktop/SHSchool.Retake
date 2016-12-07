@@ -36,17 +36,29 @@ namespace SHSchool.Retake.DAO
         [Field(Field = "name", Indexed = false)]
         public string Name { get; set; }
 
-        ///<summary>
-        /// 開始日期
-        ///</summary>
-        [Field(Field = "begin_date", Indexed = false)]
-        public DateTime BeginDate { get; set; }
+        /////<summary>
+        ///// 開始日期
+        /////</summary>
+        //[Field(Field = "begin_date", Indexed = false)]
+        //public DateTime BeginDate { get; set; }
 
-        ///<summary>
-        /// 結束日期
-        ///</summary>
-        [Field(Field = "end_date", Indexed = false)]
-        public DateTime EndDate { get; set; }
+        /////<summary>
+        ///// 結束日期
+        /////</summary>
+        //[Field(Field = "end_date", Indexed = false)]
+        //public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// 開放登記(選課)
+        /// </summary>
+        [Field(Field = "registration_open", Indexed = false)]
+        public DateTime? RegistrationOpen { get; set; }
+
+        /// <summary>
+        /// 登記截止(選課)
+        /// </summary>
+        [Field(Field = "registration_close", Indexed = false)]
+        public DateTime? RegistrationClose { get; set; }
 
         ///<summary>
         /// 正在開放

@@ -60,11 +60,11 @@ namespace SHSchool.Retake.DAO
         //[Field(Field = "course_timetable", Indexed = false)]
         //public string CourseTimetable { get; set; }
 
-        ///<summary>
-        /// 所屬課別編號
-        ///</summary>
-        [Field(Field = "course_timetable_id", Indexed = false)]
-        public int CourseTimetableID { get; set; }
+        /////<summary>
+        ///// 所屬課別編號
+        /////</summary>
+        //[Field(Field = "course_timetable_id", Indexed = false)]
+        //public int CourseTimetableID { get; set; }
 
         
         ///<summary>

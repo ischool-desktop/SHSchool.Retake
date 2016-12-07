@@ -36,7 +36,7 @@ namespace SHSchool.Retake.ImportExport
             FieldList.Add("學期");
             FieldList.Add("梯次");
             FieldList.Add("科目類別");
-            FieldList.Add("科別");
+            FieldList.Add("開課科別");
             FieldList.Add("科目名稱");
             FieldList.Add("學分數");
             FieldList.Add("科目級別");
@@ -46,6 +46,18 @@ namespace SHSchool.Retake.ImportExport
             wizard.ExportPackage += (sender, e) =>
             {
                 GetData();
+
+                //取得開課科別
+                var dicTimetable = new Dictionary<int, string>();
+                FISCA.Data.QueryHelper Helper = new FISCA.Data.QueryHelper();
+                System.Data.DataTable Table = Helper.Select("select uid,name from $shschool.retake.course_timetable");
+
+                foreach (System.Data.DataRow row in Table.Rows)
+                {
+                    int uid = int.Parse(row["uid"].ToString());
+                    string name = row["name"].ToString();
+                    dicTimetable.Add(uid, name);
+                }
 
                 foreach (UDTCourseDef elem in _CourseDefList)
                 {
@@ -63,7 +75,7 @@ namespace SHSchool.Retake.ImportExport
                                 case "學期": row.Add(field, "" + elem.Semester); break;
                                 case "梯次": row.Add(field, "" + elem.Round); break;
                                 case "科目類別": row.Add(field, elem.SubjectType); break;
-                                case "科別": row.Add(field, elem.DeptName); break;
+                                case "開課科別": row.Add(field, dicTimetable[elem.CourseTimetableID]); break;
                                 case "科目名稱": row.Add(field, elem.SubjectName); break;
                                 case "學分數": row.Add(field, "" + elem.Credit); break;
                                 case "科目級別": row.Add(field, "" + elem.SubjectLevel); break;
@@ -103,7 +115,7 @@ namespace SHSchool.Retake.ImportExport
             //取得教師資料
             _TeacherDic = new Dictionary<string, string>();
             List<string> teacherIDs = new List<string>();
-            foreach(UDTCourseDef elem in _CourseDefList)
+            foreach (UDTCourseDef elem in _CourseDefList)
             {
                 string id = elem.RefTeacherID.ToString();
                 if (!teacherIDs.Contains(id))
@@ -113,8 +125,8 @@ namespace SHSchool.Retake.ImportExport
             }
 
             FISCA.Data.QueryHelper helper = new FISCA.Data.QueryHelper();
-            string ids = string.Join("','",teacherIDs);
-            DataTable data = helper.Select("select id,teacher_name from teacher where id in ('" + ids +"')");
+            string ids = string.Join("','", teacherIDs);
+            DataTable data = helper.Select("select id,teacher_name from teacher where id in ('" + ids + "')");
             foreach (DataRow row in data.Rows)
             {
                 string id = row["id"].ToString();

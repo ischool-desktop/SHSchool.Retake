@@ -71,5 +71,10 @@ namespace SHSchool.Retake.DAO
         [Field(Field = "dept_name", Indexed = false)]
         public string DeptName { get; set; }
 
+        ///<summary>
+        /// 所屬課別編號
+        ///</summary>
+        [Field(Field = "course_timetable_id", Indexed = false)]
+        public int CourseTimetableID { get; set; }
     }
 }
