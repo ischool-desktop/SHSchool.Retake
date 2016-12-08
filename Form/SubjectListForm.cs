@@ -314,7 +314,7 @@ namespace SHSchool.Retake.Form
                         data.SubjecLevel = int.Parse(row.Cells[colSubjectLevel.Index].Value.ToString());
 
                     if (row.Cells[colCredit.Index].Value != null)
-                        data.Credit = int.Parse(row.Cells[colCredit.Index].Value.ToString());
+                        data.Credit = decimal.Parse(row.Cells[colCredit.Index].Value.ToString());
 
                     if (row.Cells[colSubjectType.Index].Value != null)
                         data.SubjectType = row.Cells[colSubjectType.Index].Value.ToString();

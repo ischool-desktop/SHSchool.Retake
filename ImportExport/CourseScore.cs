@@ -45,7 +45,7 @@ namespace SHSchool.Retake.ImportExport
         /// <summary>
         /// 學分數
         /// </summary>
-        public int Credit { get; set; }
+        public decimal Credit { get; set; }
 
         /// <summary>
         /// 重修原始成績

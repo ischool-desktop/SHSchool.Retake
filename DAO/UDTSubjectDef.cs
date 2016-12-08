@@ -71,7 +71,7 @@ namespace SHSchool.Retake.DAO
         /// 學分數
         ///</summary>
         [Field(Field = "credit", Indexed = false)]
-        public int Credit { get; set; }
+        public decimal Credit { get; set; }
 
         ///// <summary>
         ///// 日期內容(XML)

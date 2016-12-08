@@ -167,7 +167,7 @@ namespace SHSchool.Retake.DetailContent
                 else
                     _CourseData.SubjectLevel = int.Parse(txtSubjectLevel.Text);
 
-                _CourseData.Credit = int.Parse(txtCredit.Text);
+                _CourseData.Credit = decimal.Parse(txtCredit.Text);
                 _CourseData.SubjectType = cbxSubjectType.Text;
                 _CourseData.CourseTimetableID = _CourseTimetableDic[cbxDeptName.Text];
 

@@ -298,6 +298,12 @@
     <Compile Include="Form\RetakeResultsInputForm.Designer.cs">
       <DependentUpon>RetakeResultsInputForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\SCSelectDistribution.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\SCSelectDistribution.Designer.cs">
+      <DependentUpon>SCSelectDistribution.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\SetCourseInfoDateForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -520,6 +526,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\RetakeResultsInputForm.resx">
       <DependentUpon>RetakeResultsInputForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\SCSelectDistribution.resx">
+      <DependentUpon>SCSelectDistribution.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\SetCourseInfoDateForm.resx">
       <DependentUpon>SetCourseInfoDateForm.cs</DependentUpon>

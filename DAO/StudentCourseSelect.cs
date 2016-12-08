@@ -53,7 +53,7 @@ namespace SHSchool.Retake.DAO
         /// <summary>
         /// 學分數
         /// </summary>
-        public int Credit { get; set; }
+        public decimal Credit { get; set; }
 
         /// <summary>
         /// 學號

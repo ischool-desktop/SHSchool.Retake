@@ -196,7 +196,7 @@ namespace SHSchool.Retake
                                     vCourseExtension.SubjectLevel = K12.Data.Int.ParseAllowNull(Row.GetValue(constSubjectLevel));
 
                                 if (mOption.SelectedFields.Contains(constCredit))
-                                    vCourseExtension.Credit = K12.Data.Int.Parse(Row.GetValue(constCredit));
+                                    vCourseExtension.Credit = decimal.Parse(Row.GetValue(constCredit));
                                 
                                 if (mOption.SelectedFields.Contains(_CourseTimetable))
                                 {
@@ -236,7 +236,7 @@ namespace SHSchool.Retake
                                 vCourseExtension.SubjectLevel = K12.Data.Int.ParseAllowNull(Row.GetValue(constSubjectLevel));
 
                             if (mOption.SelectedFields.Contains(constCredit))
-                                vCourseExtension.Credit = K12.Data.Int.Parse(Row.GetValue(constCredit));
+                                vCourseExtension.Credit = decimal.Parse(Row.GetValue(constCredit));
 
                             if (mOption.SelectedFields.Contains(_CourseTimetable))
                             {

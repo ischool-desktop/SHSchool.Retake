@@ -238,7 +238,7 @@ namespace SHSchool.Retake.Form
                     else
                         courseData.SubjectLevel = int.Parse(txtSubjectLevel.Text);
 
-                    courseData.Credit = int.Parse(txtCredit.Text);
+                    courseData.Credit = decimal.Parse(txtCredit.Text);
                     courseData.SubjectType = cbxSubjectType.Text;
                     courseData.CourseTimetableID = int.Parse(_CourseTimetableDic[cbxDeptName.Text]);
                     courseData.SchoolYear = iptSchoolYear.Value;

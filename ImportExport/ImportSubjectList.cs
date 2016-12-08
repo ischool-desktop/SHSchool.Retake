@@ -163,7 +163,7 @@ namespace SHSchool.Retake
                                     vSubjectExtension.SubjecLevel = K12.Data.Int.ParseAllowNull(Row.GetValue(_SubjectLevel));
 
                                 if (mOption.SelectedFields.Contains(_Credit))
-                                    vSubjectExtension.Credit = int.Parse(Row.GetValue(_Credit));
+                                    vSubjectExtension.Credit = decimal.Parse(Row.GetValue(_Credit));
 
                                 if (mOption.SelectedFields.Contains(_DeptName))
                                     vSubjectExtension.DeptName = Row.GetValue(_DeptName);
@@ -181,7 +181,7 @@ namespace SHSchool.Retake
                             vSubjectExtension.SubjecLevel = K12.Data.Int.ParseAllowNull(Row.GetValue(_SubjectLevel));
 
                             if (mOption.SelectedFields.Contains(_Credit))
-                                vSubjectExtension.Credit = int.Parse(Row.GetValue(_Credit));
+                                vSubjectExtension.Credit = decimal.Parse(Row.GetValue(_Credit));
 
                             if (mOption.SelectedFields.Contains(_DeptName))
                                 vSubjectExtension.DeptName = Row.GetValue(_DeptName);
