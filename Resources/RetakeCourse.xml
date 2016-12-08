@@ -45,7 +45,7 @@
     </Field>
 
     <Field Required="False" Name="學分數" Description="學分數。">
-      <Validate AutoCorrect="False" Description="「學分數」必須是數字。" ErrorType="Error" Validator="Integer極限" When="" />
+      <Validate AutoCorrect="False" Description="「學分數」必須是數字。" ErrorType="Error" Validator="Decimal極限" When="" />
     </Field>
 
     <Field Required="False" EmptyAlsoValidate="false" Name="科目級別" Description="科目級別。">
@@ -64,8 +64,13 @@
     <FieldValidator Name="開課科別是否存在" Type="RETAKECOURSETIMETABLECHECK"/>
     <FieldValidator Name="不可空白" Type="STRINGLENGTH">
       <MinLength>1</MinLength>
-    </FieldValidator>
+    </FieldValidator>Decimal
 
+    <FieldValidator Name="Decimal極限" Type="Decimal">
+      <MinValue>0</MinValue>
+      <MaxValue>2000000000</MaxValue>
+    </FieldValidator>
+    
     <FieldValidator Name="Integer極限" Type="Integer">
       <MinValue>0</MinValue>
       <MaxValue>2000000000</MaxValue>

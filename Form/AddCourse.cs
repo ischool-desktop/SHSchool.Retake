@@ -203,10 +203,10 @@ namespace SHSchool.Retake.Form
 
             if (!string.IsNullOrWhiteSpace(txtCredit.Text))
             {
-                int i;
-                if (!int.TryParse(txtCredit.Text, out i))
+                decimal i;
+                if (!decimal.TryParse(txtCredit.Text, out i))
                 {
-                    _errorP.SetError(txtCredit, "學分數必須是整數");
+                    _errorP.SetError(txtCredit, "學分數必須是數值");
                     pass = false;
                 }
             }
