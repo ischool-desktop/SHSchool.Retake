@@ -83,5 +83,8 @@ namespace SHSchool.Retake.DAO
         ///</summary>
         [Field(Field = "ref_subject_id", Indexed = false)]
         public int RefSubjectID { get; set; }
+
+        [Field(Field = "fail_reason", Indexed = false)]
+        public string FailResaon { get; set; }
     }
 }

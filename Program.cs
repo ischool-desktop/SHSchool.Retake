@@ -318,7 +318,7 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                 item05["課程自動分發"].Image = Properties.Resources.time_frame_refresh_128;
                 item05["課程自動分發"].Click += delegate
                 {
-                    MsgBox.Show("功能尚未完成");
+                    new Form.SCSelectDistribution().ShowDialog();
                 };
             }
             {
