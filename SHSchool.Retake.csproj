@@ -292,6 +292,18 @@
     <Compile Include="Form\GradingProjectConfigForm.Designer.cs">
       <DependentUpon>GradingProjectConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\ModifyRecord2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\ModifyRecord2.Designer.cs">
+      <DependentUpon>ModifyRecord2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\ModifyRecord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\ModifyRecord.Designer.cs">
+      <DependentUpon>ModifyRecord.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\RetakeResultsInputForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -523,6 +535,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\GradingProjectConfigForm.resx">
       <DependentUpon>GradingProjectConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\ModifyRecord2.resx">
+      <DependentUpon>ModifyRecord2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\ModifyRecord.resx">
+      <DependentUpon>ModifyRecord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\RetakeResultsInputForm.resx">
       <DependentUpon>RetakeResultsInputForm.cs</DependentUpon>
