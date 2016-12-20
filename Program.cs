@@ -141,13 +141,13 @@ namespace SHSchool.Retake
             {
                 // 重補修科目管理
                 Catalog catalog02 = RoleAclSource.Instance["重補修"]["重補修選課"];
-                catalog02.Add(new RibbonFeature("SHSchool.Retake.SubjectListForm", "開放科目管理"));
+                catalog02.Add(new RibbonFeature("SHSchool.Retake.SubjectListForm", "開放選課科目管理"));
 
                 RibbonBarItem item02 = RetakeAdmin.Instance.RibbonBarItems["重補修選課"];
-                item02["開放科目管理"].Image = Properties.Resources.重補修科目管理_project_64;
-                item02["開放科目管理"].Size = RibbonBarButton.MenuButtonSize.Medium;
-                item02["開放科目管理"].Enable = UserAcl.Current["SHSchool.Retake.SubjectListForm"].Executable;
-                item02["開放科目管理"].Click += delegate
+                item02["開放選課科目管理"].Image = Properties.Resources.重補修科目管理_project_64;
+                item02["開放選課科目管理"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item02["開放選課科目管理"].Enable = UserAcl.Current["SHSchool.Retake.SubjectListForm"].Executable;
+                item02["開放選課科目管理"].Click += delegate
                 {
                     Form.SubjectListForm slf = new Form.SubjectListForm();
                     if (slf._isShowForm)
@@ -310,13 +310,13 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
             {
                 //選課開放時間
                 Catalog catalog05 = RoleAclSource.Instance["重補修"]["重補修選課"];
-                catalog05.Add(new RibbonFeature("A754CBCD-F002-40BB-BDD7-86A8B259E613", "課程自動分發"));
+                catalog05.Add(new RibbonFeature("A754CBCD-F002-40BB-BDD7-86A8B259E613", "選課課程分發"));
 
                 RibbonBarItem item05 = RetakeAdmin.Instance.RibbonBarItems["重補修選課"];
-                item05["課程自動分發"].Enable = UserAcl.Current["A754CBCD-F002-40BB-BDD7-86A8B259E613"].Executable;
-                item05["課程自動分發"].Size = RibbonBarButton.MenuButtonSize.Medium;
-                item05["課程自動分發"].Image = Properties.Resources.time_frame_refresh_128;
-                item05["課程自動分發"].Click += delegate
+                item05["選課課程分發"].Enable = UserAcl.Current["A754CBCD-F002-40BB-BDD7-86A8B259E613"].Executable;
+                item05["選課課程分發"].Size = RibbonBarButton.MenuButtonSize.Medium;
+                item05["選課課程分發"].Image = Properties.Resources.time_frame_refresh_128;
+                item05["選課課程分發"].Click += delegate
                 {
                     new Form.SCSelectDistribution().ShowDialog();
                 };

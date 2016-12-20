@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace SHSchool.Retake.Form
 {
@@ -15,22 +16,11 @@ namespace SHSchool.Retake.Form
     {
         private DataTable _DataTable;
         private Dictionary<DataRow, DataGridViewRow> _DisplayRow;
-        
-        //接收 來自ModifyRecord2 手動分派課程 但又尚未存檔 該課程增加人數
-        private Dictionary<string, int> Manually_Distribution_Extra_Student_Count_Dict = new Dictionary<string,int>();
-
-        //接收 來自ModifyRecord2 手動分派課程 但又尚未存檔 該生的增加已指定課程
-        private Dictionary<string, List<string>> Manually_Distribution_Extra_dicStudentAttendList = new Dictionary<string, List<string>>();
-
 
         public SCSelectDistribution()
         {
             InitializeComponent();
 
-            comboBoxEx1.Items.Add("依學生");
-            comboBoxEx1.Items.Add("依科目");
-
-            
 
             #region 取得學生選課及分發狀況
             FISCA.Data.QueryHelper queryHelper = new FISCA.Data.QueryHelper();
@@ -141,6 +131,9 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                 }
             }
 
+            comboBoxEx1.Items.Add(new DataGridViewSorter("依學生", new List<DataGridViewRow>(_DisplayRow.Values)));
+            comboBoxEx1.Items.Add(new DataGridViewSorter("依科目", new List<DataGridViewRow>(_DisplayRow.Values)));
+            comboBoxEx1.DisplayMember = "Mode";
             comboBoxEx1.SelectedIndex = 0;
         }
 
@@ -154,6 +147,10 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                 Dictionary<string, List<string>> dicStudentAttendList = new Dictionary<string, List<string>>();
                 //[studentID][row *]
                 Dictionary<string, List<DataRow>> dicStudentDistributionList = new Dictionary<string, List<DataRow>>();
+
+                Dictionary<string, int> dicStudentDistributionCreditCount = new Dictionary<string, int>();
+
+                Dictionary<string, int> dicCourseStudentCount = new Dictionary<string, int>();
                 #region 整理取得學生須分發的選課紀錄
                 {
                     foreach (System.Data.DataRow row in _DataTable.Rows)
@@ -167,31 +164,20 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                         //select_subject_id, cscourse.uid as attend_course_id
                         if (("" + row["distribution_id"]) == "")
                         {
-                            if (("" + row["select_subject_id"]) != "")
-                                dicStudentDistributionList[studentID].Add(row);
+                            dicStudentDistributionList[studentID].Add(row);
+
+                            if (!dicStudentDistributionCreditCount.ContainsKey(studentID))
+                                dicStudentDistributionCreditCount.Add(studentID, 0);
+                            dicStudentDistributionCreditCount[studentID] += int.Parse("" + row["credit"]);
                         }
                         else
                         {
-                            dicStudentAttendList[studentID].Add("" + row["attend_course_id"]);
+                            dicStudentAttendList[studentID].Add("" + row["distribution_id"]);
+                            if (!dicCourseStudentCount.ContainsKey("" + row["distribution_id"]))
+                                dicCourseStudentCount.Add("" + row["distribution_id"], 0);
+                            dicCourseStudentCount["" + row["distribution_id"]]++;
                         }
                     }
-
-                    if (Manually_Distribution_Extra_dicStudentAttendList.Keys.Count > 0) { 
-                    
-                    foreach(var key in Manually_Distribution_Extra_dicStudentAttendList.Keys){
-
-                        if (dicStudentAttendList.ContainsKey(key)) {
-
-                            foreach (var attend_ID in Manually_Distribution_Extra_dicStudentAttendList[key]) {
-
-                                dicStudentAttendList[key].Add(attend_ID);
-                            }
-                        }                                       
-                    }
-                    
-                                                            
-                    }
-
                 }
                 #endregion
                 //[subj^^level^^credit^^dept][row *]
@@ -206,22 +192,25 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                     FISCA.Data.QueryHelper queryHelper = new FISCA.Data.QueryHelper();
                     var dt = queryHelper.Select(@"
 SELECT course.uid, course.subject_name, course.subject_level, course.credit, course.course_name
-    , $shschool.retake.cdselect.dept_name as dept_name, CASE WHEN scount.student_count is null THEN 0 ELSE scount.student_count END as student_count
+    , $shschool.retake.cdselect.dept_name as dept_name
 FROM $shschool.retake.course course
 	LEFT OUTER JOIN $shschool.retake.session session on course.school_year = session.school_year AND course.semester = session.semester AND course.round = session.round
 	LEFT OUTER JOIN $shschool.retake.cdselect on $shschool.retake.cdselect.ref_course_timetable_id = course.course_timetable_id
-	LEFT OUTER JOIN (
-		SELECT ref_course_id, count(*) as student_count
-		FROM $shschool.retake.scselect
-		GROUP BY ref_course_id
-	) as scount on scount.ref_course_id = course.uid
 WHERE
 	session.active = true
 ORDER BY subject_name, subject_level, credit
 ");
-
+                    dt.Columns.Add("student_count");
                     foreach (System.Data.DataRow row in dt.Rows)
                     {
+                        if (dicCourseStudentCount.ContainsKey("" + row["uid"]))
+                        {
+                            row["student_count"] = "" + dicCourseStudentCount["" + row["uid"]];
+                        }
+                        else
+                        {
+                            row["student_count"] = "0";
+                        }
                         if (!idList.Contains("" + row["uid"]))
                         {
                             idList.Add("" + row["uid"]);
@@ -241,14 +230,20 @@ ORDER BY subject_name, subject_level, credit
                         var section = "" + item.Date.ToShortDateString() + "^^" + item.Period;
                         if (!dicCourseSection.ContainsKey(courseID))
                             dicCourseSection.Add(courseID, new List<string>());
-                        dicCourseSection[courseID].Add(section);                        
+                        dicCourseSection[courseID].Add(section);
                     }
                 }
                 #endregion
 
                 List<UDTScselectDef> addList = new List<UDTScselectDef>();
+                int progress = 0;
                 #region 分發
-                foreach (var studentID in dicStudentDistributionList.Keys)
+                List<string> orderStudent = new List<string>(dicStudentDistributionCreditCount.Keys);
+                orderStudent.Sort(delegate (string sid1, string sid2)
+                {
+                    return dicStudentDistributionCreditCount[sid2].CompareTo(dicStudentDistributionCreditCount[sid1]);
+                });
+                foreach (var studentID in orderStudent)
                 {
                     for (int i = 0; i < dicStudentDistributionList[studentID].Count; i++)
                     {
@@ -274,16 +269,6 @@ ORDER BY subject_name, subject_level, credit
                                 }
                                 if (!pass) continue;
                                 #endregion
-
-                                //假設有手動指定課程，但又尚未存檔，可能新增的人數資料尚未加入資料庫時，要在這邊補加入，才不會影響分發人數判斷(人少優先分配)
-                                if (Manually_Distribution_Extra_Student_Count_Dict.Keys.Count > 0) {
-                                    if (Manually_Distribution_Extra_Student_Count_Dict.ContainsKey(""+courseRow["uid"])) { 
-                                    
-                                       courseRow["student_count"] = int.Parse( ""+ courseRow["student_count"]) + Manually_Distribution_Extra_Student_Count_Dict[(""+courseRow["uid"])];
-                                    
-                                    }                                                                
-                                }
-
                                 candidateList.Add(courseRow);
                                 dicCandidateOrder.Add(courseRow, 0);
 
@@ -333,46 +318,38 @@ ORDER BY subject_name, subject_level, credit
                                 row["course_name"] = target["course_name"];
                                 row["distribution_id"] = target["uid"];
                                 row["fail_reason"] = "";
-
-                                bkw.ReportProgress(0, row);
                             }
                             else
                             {
                                 row["fail_reason"] = "衝堂：" + string.Join("、", unpassList) + ")";
-                                bkw.ReportProgress(0, row);
                             }
                         }
                         else
                         {
                             if ("" + row["fail_reason_ori"] == "")
                             {
-                            row["fail_reason"] = "沒有開課";
+                                row["fail_reason"] = "沒有開課";
                             }
-                            
-                            bkw.ReportProgress(0, row);
                         }
                     }
+                    progress++;
+                    bkw.ReportProgress(100 * progress / dicStudentDistributionList.Count);
                 }
                 #endregion
             };
             bkw.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
             {
-                var dataRow = e.UserState as DataRow;
-                if (("" + dataRow["distribution_id"]) != "")
-                {
-                    _DisplayRow[dataRow].Cells[8].Style.BackColor = Color.Red;
-                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["course_name"];
-                }
-                else if (("" + dataRow["fail_reason"]) != "")
-                {
-                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Gray;
-                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
-                }
-                dgData.FirstDisplayedScrollingRowIndex = _DisplayRow[dataRow].Index;
+                labelX2.Visible = false;
+                progressBarX1.Value = e.ProgressPercentage;
+                progressBarX1.Visible = true;
             };
             bkw.RunWorkerCompleted += delegate
             {
-                FISCA.Presentation.Controls.MsgBox.Show("自動分發完成");
+                progressBarX1.Visible = false;
+                labelX2.Visible = true;
+                labelX2.Text = "自動分發完成";
+                updateDataGridView();
+                //FISCA.Presentation.Controls.MsgBox.Show("自動分發完成");
             };
             bkw.RunWorkerAsync();
         }
@@ -380,97 +357,65 @@ ORDER BY subject_name, subject_level, credit
         private void btnSave_Click(object sender, EventArgs e)
         {
             AccessHelper accessHepler = new AccessHelper();
-          
-            List<UDTScselectDef> list = new List<UDTScselectDef>();
 
-            Dictionary<string, string> failReason = new Dictionary<string, string>();
+            Dictionary<string, string> dicFailReason = new Dictionary<string, string>();
 
-            list = accessHepler.Select<UDTScselectDef>();
+            Dictionary<string, string> dicDistribution = new Dictionary<string, string>();
+
+            List<UDTScselectDef> distributionList = new List<UDTScselectDef>();
 
             foreach (DataGridViewRow displayRow in dgData.Rows)
-            {                
+            {
                 DataRow dataRow = (DataRow)displayRow.Tag;
-               
+
+                //分發課程有變更
                 if (("" + dataRow["distribution_id"]) != "" + dataRow["attend_course_id"])
                 {
                     //新增課程
-                    if (("" + dataRow["distribution_id"]) != "" && ("" + dataRow["attend_course_id"]) == "")
+                    if (("" + dataRow["attend_course_id"]) == "")
                     {
-                        list.Add(new UDTScselectDef() { CourseID = int.Parse("" + dataRow["distribution_id"]), StudentID = (int.Parse("" + dataRow["student_id"])) });
+                        distributionList.Add(new UDTScselectDef() { CourseID = int.Parse("" + dataRow["distribution_id"]), StudentID = (int.Parse("" + dataRow["student_id"])) });
                     }
-                    //更新課程
-                    if (("" + dataRow["distribution_id"]) != "" && ("" + dataRow["attend_course_id"]) != "")
+                    else //更改分發課程
                     {
-                        foreach (var item in list)
-                        {
-                            if ("" + item.StudentID == "" + dataRow["student_id"] && "" + item.CourseID == "" + dataRow["attend_course_id"])
-                            {
-                                item.CourseID = int.Parse("" + dataRow["distribution_id"]);
-                            }
-                        }                                        
-                    }
-
-                    // 刪除課程
-                    if (("" + dataRow["distribution_id"]) == "" && ("" + dataRow["attend_course_id"])!="")
-                    {
-                        foreach (var item in list )
-                        {
-                            if ("" + item.StudentID == "" + dataRow["student_id"] && "" + item.CourseID == "" + dataRow["attend_course_id"])
-                            {
-                                item.Deleted = true;                            
-                            }
-                        }
+                        dicDistribution.Add("" + dataRow["csselect_id"], "" + dataRow["distribution_id"]);
                     }
                 }
-                    // 新增是由原因
-                else if (("" + dataRow["fail_reason"]) != "" + dataRow["fail_reason_ori"])
+                //有分發課程移除未分發原因
+                if (("" + dataRow["distribution_id"]) != "")
                 {
-                    failReason.Add("" + dataRow["ssselect_id"], "" + dataRow["fail_reason"]);
-                    
+                    dataRow["fail_reason"] = "";
+                }
+                // 新增是由原因
+                if (("" + dataRow["fail_reason"]) != "" + dataRow["fail_reason_ori"])
+                {
+                    dicFailReason.Add("" + dataRow["ssselect_id"], "" + dataRow["fail_reason"]);
                 }
             }
-            list.SaveAll();
-                   
-            if (failReason.Count > 0)
+            //儲存分發結果
+            if (dicDistribution.Count > 0)
             {
-                List<UDTSsselectDef> selectList = new AccessHelper().Select<UDTSsselectDef>("uid in (" + string.Join(",", failReason.Keys) + ")");
+                foreach (var item in new AccessHelper().Select<UDTScselectDef>("uid in (" + string.Join(",", dicDistribution.Keys) + ")"))
+                {
+                    if (dicDistribution[item.UID] == "")
+                        item.Deleted = true;
+                    else
+                        item.CourseID = int.Parse(dicDistribution[item.UID]);
+                    distributionList.Add(item);
+                }
+            }
+            distributionList.SaveAll();
+
+            //儲存未分發原因
+            if (dicFailReason.Count > 0)
+            {
+                List<UDTSsselectDef> selectList = new AccessHelper().Select<UDTSsselectDef>("uid in (" + string.Join(",", dicFailReason.Keys) + ")");
                 foreach (var item in selectList)
                 {
-                    item.FailResaon = failReason[item.UID];
+                    item.FailResaon = dicFailReason[item.UID];
                 }
                 selectList.SaveAll();
             }
-
-            #region 舊的Save() code
-            //foreach (DataGridViewRow displayRow in dgData.Rows)
-            //{
-            //    DataRow dataRow = (DataRow)displayRow.Tag;
-            //    if (("" + dataRow["distribution_id"]) != "")
-            //    {
-            //        list.Add(new UDTScselectDef() { CourseID = int.Parse("" + dataRow["distribution_id"]), StudentID = (int.Parse("" + dataRow["student_id"])) });
-            //        if (("" + dataRow["fail_reason"]) != "")
-            //        {
-            //            failReason.Add("" + dataRow["ssselect_id"], "");
-            //        }
-            //    }
-
-            //    else if (("" + dataRow["fail_reason"]) != "")
-            //    {
-            //        failReason.Add("" + dataRow["ssselect_id"], "" + dataRow["fail_reason"]);
-
-            //    }
-            //}
-            //list.SaveAll();
-            //if (failReason.Count > 0)
-            //{
-            //    List<UDTSsselectDef> selectList = new AccessHelper().Select<UDTSsselectDef>("uid in (" + string.Join(",", failReason.Keys) + ")");
-            //    foreach (var item in selectList)
-            //    {
-            //        item.FailResaon = failReason[item.UID];
-            //    }
-            //    selectList.SaveAll();
-            //} 
-            #endregion
 
             FISCA.Presentation.Controls.MsgBox.Show("儲存完成。");
             this.Close();
@@ -494,13 +439,7 @@ ORDER BY subject_name, subject_level, credit
 
             if (MRForm.ShowDialog() == DialogResult.OK)
             {
-                _DataTable = MRForm._DataTable;
-
-                Change_UI_dgView(checkBox1.Checked, checkBox2.Checked, comboBoxEx1.SelectedItem.ToString());
-            }
-            else
-            {
-                //Do Nothing
+                updateDataGridView();
             }
         }
 
@@ -519,31 +458,29 @@ ORDER BY subject_name, subject_level, credit
             ModifyRecord2 MRForm2 = new ModifyRecord2(_DataTable, _RowList);
 
             if (MRForm2.ShowDialog() == DialogResult.OK)
+                updateDataGridView();
+
+        }
+
+        private void 清除分發課程ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow displayRow in dgData.Rows)
             {
-                //取得更改後_DataTable
-                _DataTable = MRForm2._DataTable;
-
-                // 取得手動加入額外人數
-                Manually_Distribution_Extra_Student_Count_Dict = MRForm2._Manually_Distribution_Extra_Student_Count_Dict;
-
-                Manually_Distribution_Extra_dicStudentAttendList = MRForm2._Manually_Distribution_Extra_dicStudentAttendList;
-
-                Change_UI_dgView(checkBox1.Checked, checkBox2.Checked, comboBoxEx1.SelectedItem.ToString());
-     
+                if (displayRow.Selected)
+                {
+                    (displayRow.Tag as DataRow)["distribution_id"] = "";
+                }
             }
-            else
-            {
-                //Do Nothing
-            }
-
+            updateDataGridView();
         }
 
 
         // 隨時監聽所選Rows，若不符條件，將右鍵功能disable
         private void dgData_SelectionChanged(object sender, EventArgs e)
         {
-            手動輸入無法分發原因ToolStripMenuItem.Enabled = true;
-            手動更正分發課程ToolStripMenuItem.Enabled = true;
+            手動輸入無法分發原因ToolStripMenuItem.Enabled = false;
+            手動更正分發課程ToolStripMenuItem.Enabled = false;
+            清除分發課程ToolStripMenuItem.Enabled = false;
 
             List<DataGridViewRow> _RowList = new List<DataGridViewRow>();
 
@@ -558,234 +495,157 @@ ORDER BY subject_name, subject_level, credit
             // 全部和第一筆資料做比較，有一不同，就不給過
             if (_RowList.Count != 0)
             {
+                手動輸入無法分發原因ToolStripMenuItem.Enabled = true;
+                手動更正分發課程ToolStripMenuItem.Enabled = true;
+                清除分發課程ToolStripMenuItem.Enabled = true;
+
                 DataRow dataRow01 = (DataRow)_RowList[0].Tag;
-                if(_RowList[0].Tag !=null)
-                {                                
-                foreach (DataGridViewRow displayRow in _RowList)
+                if (_RowList[0].Tag != null)
                 {
-                    DataRow dataRow = (DataRow)displayRow.Tag;
-
-                    //if (dataRow != null)
-                    //{
-                    //    if ("" + dataRow["fail_reason"] == "")
-                    //    {
-                    //        手動輸入無法分發原因ToolStripMenuItem.Enabled = false;
-                    //    }
-                    //}
-
-                    if ("" + dataRow01["subject_name"] == "" + dataRow["subject_name"] && "" + dataRow01["stu_dept"] == "" + dataRow["stu_dept"] && "" + dataRow01["subject_level"] == "" + dataRow["subject_level"] && "" + dataRow01["credit"] == "" + dataRow["credit"])
+                    foreach (DataGridViewRow displayRow in _RowList)
                     {
-                        //此乃正常課程需求完全相同狀況，不需要對右鍵ToolStripMenuItem 內容 做disable
-                    }
-                    else
-                    {
-                        手動更正分發課程ToolStripMenuItem.Enabled = false;
-                    }
-                    //if ("" + dataRow["fail_reason"] != "")
-                    //{
-                    //    手動更正分發課程ToolStripMenuItem.Enabled = false;
-                    //}
+                        DataRow dataRow = (DataRow)displayRow.Tag;
+
+                        //if (dataRow != null)
+                        //{
+                        //    if ("" + dataRow["fail_reason"] == "")
+                        //    {
+                        //        手動輸入無法分發原因ToolStripMenuItem.Enabled = false;
+                        //    }
+                        //}
+
+                        if ("" + dataRow01["subject_name"] == "" + dataRow["subject_name"] && "" + dataRow01["stu_dept"] == "" + dataRow["stu_dept"] && "" + dataRow01["subject_level"] == "" + dataRow["subject_level"] && "" + dataRow01["credit"] == "" + dataRow["credit"])
+                        {
+                            //此乃正常課程需求完全相同狀況，不需要對右鍵ToolStripMenuItem 內容 做disable
+                        }
+                        else
+                        {
+                            手動更正分發課程ToolStripMenuItem.Enabled = false;
+                        }
+                        //if ("" + dataRow["fail_reason"] != "")
+                        //{
+                        //    手動更正分發課程ToolStripMenuItem.Enabled = false;
+                        //}
 
 
+                    }
                 }
-            }
             }
         }
 
-        private void Change_UI_dgView(bool checkbox1_Is_checked, bool checkbox2_Is_checked, string ReArrange_Mode)
+        private void updateDataGridView()
         {
-            #region 依學生排序
-            if (ReArrange_Mode == "依學生")
+            dgData.Sort((DataGridViewSorter)comboBoxEx1.SelectedItem);
+
+            foreach (DataRow dataRow in _DataTable.Rows)
             {
-                //清空重置，刷新畫面UI
-                dgData.Rows.Clear();
-                _DisplayRow.Clear();
-
-                List<DataRow> _DataTable_Rows_List = new List<DataRow>();
-
-                foreach (DataRow dataRow in _DataTable.Rows)
+                _DisplayRow[dataRow].Visible = true;
+                _DisplayRow[dataRow].Cells[8].Value = "";
+                _DisplayRow[dataRow].Selected = false;
+                if (("" + dataRow["fail_reason"]) != "")
                 {
-                    if (checkbox1_Is_checked)
-                    {
-                        if ("" + dataRow["course_name"] == "")
-                        {
-
-                            _DataTable_Rows_List.Add(dataRow);
-                        }
-                    }
-                    else if (checkbox2_Is_checked)
-                    {
-                        if ("" + dataRow["distribution_id"] != "" + dataRow["attend_course_id"])
-                        {
-
-                            _DataTable_Rows_List.Add(dataRow);
-                        }
-                    }
-                    else
-                    {
-                        _DataTable_Rows_List.Add(dataRow);
-                    }
-                }
-
-                //PadLeft 幫忙補0 齊4位  避免 排序時 8號 比16號大的問題  (因為sort 比第一位)
-                _DataTable_Rows_List.Sort((x, y) => { return ("" + x["class_name"] + ("" + x["seat_no"]).PadLeft(4, '0')).CompareTo(("" + y["class_name"] + ("" + y["seat_no"]).PadLeft(4, '0'))); });
-
-                foreach (DataRow dataRow in _DataTable_Rows_List)
-                {
-                    var displayRow = dgData.Rows[dgData.Rows.Add()];
-                    _DisplayRow.Add(dataRow, displayRow);
-                    displayRow.Tag = dataRow;
-
-                    #region dataRow 欄位
-                    //dept.stu_dept, class.grade_year, class.class_name, student.seat_no, student.student_number, student.name
-                    //, scourse.subject_name, scourse.subject_level, scourse.credit
-                    //, session.school_year, session.semester, session.round
-                    //, CASE WHEN cscourse.subject_type is null THEN sscourse.subject_type ELSE cscourse.subject_type END
-                    //, cscourse.course_name
-                    //, sscourse.uid as select_subject_id, cscourse.uid as attend_course_id, student as student_id 
-                    #endregion
-                    int cellIndex = 0;
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["class_name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["seat_no"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["student_number"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["stu_dept"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_level"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["credit"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["course_name"];
-
-                    if ("" + dataRow["distribution_id"] != "" + dataRow["attend_course_id"])
-                    {
-                        _DisplayRow[dataRow].Cells[8].Style.BackColor = Color.Red;
-                    }
-                    if (("" + dataRow["course_name"]) == "" && ("" + dataRow["fail_reason"]) != "")
-                    {
+                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.LightGray;
+                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
+                    if (("" + dataRow["fail_reason_ori"]) != ("" + dataRow["fail_reason"]))
                         _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Gray;
-                        _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
-                    }
                 }
-            } 
-            #endregion
-
-            #region 依科目排序
-            if (ReArrange_Mode == "依科目")
-            {
-                //清空重置，刷新畫面UI
-                dgData.Rows.Clear();
-                _DisplayRow.Clear();
-
-                List<DataRow> _DataTable_Rows_List = new List<DataRow>();
-
-                foreach (DataRow dataRow in _DataTable.Rows)
+                if (("" + dataRow["distribution_id"]) != "")
                 {
-                    if (checkbox1_Is_checked)
-                    {
-                        if ("" + dataRow["course_name"] == "")
-                        {
-                            _DataTable_Rows_List.Add(dataRow);
-                        }
-                    }
-                    else if (checkbox2_Is_checked)
-                    {
-                        if ("" + dataRow["distribution_id"] != "" + dataRow["attend_course_id"])
-                        {
-                            _DataTable_Rows_List.Add(dataRow);
-                        }
-                    }
-                    else
-                    {
-                        _DataTable_Rows_List.Add(dataRow);
-                    }
-
+                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = _DisplayRow[dataRow].DefaultCellStyle.ForeColor;
+                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["course_name"];
+                    if (("" + dataRow["distribution_id"]) != ("" + dataRow["attend_course_id"]))
+                        _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Red;
                 }
 
-                _DataTable_Rows_List.Sort((x, y) => { return -("" + x["stu_dept"] + "_" + x["subject_name"] + "_" + x["subject_level"] + "_" + x["credit"]).CompareTo(("" + y["stu_dept"] + "_" + y["subject_name"] + "_" + y["subject_level"] + "_" + y["credit"])); });
-
-                foreach (DataRow dataRow in _DataTable_Rows_List)
+                if (checkBox1.Checked)//篩選未分發的
                 {
-                    var displayRow = dgData.Rows[dgData.Rows.Add()];
-                    _DisplayRow.Add(dataRow, displayRow);
-                    displayRow.Tag = dataRow;
-
-                    #region dataRow 欄位
-                    //dept.stu_dept, class.grade_year, class.class_name, student.seat_no, student.student_number, student.name
-                    //, scourse.subject_name, scourse.subject_level, scourse.credit
-                    //, session.school_year, session.semester, session.round
-                    //, CASE WHEN cscourse.subject_type is null THEN sscourse.subject_type ELSE cscourse.subject_type END
-                    //, cscourse.course_name
-                    //, sscourse.uid as select_subject_id, cscourse.uid as attend_course_id, student as student_id 
-                    #endregion
-                    int cellIndex = 0;
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["class_name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["seat_no"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["student_number"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["stu_dept"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_name"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_level"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["credit"];
-                    displayRow.Cells[cellIndex++].Value = "" + dataRow["course_name"];
-
-                    if ("" + dataRow["distribution_id"] != "" + dataRow["attend_course_id"])
+                    if ("" + dataRow["distribution_id"] != "")
                     {
-                        _DisplayRow[dataRow].Cells[8].Style.BackColor = Color.Red;
-                    }
-
-                    if (("" + dataRow["course_name"]) == "" && ("" + dataRow["fail_reason"]) != "")
-                    {
-                        _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Gray;
-                        _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
+                        _DisplayRow[dataRow].Visible = false;
                     }
                 }
-
-
-            } 
-            #endregion
+                if (checkBox2.Checked)//篩選有調整分發的
+                {
+                    if ("" + dataRow["distribution_id"] == "" + dataRow["attend_course_id"]
+                        && "" + dataRow["fail_reason_ori"] == "" + dataRow["fail_reason"])
+                    {
+                        _DisplayRow[dataRow].Visible = false;
+                    }
+                }
+            }
         }
-        
+
 
 
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
-            {                
+            {
                 checkBox2.Enabled = false;
             }
             else
-            {               
+            {
                 checkBox2.Enabled = true;
             }
-            Change_UI_dgView(checkBox1.Checked, checkBox2.Checked, comboBoxEx1.SelectedItem.ToString());
+            updateDataGridView();
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox2.Checked)
-            {                
+            {
                 checkBox1.Enabled = false;
             }
             else
-            {               
+            {
                 checkBox1.Enabled = true;
             }
 
-            Change_UI_dgView(checkBox1.Checked, checkBox2.Checked, comboBoxEx1.SelectedItem.ToString());
+            updateDataGridView();
         }
 
         private void comboBoxEx1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Change_UI_dgView(checkBox1.Checked, checkBox2.Checked, comboBoxEx1.SelectedItem.ToString());
+            updateDataGridView();
         }
-
-
-
-
-      
-        
-        
     }
 
+    class DataGridViewSorter : System.Collections.IComparer
+    {
+        private List<DataGridViewRow> _OrgIndex = new List<DataGridViewRow>();
 
+        public string Mode { get; set; }
+
+        public DataGridViewSorter(string mode, List<DataGridViewRow> orgIndex)
+        {
+            Mode = mode;
+            _OrgIndex = orgIndex;
+        }
+
+        int IComparer.Compare(object x, object y)
+        {
+            DataGridViewRow row1 = (DataGridViewRow)x;
+            DataGridViewRow row2 = (DataGridViewRow)y;
+            if (Mode == "依科目")
+            {
+                DataRow d1 = (DataRow)row1.Tag;
+                DataRow d2 = (DataRow)row2.Tag;
+
+                List<string> desc = new List<string>() { "credit", "subject_level" };
+                foreach (var key in new string[] { "credit", "subject_name", "subject_level", "stu_dept", "distribution_id" })
+                {
+                    if ("" + d1[key] != "" + d2[key])
+                    {
+                        if (desc.Contains(key))
+                            return (("" + d2[key]).PadLeft(20)).CompareTo((("" + d1[key]).PadLeft(20)));
+                        else
+                            return (("" + d1[key]).PadLeft(20)).CompareTo((("" + d2[key]).PadLeft(20)));
+                    }
+                }
+            }
+            //Mode=依學生 或 依科目的比較條件都相等
+            return _OrgIndex.IndexOf(row1).CompareTo(_OrgIndex.IndexOf(row2));
+        }
+    }
 }

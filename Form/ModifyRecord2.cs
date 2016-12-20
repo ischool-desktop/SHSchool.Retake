@@ -27,12 +27,6 @@ namespace SHSchool.Retake.Form
          Dictionary<string, List<string>> dicStudentAttendList = new Dictionary<string, List<string>>();
          Dictionary<string, List<string>> dicCourseSection = new Dictionary<string, List<string>>();
 
-         ///存來自ModifyRecord2 手動分派課程 但又尚未存檔 該課程增加人數
-         public Dictionary<string, int> _Manually_Distribution_Extra_Student_Count_Dict = new Dictionary<string, int>();
-
-         //存 來自ModifyRecord2 手動分派課程 但又尚未存檔 該生的增加已指定課程
-         public Dictionary<string, List<string>> _Manually_Distribution_Extra_dicStudentAttendList = new Dictionary<string, List<string>>();
-
          List<string> idList = new List<string>() { "-1" };
          List<string> ConflictWarningList = new List<string>();
          AccessHelper accessHepler = new AccessHelper();
@@ -115,7 +109,7 @@ ORDER BY subject_name, subject_level, credit
                 }
                 else
                 {
-                    dicStudentAttendList[studentID].Add("" + row["attend_course_id"]);
+                    dicStudentAttendList[studentID].Add("" + row["distribution_id"]);
                 }
             }
         }
@@ -174,24 +168,6 @@ ORDER BY subject_name, subject_level, credit
                         if (comboBoxEx1.Text != "")
                         {
                             row["distribution_id"] = CourseName_to_CourseID["" + comboBoxEx1.Text];
-
-                            //數手動加入課程的額外人數
-                            if (!_Manually_Distribution_Extra_Student_Count_Dict.ContainsKey(""+row["distribution_id"]))
-                            {
-                                _Manually_Distribution_Extra_Student_Count_Dict.Add("" + row["distribution_id"], 0);
-                            
-                            }
-                            _Manually_Distribution_Extra_Student_Count_Dict["" + row["distribution_id"]]++;
-
-                            //數手動加入課程的新選課程，後續處理自動分發衝堂用                            
-                            if (!_Manually_Distribution_Extra_dicStudentAttendList.ContainsKey("" + row["student_id"]))
-                            {
-                                _Manually_Distribution_Extra_dicStudentAttendList.Add("" + row["student_id"],new List<string>());
-                            
-                            }
-
-                            _Manually_Distribution_Extra_dicStudentAttendList["" + row["student_id"]].Add("" + row["distribution_id"]);
-
                         }
                         else {
                             row["distribution_id"] = "";
