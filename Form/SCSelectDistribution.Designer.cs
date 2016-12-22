@@ -64,7 +64,7 @@
             this.btnDistribution.AutoSize = true;
             this.btnDistribution.BackColor = System.Drawing.Color.Transparent;
             this.btnDistribution.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnDistribution.Location = new System.Drawing.Point(856, 727);
+            this.btnDistribution.Location = new System.Drawing.Point(830, 417);
             this.btnDistribution.Name = "btnDistribution";
             this.btnDistribution.Size = new System.Drawing.Size(82, 25);
             this.btnDistribution.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -109,7 +109,7 @@
             this.dgData.RowHeadersVisible = false;
             this.dgData.RowTemplate.Height = 24;
             this.dgData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgData.Size = new System.Drawing.Size(1014, 680);
+            this.dgData.Size = new System.Drawing.Size(988, 370);
             this.dgData.TabIndex = 9;
             this.dgData.SelectionChanged += new System.EventHandler(this.dgData_SelectionChanged);
             // 
@@ -220,7 +220,7 @@
             this.btnSave.AutoSize = true;
             this.btnSave.BackColor = System.Drawing.Color.Transparent;
             this.btnSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnSave.Location = new System.Drawing.Point(944, 727);
+            this.btnSave.Location = new System.Drawing.Point(918, 417);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(82, 25);
             this.btnSave.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -230,9 +230,10 @@
             // 
             // checkBox1
             // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox1.Location = new System.Drawing.Point(733, 10);
+            this.checkBox1.Location = new System.Drawing.Point(707, 10);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(157, 21);
             this.checkBox1.TabIndex = 12;
@@ -270,9 +271,10 @@
             // 
             // checkBox2
             // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox2.AutoSize = true;
             this.checkBox2.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox2.Location = new System.Drawing.Point(896, 10);
+            this.checkBox2.Location = new System.Drawing.Point(870, 10);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(131, 21);
             this.checkBox2.TabIndex = 17;
@@ -290,15 +292,16 @@
             // 
             this.progressBarX1.BackgroundStyle.Class = "";
             this.progressBarX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.progressBarX1.Location = new System.Drawing.Point(12, 728);
+            this.progressBarX1.Location = new System.Drawing.Point(12, 418);
             this.progressBarX1.Name = "progressBarX1";
-            this.progressBarX1.Size = new System.Drawing.Size(838, 23);
+            this.progressBarX1.Size = new System.Drawing.Size(812, 23);
             this.progressBarX1.TabIndex = 18;
             this.progressBarX1.Text = "progressBarX1";
             this.progressBarX1.Visible = false;
             // 
             // labelX2
             // 
+            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelX2.AutoSize = true;
             this.labelX2.BackColor = System.Drawing.Color.Transparent;
             // 
@@ -306,19 +309,18 @@
             // 
             this.labelX2.BackgroundStyle.Class = "";
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(12, 729);
+            this.labelX2.Location = new System.Drawing.Point(12, 421);
             this.labelX2.Name = "labelX2";
-            this.labelX2.Size = new System.Drawing.Size(167, 21);
+            this.labelX2.Size = new System.Drawing.Size(154, 21);
             this.labelX2.TabIndex = 19;
-            this.labelX2.Text = "可點滑鼠右鍵進行手動調整";
+            this.labelX2.Text = "滑鼠右鍵可進行手動調整";
             // 
             // SCSelectDistribution
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1038, 764);
+            this.ClientSize = new System.Drawing.Size(1012, 454);
             this.Controls.Add(this.labelX2);
-            this.Controls.Add(this.progressBarX1);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.comboBoxEx1);
             this.Controls.Add(this.labelX1);
@@ -326,12 +328,11 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dgData);
             this.Controls.Add(this.btnDistribution);
+            this.Controls.Add(this.progressBarX1);
             this.DoubleBuffered = true;
             this.MaximizeBox = true;
-            this.MaximumSize = new System.Drawing.Size(1054, 803);
-            this.MinimumSize = new System.Drawing.Size(1054, 803);
             this.Name = "SCSelectDistribution";
-            this.Text = "選課課程分發";
+            this.Text = "課程自動分發";
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);

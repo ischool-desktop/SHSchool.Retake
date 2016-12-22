@@ -142,6 +142,7 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
             BackgroundWorker bkw = new BackgroundWorker() { WorkerReportsProgress = true };
             bkw.DoWork += delegate
             {
+                bkw.ReportProgress(1);
                 AccessHelper accessHepler = new AccessHelper();
                 //[studentID][courseID *]
                 Dictionary<string, List<string>> dicStudentAttendList = new Dictionary<string, List<string>>();
@@ -180,6 +181,7 @@ ORDER BY session.school_year desc, session.semester desc, session.round desc, st
                     }
                 }
                 #endregion
+                bkw.ReportProgress(2);
                 //[subj^^level^^credit^^dept][row *]
                 Dictionary<string, List<DataRow>> dicCourseList = new Dictionary<string, List<DataRow>>();
                 //[courseID][date^^period *]
@@ -235,6 +237,7 @@ ORDER BY subject_name, subject_level, credit
                 }
                 #endregion
 
+                bkw.ReportProgress(4);
                 List<UDTScselectDef> addList = new List<UDTScselectDef>();
                 int progress = 0;
                 #region 分發
@@ -333,7 +336,7 @@ ORDER BY subject_name, subject_level, credit
                         }
                     }
                     progress++;
-                    bkw.ReportProgress(100 * progress / dicStudentDistributionList.Count);
+                    bkw.ReportProgress(5 + 95 * progress / dicStudentDistributionList.Count);
                 }
                 #endregion
             };
