@@ -321,6 +321,8 @@ ORDER BY subject_name, subject_level, credit
                                 row["course_name"] = target["course_name"];
                                 row["distribution_id"] = target["uid"];
                                 row["fail_reason"] = "";
+                                //加入學生已選課程清單
+                                dicStudentAttendList[studentID].Add("" + row["distribution_id"]);
                             }
                             else
                             {
