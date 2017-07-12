@@ -391,8 +391,8 @@ ORDER BY subject_name, subject_level, credit
                 {
                     dataRow["fail_reason"] = "";
                 }
-                // 新增是由原因
-                if (("" + dataRow["fail_reason"]) != "" + dataRow["fail_reason_ori"])
+                // 新增事由原因(檢查確實存在選課紀錄)
+                if (("" + dataRow["fail_reason"]) != "" + dataRow["fail_reason_ori"] && ("" + dataRow["ssselect_id"]) != "")
                 {
                     dicFailReason.Add("" + dataRow["ssselect_id"], "" + dataRow["fail_reason"]);
                 }

@@ -12,34 +12,31 @@ using FISCA.Presentation.Controls;
 
 namespace SHSchool.Retake.Form
 {
-    
+
     public partial class ModifyRecord2 : FISCA.Presentation.Controls.BaseForm
     {
-         List<DataGridViewRow> _RowList = new List<DataGridViewRow>();
+        private List<DataGridViewRow> _RowList = new List<DataGridViewRow>();
+        private DataTable _DataTable = new DataTable();
+        private  Dictionary<string, string> _DicCourseID = new Dictionary<string, string>();
+        private Dictionary<string, string> _DicCourseName = new Dictionary<string, string>();
+        private Dictionary<string, List<string>> _DicStudentAttendList = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> _DicCourseSection = new Dictionary<string, List<string>>();
 
-         public DataTable _DataTable = new DataTable();
-         public Dictionary<string, string> CourseName_to_CourseID = new Dictionary<string, string>();
-         public Dictionary<string, string> CourseID_to_CourseName = new Dictionary<string, string>();
 
-         //[subj^^level^^credit^^dept][row *]
-         //Dictionary<string, List<DataRow>> dicCourseList = new Dictionary<string, List<DataRow>>();
 
-         Dictionary<string, List<string>> dicStudentAttendList = new Dictionary<string, List<string>>();
-         Dictionary<string, List<string>> dicCourseSection = new Dictionary<string, List<string>>();
-
-         List<string> idList = new List<string>() { "-1" };
-         List<string> ConflictWarningList = new List<string>();
-         AccessHelper accessHepler = new AccessHelper();
-
-        public ModifyRecord2(DataTable DataTable,List<DataGridViewRow> RowList)
+        public ModifyRecord2(DataTable dataTable, List<DataGridViewRow> rowList)
         {
             InitializeComponent();
-
-            foreach (DataGridViewRow displayRow in RowList)
+           
+            _DataTable = dataTable;
+            foreach (DataGridViewRow displayRow in rowList)
             {
-                _RowList.Add(displayRow);               
+                _RowList.Add(displayRow);
             }
-            _DataTable = DataTable;
+
+            DataRow dataRow01 = (DataRow)_RowList[0].Tag;
+            List<string> idList = new List<string>() { "-1" };
+            AccessHelper accessHepler = new AccessHelper();
 
             comboBoxEx1.Items.Add("");
 
@@ -60,32 +57,25 @@ WHERE
 ORDER BY subject_name, subject_level, credit
 ");
 
-            DataRow dataRow01 = (DataRow)_RowList[0].Tag;
-
             if (_RowList[0].Tag != null)
             {
                 foreach (System.Data.DataRow row in dt.Rows)
-                {             
-                    if ("" + dataRow01["subject_name"] == "" + row["subject_name"] && "" + dataRow01["stu_dept"] == "" + row["dept_name"] && "" + dataRow01["subject_level"] == "" + row["subject_level"] && "" + dataRow01["credit"] == "" + row["credit"])
+                {
+                    if ("" + dataRow01["subject_name"] == "" + row["subject_name"]
+                        && "" + dataRow01["stu_dept"] == "" + row["dept_name"]
+                        && "" + dataRow01["subject_level"] == "" + row["subject_level"]
+                        && "" + dataRow01["credit"] == "" + row["credit"])
                     {
                         // 符合 科目、科別、級別、學分  相同，才加入List
 
-                        comboBoxEx1.Items.Add("" + row["course_name"]);                        
+                        comboBoxEx1.Items.Add("" + row["course_name"]);
+                        if (!idList.Contains("" + row["uid"]))
+                        {
+                            idList.Add("" + row["uid"]);
+                        }
+                        _DicCourseID.Add("" + row["course_name"], "" + row["uid"]);
+                        _DicCourseName.Add("" + row["uid"], "" + row["course_name"]);
                     }
-                    //var key = "" + row["subject_name"] + "^^" + row["subject_level"] + "^^" + row["credit"] + "^^" + row["dept_name"];
-                    //if (!dicCourseList.ContainsKey(key))
-                    //{
-                    //    dicCourseList.Add(key, new List<DataRow>());
-                    //}
-                    //dicCourseList[key].Add(row);
-                    if (!idList.Contains("" + row["uid"]))
-                    {
-                        idList.Add("" + row["uid"]);
-                        
-                    }
-
-                    CourseName_to_CourseID.Add("" + row["course_name"], "" + row["uid"]);
-                    CourseID_to_CourseName.Add("" + row["uid"], "" + row["course_name"]);
                 }
             }
 
@@ -94,63 +84,69 @@ ORDER BY subject_name, subject_level, credit
             {
                 var courseID = "" + item.CourseID;
                 var section = "" + item.Date.ToShortDateString() + "^^" + item.Period;
-                if (!dicCourseSection.ContainsKey(courseID))
-                    dicCourseSection.Add(courseID, new List<string>());
-                dicCourseSection[courseID].Add(section);
+                if (!_DicCourseSection.ContainsKey(courseID))
+                    _DicCourseSection.Add(courseID, new List<string>());
+                _DicCourseSection[courseID].Add(section);
 
             }
 
             foreach (System.Data.DataRow row in _DataTable.Rows)
             {
                 var studentID = "" + row["student_id"];
-                if (!dicStudentAttendList.ContainsKey(studentID))
-                {                    
-                    dicStudentAttendList.Add(studentID, new List<string>());
+                if (!_DicStudentAttendList.ContainsKey(studentID))
+                {
+                    _DicStudentAttendList.Add(studentID, new List<string>());
                 }
                 else
                 {
-                    dicStudentAttendList[studentID].Add("" + row["distribution_id"]);
+                    _DicStudentAttendList[studentID].Add("" + row["distribution_id"]);
                 }
             }
         }
 
         private void buttonX1_Click(object sender, EventArgs e)
-        {            
-            foreach (DataGridViewRow displayRow in _RowList) {
+        {
+            List<string> conflictWarningList = new List<string>();
+            foreach (DataGridViewRow displayRow in _RowList)
+            {
 
                 DataRow dataRow = (DataRow)displayRow.Tag;
 
                 string studentID = "" + dataRow["student_id"];
                 string courseID = "";
-                                
-                if(CourseName_to_CourseID.ContainsKey("" + comboBoxEx1.Text)){
-                
-                courseID = CourseName_to_CourseID["" + comboBoxEx1.Text];
+
+                if (_DicCourseID.ContainsKey("" + comboBoxEx1.Text))
+                {
+
+                    courseID = _DicCourseID["" + comboBoxEx1.Text];
                 }
 
-                foreach (var attendCourseID in dicStudentAttendList[studentID])
+                foreach (var attendCourseID in _DicStudentAttendList[studentID])
                 {
-                    if (dicCourseSection.ContainsKey(courseID) && dicCourseSection.ContainsKey(attendCourseID) && dicCourseSection[courseID].Intersect(dicCourseSection[attendCourseID]).Count() > 0)
+                    if (_DicCourseSection.ContainsKey(courseID) && _DicCourseSection.ContainsKey(attendCourseID) && _DicCourseSection[courseID].Intersect(_DicCourseSection[attendCourseID]).Count() > 0)
                     {
                         //整理衝堂學生、課程提示訊息資料                        
-                        ConflictWarningList.Add("學生:" + ("" + dataRow["name"]) +"  "+ "科目:" + CourseID_to_CourseName[courseID] + "與" + "科目:" + CourseID_to_CourseName[attendCourseID] + "衝堂" + "確定要分發課程?" + "\r\n");
+                        conflictWarningList.Add("學生:" + ("" + dataRow["name"]) + "  " + "科目:" + _DicCourseName[courseID] + "與" + "科目:" + _DicCourseName[attendCourseID] + "衝堂" + "確定要分發課程?" + "\r\n");
                     }
-                }                        
+                }
             }
 
             // 有衝堂狀況時
-            if (ConflictWarningList.Count > 0) {
+            if (conflictWarningList.Count > 0)
+            {
                 string warning = "";
-                foreach (var warn in ConflictWarningList) {
-                    warning += warn;                                
+                foreach (var warn in conflictWarningList)
+                {
+                    warning += warn;
                 }
                 if (MsgBox.Show(warning, "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     //Do Nothing
                 }
-                else {
-                    return;                
-                };                                    
+                else
+                {
+                    return;
+                };
             }
 
             foreach (DataGridViewRow displayRow in _RowList)
@@ -159,21 +155,22 @@ ORDER BY subject_name, subject_level, credit
 
                 foreach (System.Data.DataRow row in _DataTable.Rows)
                 {
-                    if (row["class_name"] == dataRow["class_name"] && row["seat_no"] == dataRow["seat_no"]&&
-                        row["student_number"] == dataRow["student_number"] && row["name"] == dataRow["name"]&&
+                    if (row["class_name"] == dataRow["class_name"] && row["seat_no"] == dataRow["seat_no"] &&
+                        row["student_number"] == dataRow["student_number"] && row["name"] == dataRow["name"] &&
                         row["stu_dept"] == dataRow["stu_dept"] && row["subject_level"] == dataRow["subject_level"] &&
-                        row["credit"] == dataRow["credit"] && row["fail_reason"] == dataRow["fail_reason"] 
+                        row["credit"] == dataRow["credit"] && row["fail_reason"] == dataRow["fail_reason"]
                         )
                     {
                         if (comboBoxEx1.Text != "")
                         {
-                            row["distribution_id"] = CourseName_to_CourseID["" + comboBoxEx1.Text];
+                            row["distribution_id"] = _DicCourseID["" + comboBoxEx1.Text];
                         }
-                        else {
+                        else
+                        {
                             row["distribution_id"] = "";
-                           
-                        }                        
-                        row["course_name"] = ""+ comboBoxEx1.Text;                        
+
+                        }
+                        row["course_name"] = "" + comboBoxEx1.Text;
                     }
                 }
             }

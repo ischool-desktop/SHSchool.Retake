@@ -182,7 +182,7 @@
             this.toolStripSeparator1,
             this.手動輸入無法分發原因ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 76);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 98);
             // 
             // 手動更正分發課程ToolStripMenuItem
             // 
