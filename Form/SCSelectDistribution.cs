@@ -25,17 +25,31 @@ namespace SHSchool.Retake.Form
             #region 取得學生選課及分發狀況
             FISCA.Data.QueryHelper queryHelper = new FISCA.Data.QueryHelper();
             _DataTable = queryHelper.Select(@"
-SELECT dept.stu_dept, class.grade_year, class.class_name, student.seat_no, student.student_number, student.name
-	, scourse.subject_name, scourse.subject_level, scourse.credit
-	, session.school_year, session.semester, session.round
+SELECT 
+	dept.stu_dept
+	, class.grade_year
+	, class.class_name
+	, student.seat_no
+	, student.student_number
+	, student.name
+	, scourse.subject_name
+	, scourse.subject_level
+	, scourse.credit
+	, session.school_year
+	, session.semester
+	, session.round
 	, CASE WHEN cscourse.subject_type is null THEN sscourse.subject_type ELSE cscourse.subject_type END
 	, cscourse.course_name
 	, sscourse.uid as select_subject_id
-    , cscourse.uid as attend_course_id, cscourse.uid as distribution_id,cscourse.csselect_id
-    , sscourse.fail_reason as fail_reason, sscourse.fail_reason as fail_reason_ori, sscourse.ssselect_id  
-    
+    , cscourse.uid as attend_course_id
+	, cscourse.uid as distribution_id
+	, cscourse.csselect_id
+    , sscourse.fail_reason as fail_reason
+	, sscourse.fail_reason as fail_reason_ori
+	, sscourse.ssselect_id      
     , student.id as student_id
-    
+	, suggest_list.type
+	, suggest_list.required
 FROM (
 		SELECT csselect.ref_student_id, course.subject_name, course.subject_level, course.credit, course.school_year, course.semester, course.round
 		FROM $shschool.retake.scselect csselect
@@ -93,10 +107,46 @@ FROM (
 		AND cscourse.school_year = scourse.school_year
 		AND cscourse.semester = scourse.semester
 		AND cscourse.round = scourse.round
+	LEFT OUTER JOIN (
+		SELECT * FROM
+			xpath_table(
+				'ref_student_id'
+				, 'subject_content'
+				, '$shschool.retake.suggest_list'
+				, '/Subjects/Subject/@Name|/Subjects/Subject/@Level|/Subjects/Subject/@Credit|/Subjects/Subject/@Type|/Subjects/Subject/@Required|/Subjects/Subject/@Score|/Subjects/Subject/@SchoolYear|/Subjects/Subject/@Semester|/Subjects/Subject/@GradeYear'
+				, 'ref_session_id=(select uid from $shschool.retake.session where active=''true'')'
+			) AS t(
+				ref_student_id BIGINT
+				, subject_name character varying
+				, subject_level character varying
+				, credit BIGINT
+				, type character varying
+				, required character varying
+				, score character varying
+				, schoolyear character varying
+				, semester character varying
+				, gradeyear character varying
+			)
+	) AS suggest_list 
+		ON suggest_list.ref_student_id = student.id
+		AND suggest_list.subject_name = scourse.subject_name 
+		AND suggest_list.subject_level=scourse.subject_level::TEXT
+		AND suggest_list.credit=scourse.credit
 WHERE 
 	session.active = true
-ORDER BY session.school_year desc, session.semester desc, session.round desc, stu_dept, class.grade_year desc, class.display_order, class.class_name, student.seat_no, student.id, scourse.credit desc, scourse.subject_name, scourse.subject_level
-");
+ORDER BY 
+	session.school_year desc
+	, session.semester desc
+	, session.round desc
+	, stu_dept
+	, class.grade_year desc
+	, class.display_order
+	, class.class_name
+	, student.seat_no
+	, student.id
+	, scourse.credit desc
+	, scourse.subject_name
+	, scourse.subject_level");
             #endregion
             _DisplayRow = new Dictionary<DataRow, DataGridViewRow>();
             foreach (DataRow dataRow in _DataTable.Rows)
@@ -365,7 +415,7 @@ ORDER BY subject_name, subject_level, credit
 
             Dictionary<string, string> dicFailReason = new Dictionary<string, string>();
 
-            Dictionary<string, string> dicDistribution = new Dictionary<string, string>();
+            Dictionary<string, DataRow> dicDistribution = new Dictionary<string, DataRow>();
 
             List<UDTScselectDef> distributionList = new List<UDTScselectDef>();
 
@@ -379,11 +429,16 @@ ORDER BY subject_name, subject_level, credit
                     //新增課程
                     if (("" + dataRow["attend_course_id"]) == "")
                     {
-                        distributionList.Add(new UDTScselectDef() { CourseID = int.Parse("" + dataRow["distribution_id"]), StudentID = (int.Parse("" + dataRow["student_id"])) });
+                        distributionList.Add(new UDTScselectDef()
+                        {
+                            CourseID = int.Parse("" + dataRow["distribution_id"]),
+                            StudentID = (int.Parse("" + dataRow["student_id"])),
+                            Type = ("" + dataRow["type"]) == "" ? "" : ("" + dataRow["type"] + "修")
+                        });
                     }
                     else //更改分發課程
                     {
-                        dicDistribution.Add("" + dataRow["csselect_id"], "" + dataRow["distribution_id"]);
+                        dicDistribution.Add("" + dataRow["csselect_id"], dataRow);
                     }
                 }
                 //有分發課程移除未分發原因
@@ -402,10 +457,14 @@ ORDER BY subject_name, subject_level, credit
             {
                 foreach (var item in new AccessHelper().Select<UDTScselectDef>("uid in (" + string.Join(",", dicDistribution.Keys) + ")"))
                 {
-                    if (dicDistribution[item.UID] == "")
+                    var dataRow = dicDistribution[item.UID];
+                    if (("" + dataRow["distribution_id"]) == "")
                         item.Deleted = true;
                     else
-                        item.CourseID = int.Parse(dicDistribution[item.UID]);
+                    {
+                        item.CourseID = int.Parse("" + dataRow["distribution_id"]);
+                        item.Type = ("" + dataRow["type"]) == "" ? "" : ("" + dataRow["type"] + "修");
+                    }
                     distributionList.Add(item);
                 }
             }
