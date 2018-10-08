@@ -221,15 +221,15 @@ namespace SHSchool.Retake.DAO
                         row["姓名"] = studRec.StudentName;
                         row["科目名稱"] = sss.Subject + GetNumber(sss.Level);
                         if (sss.Require)
-                            row["必選修"] = "必";
+                            row["必選修"] = "必修";
                         else
-                            row["必選修"] = "選";
+                            row["必選修"] = "選修";
 
                         row["成績"] = sss.Score;
                         row["學分"] = sss.Credit;
                         row["學年度"] = sss.SchoolYear;
                         row["學期"] = sss.Semester;
-                        row["重補修"] = "重";
+                        row["重補修"] = "重修";
                         row["科目"] = sss.Subject;
                         row["級別"] = sss.Level;
                         row["成績年級"] = sss.GradeYear;
@@ -265,10 +265,10 @@ namespace SHSchool.Retake.DAO
 
                         row["姓名"] = studRec.StudentName;
                         row["科目名稱"] = gps.SubjectName + GetNumber(gps.Level);
-                        row["必選修"] = "必";
+                        row["必選修"] = "必修";
                         row["學期"] = gps.Semester;
                         row["學分"] = gps.Credit;
-                        row["重補修"] = "補";
+                        row["重補修"] = "補修";
                         row["科目"] = gps.SubjectName;
                         row["級別"] = gps.Level;
                         row["成績年級"] = gps.GradeYear;

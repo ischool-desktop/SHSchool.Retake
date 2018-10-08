@@ -12,10 +12,10 @@ using System.Data;
 using System.Xml;
 
 namespace SHSchool.Retake.ImportExport
-{       
+{
     public class ExportCourseScore
     {
-        BackgroundWorker _bgWorker= new BackgroundWorker ();
+        BackgroundWorker _bgWorker = new BackgroundWorker();
         List<string> _CourseIDList;
         List<UDTScselectDef> _ScSelectList;
 
@@ -26,7 +26,7 @@ namespace SHSchool.Retake.ImportExport
             _bgWorker.DoWork += new DoWorkEventHandler(_bgWorker_DoWork);
             _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(_bgWorker_RunWorkerCompleted);
             _bgWorker.RunWorkerAsync();
-            
+
         }
 
         void _bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -40,7 +40,7 @@ namespace SHSchool.Retake.ImportExport
             {
                 FISCA.Presentation.Controls.MsgBox.Show("產生成績檔案發生錯誤," + e.Error.Message);
             }
-            
+
         }
 
         void _bgWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -71,11 +71,13 @@ namespace SHSchool.Retake.ImportExport
                 if (!studIDList.Contains(sid))
                     studIDList.Add(sid);
 
-                if (data.Type == "重修")
-                    score1List.Add(data);
+                //if (data.Type == "重修")
+                //    score1List.Add(data);
 
-                if (data.Type=="補修")
+                if (data.Type == "補修")
                     score2List.Add(data);
+                else
+                    score1List.Add(data);
             }
 
             // 取得學生
@@ -92,11 +94,11 @@ namespace SHSchool.Retake.ImportExport
                 classDict.Add(data.ID, data);
 
             // 取得學生成績
-            Dictionary<int, List<SemesterSubjectScoreInfo>> semsScoreDict = new Dictionary<int,List<SemesterSubjectScoreInfo>> ();
-                      // 填入學期科目成績(有過濾重讀)
-             AccessHelper accessHelper = new AccessHelper();
-             List<StudentRecord> StudRecList = accessHelper.StudentHelper.GetStudents(studIDList);
-            accessHelper.StudentHelper.FillSemesterSubjectScore(true,StudRecList);
+            Dictionary<int, List<SemesterSubjectScoreInfo>> semsScoreDict = new Dictionary<int, List<SemesterSubjectScoreInfo>>();
+            // 填入學期科目成績(有過濾重讀)
+            AccessHelper accessHelper = new AccessHelper();
+            List<StudentRecord> StudRecList = accessHelper.StudentHelper.GetStudents(studIDList);
+            accessHelper.StudentHelper.FillSemesterSubjectScore(true, StudRecList);
             foreach (StudentRecord studRec in StudRecList)
             {
                 int sid = int.Parse(studRec.StudentID);
@@ -150,15 +152,15 @@ namespace SHSchool.Retake.ImportExport
             {
                 bool hasData = false;
                 if (semsScoreDict.ContainsKey(data.StudentID))
-                {                    
+                {
                     foreach (SemesterSubjectScoreInfo rec1 in semsScoreDict[data.StudentID])
                     {
-                        string ss = rec1.Detail.ToString();                        
+                        string ss = rec1.Detail.ToString();
 
                         // 需要計算學分
                         if (rec1.Detail.GetAttribute("不計學分") != "是")
                         {
-                                // 取得課程
+                            // 取得課程
                             if (courseDict.ContainsKey(data.CourseID))
                             {
                                 UDTCourseDef co = courseDict[data.CourseID];
@@ -202,12 +204,14 @@ namespace SHSchool.Retake.ImportExport
 
                                     cs.Credit = co.Credit;
                                     cs.isT1 = true;
-                                    CourseScoreList.Add(cs);
-                                }
-                            } 
-                            
-                        }
 
+                                    cs.RetakeSchoolYear = "" + co.SchoolYear;
+                                    cs.RetakeSemester = "" + co.Semester;
+                                    CourseScoreList.Add(cs);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 // 完全比不到重修成績當補修看
@@ -223,11 +227,8 @@ namespace SHSchool.Retake.ImportExport
             int dSchoolYear = int.Parse(K12.Data.School.DefaultSchoolYear);
             int dSemester = int.Parse(K12.Data.School.DefaultSemester);
             // 補修處理
-
-
-
             foreach (UDTScselectDef data in score2List)
-            {                
+            {
                 if (courseDict.ContainsKey(data.CourseID))
                 {
                     CourseScore cs = new CourseScore();
@@ -249,9 +250,9 @@ namespace SHSchool.Retake.ImportExport
                     if (data.Score.HasValue)
                     {
                         cs.Score = data.Score;
-                        if (data.Score.Value >= 60)                        
-                            cs.pass = true;                            
-                        
+                        if (data.Score.Value >= 60)
+                            cs.pass = true;
+
                     }
 
 
@@ -282,7 +283,7 @@ namespace SHSchool.Retake.ImportExport
                             }
                         }
                     }
-                    
+
                     CourseScoreList.Add(cs);
                 }
             }
@@ -297,46 +298,52 @@ namespace SHSchool.Retake.ImportExport
             wb.Worksheets[0].Cells[0, 4].PutValue("學年度");
             wb.Worksheets[0].Cells[0, 5].PutValue("學期");
             wb.Worksheets[0].Cells[0, 6].PutValue("學分數");
-            wb.Worksheets[0].Cells[0, 7].PutValue("分項類別");           
+            wb.Worksheets[0].Cells[0, 7].PutValue("分項類別");
             wb.Worksheets[0].Cells[0, 8].PutValue("成績年級");
             wb.Worksheets[0].Cells[0, 9].PutValue("必選修");
             wb.Worksheets[0].Cells[0, 10].PutValue("校部訂");
             wb.Worksheets[0].Cells[0, 11].PutValue("原始成績");
             wb.Worksheets[0].Cells[0, 12].PutValue("重修成績");
             wb.Worksheets[0].Cells[0, 13].PutValue("取得學分");
+            wb.Worksheets[0].Cells[0, 14].PutValue("重修學年度");
+            wb.Worksheets[0].Cells[0, 15].PutValue("重修學期");
 
             int rowIdx = 1;
             foreach (CourseScore cs in CourseScoreList)
             {
-                wb.Worksheets[0].Cells[rowIdx, 0].PutValue(cs.StudentNumber);
-                wb.Worksheets[0].Cells[rowIdx, 1].PutValue(cs.Name);
-                wb.Worksheets[0].Cells[rowIdx, 2].PutValue(cs.SubjectName);
-                wb.Worksheets[0].Cells[rowIdx, 3].PutValue(cs.SubjectLevel);
-                wb.Worksheets[0].Cells[rowIdx, 4].PutValue(cs.SchoolYear);
-                wb.Worksheets[0].Cells[rowIdx, 5].PutValue(cs.Semester);
-                wb.Worksheets[0].Cells[rowIdx, 6].PutValue(cs.Credit);
-                wb.Worksheets[0].Cells[rowIdx, 7].PutValue(cs.開課分項類別);
-                wb.Worksheets[0].Cells[rowIdx, 8].PutValue(cs.GradeYear);
-                wb.Worksheets[0].Cells[rowIdx, 9].PutValue(cs.strRequire);
-                wb.Worksheets[0].Cells[rowIdx, 10].PutValue(cs.Def1);
-
                 if (cs.Score.HasValue)
                 {
+                    wb.Worksheets[0].Cells[rowIdx, 0].PutValue("" + cs.StudentNumber);
+                    wb.Worksheets[0].Cells[rowIdx, 1].PutValue("" + cs.Name);
+                    wb.Worksheets[0].Cells[rowIdx, 2].PutValue("" + cs.SubjectName);
+                    wb.Worksheets[0].Cells[rowIdx, 3].PutValue("" + cs.SubjectLevel);
+                    wb.Worksheets[0].Cells[rowIdx, 4].PutValue("" + cs.SchoolYear);
+                    wb.Worksheets[0].Cells[rowIdx, 5].PutValue("" + cs.Semester);
+                    wb.Worksheets[0].Cells[rowIdx, 6].PutValue("" + cs.Credit);
+                    wb.Worksheets[0].Cells[rowIdx, 7].PutValue("" + cs.開課分項類別);
+                    wb.Worksheets[0].Cells[rowIdx, 8].PutValue("" + cs.GradeYear);
+                    wb.Worksheets[0].Cells[rowIdx, 9].PutValue("" + cs.strRequire);
+                    wb.Worksheets[0].Cells[rowIdx, 10].PutValue("" + cs.Def1);
+
                     if (cs.isT1)
                     {
-                        wb.Worksheets[0].Cells[rowIdx, 12].PutValue(cs.Score.Value);
-                        if(cs.retSourceScore.HasValue)
-                            wb.Worksheets[0].Cells[rowIdx, 11].PutValue(cs.retSourceScore.Value);
+                        wb.Worksheets[0].Cells[rowIdx, 12].PutValue("" + cs.Score.Value);
+                        if (cs.retSourceScore.HasValue)
+                            wb.Worksheets[0].Cells[rowIdx, 11].PutValue("" + cs.retSourceScore.Value);
                     }
                     else
-                        wb.Worksheets[0].Cells[rowIdx, 11].PutValue(cs.Score.Value);
-                    
+                        wb.Worksheets[0].Cells[rowIdx, 11].PutValue("" + cs.Score.Value);
+
+                    if (cs.pass)
+                        wb.Worksheets[0].Cells[rowIdx, 13].PutValue("是");
+                    else
+                        wb.Worksheets[0].Cells[rowIdx, 13].PutValue("否");
+
+
+                    wb.Worksheets[0].Cells[rowIdx, 14].PutValue("" + cs.RetakeSchoolYear);
+                    wb.Worksheets[0].Cells[rowIdx, 15].PutValue("" + cs.RetakeSemester);
+                    rowIdx++;
                 }
-                if(cs.pass)
-                    wb.Worksheets[0].Cells[rowIdx, 13].PutValue("是");
-                else
-                    wb.Worksheets[0].Cells[rowIdx, 13].PutValue("否");
-                rowIdx++;
             }
             wb.Worksheets[0].AutoFitColumns();
             e.Result = wb;

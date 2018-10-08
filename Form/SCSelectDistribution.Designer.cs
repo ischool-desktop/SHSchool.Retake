@@ -32,15 +32,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnDistribution = new DevComponents.DotNetBar.ButtonX();
             this.dgData = new DevComponents.DotNetBar.Controls.DataGridViewX();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.手動更正分發課程ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.清除分發課程ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,6 +44,17 @@
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.progressBarX1 = new DevComponents.DotNetBar.Controls.ProgressBarX();
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -64,7 +66,7 @@
             this.btnDistribution.AutoSize = true;
             this.btnDistribution.BackColor = System.Drawing.Color.Transparent;
             this.btnDistribution.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnDistribution.Location = new System.Drawing.Point(830, 417);
+            this.btnDistribution.Location = new System.Drawing.Point(932, 392);
             this.btnDistribution.Name = "btnDistribution";
             this.btnDistribution.Size = new System.Drawing.Size(82, 25);
             this.btnDistribution.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -91,7 +93,9 @@
             this.Column6,
             this.Column7,
             this.Column8,
-            this.Column9});
+            this.Column10,
+            this.Column11,
+            this.colTarget});
             this.dgData.ContextMenuStrip = this.contextMenuStrip1;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
@@ -109,9 +113,150 @@
             this.dgData.RowHeadersVisible = false;
             this.dgData.RowTemplate.Height = 24;
             this.dgData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgData.Size = new System.Drawing.Size(988, 370);
+            this.dgData.Size = new System.Drawing.Size(1090, 345);
             this.dgData.TabIndex = 9;
             this.dgData.SelectionChanged += new System.EventHandler(this.dgData_SelectionChanged);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.手動更正分發課程ToolStripMenuItem,
+            this.清除分發課程ToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.手動輸入無法分發原因ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 76);
+            // 
+            // 手動更正分發課程ToolStripMenuItem
+            // 
+            this.手動更正分發課程ToolStripMenuItem.Enabled = false;
+            this.手動更正分發課程ToolStripMenuItem.Name = "手動更正分發課程ToolStripMenuItem";
+            this.手動更正分發課程ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.手動更正分發課程ToolStripMenuItem.Text = "調整分發課程";
+            this.手動更正分發課程ToolStripMenuItem.Click += new System.EventHandler(this.手動更正分發課程ToolStripMenuItem_Click);
+            // 
+            // 清除分發課程ToolStripMenuItem
+            // 
+            this.清除分發課程ToolStripMenuItem.Enabled = false;
+            this.清除分發課程ToolStripMenuItem.Name = "清除分發課程ToolStripMenuItem";
+            this.清除分發課程ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.清除分發課程ToolStripMenuItem.Text = "清除分發課程";
+            this.清除分發課程ToolStripMenuItem.Click += new System.EventHandler(this.清除分發課程ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(167, 6);
+            // 
+            // 手動輸入無法分發原因ToolStripMenuItem
+            // 
+            this.手動輸入無法分發原因ToolStripMenuItem.Enabled = false;
+            this.手動輸入無法分發原因ToolStripMenuItem.Name = "手動輸入無法分發原因ToolStripMenuItem";
+            this.手動輸入無法分發原因ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.手動輸入無法分發原因ToolStripMenuItem.Text = "調整無法分發原因";
+            this.手動輸入無法分發原因ToolStripMenuItem.Click += new System.EventHandler(this.手動輸入無法分發原因ToolStripMenuItem_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.AutoSize = true;
+            this.btnSave.BackColor = System.Drawing.Color.Transparent;
+            this.btnSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnSave.Location = new System.Drawing.Point(1020, 392);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(82, 25);
+            this.btnSave.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btnSave.TabIndex = 11;
+            this.btnSave.Text = "儲存";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox1.Location = new System.Drawing.Point(809, 10);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(157, 21);
+            this.checkBox1.TabIndex = 12;
+            this.checkBox1.Text = "篩選尚未分發課程學生";
+            this.checkBox1.UseVisualStyleBackColor = false;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // labelX1
+            // 
+            this.labelX1.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX1.BackgroundStyle.Class = "";
+            this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX1.Location = new System.Drawing.Point(12, 12);
+            this.labelX1.Name = "labelX1";
+            this.labelX1.Size = new System.Drawing.Size(75, 23);
+            this.labelX1.TabIndex = 13;
+            this.labelX1.Text = "排序方式:";
+            // 
+            // comboBoxEx1
+            // 
+            this.comboBoxEx1.DisplayMember = "Mode";
+            this.comboBoxEx1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxEx1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEx1.FormattingEnabled = true;
+            this.comboBoxEx1.ItemHeight = 19;
+            this.comboBoxEx1.Location = new System.Drawing.Point(93, 10);
+            this.comboBoxEx1.Name = "comboBoxEx1";
+            this.comboBoxEx1.Size = new System.Drawing.Size(121, 25);
+            this.comboBoxEx1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.comboBoxEx1.TabIndex = 16;
+            this.comboBoxEx1.SelectedIndexChanged += new System.EventHandler(this.comboBoxEx1_SelectedIndexChanged);
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox2.Location = new System.Drawing.Point(972, 10);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(131, 21);
+            this.checkBox2.TabIndex = 17;
+            this.checkBox2.Text = "篩選本次調整學生";
+            this.checkBox2.UseVisualStyleBackColor = false;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
+            // progressBarX1
+            // 
+            this.progressBarX1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBarX1.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.progressBarX1.BackgroundStyle.Class = "";
+            this.progressBarX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.progressBarX1.Location = new System.Drawing.Point(12, 393);
+            this.progressBarX1.Name = "progressBarX1";
+            this.progressBarX1.Size = new System.Drawing.Size(914, 23);
+            this.progressBarX1.TabIndex = 18;
+            this.progressBarX1.Text = "progressBarX1";
+            this.progressBarX1.Visible = false;
+            // 
+            // labelX2
+            // 
+            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelX2.AutoSize = true;
+            this.labelX2.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX2.BackgroundStyle.Class = "";
+            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX2.Location = new System.Drawing.Point(12, 396);
+            this.labelX2.Name = "labelX2";
+            this.labelX2.Size = new System.Drawing.Size(154, 21);
+            this.labelX2.TabIndex = 19;
+            this.labelX2.Text = "滑鼠右鍵可進行手動調整";
             // 
             // Column1
             // 
@@ -167,159 +312,30 @@
             this.Column8.ReadOnly = true;
             this.Column8.Width = 80;
             // 
-            // Column9
+            // Column10
             // 
-            this.Column9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column9.HeaderText = "分發課程";
-            this.Column9.Name = "Column9";
-            this.Column9.ReadOnly = true;
+            this.Column10.HeaderText = "必選修";
+            this.Column10.Name = "Column10";
+            this.Column10.ReadOnly = true;
             // 
-            // contextMenuStrip1
+            // Column11
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.手動更正分發課程ToolStripMenuItem,
-            this.清除分發課程ToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.手動輸入無法分發原因ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(171, 98);
+            this.Column11.HeaderText = "重補修";
+            this.Column11.Name = "Column11";
+            this.Column11.ReadOnly = true;
             // 
-            // 手動更正分發課程ToolStripMenuItem
+            // colTarget
             // 
-            this.手動更正分發課程ToolStripMenuItem.Enabled = false;
-            this.手動更正分發課程ToolStripMenuItem.Name = "手動更正分發課程ToolStripMenuItem";
-            this.手動更正分發課程ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.手動更正分發課程ToolStripMenuItem.Text = "調整分發課程";
-            this.手動更正分發課程ToolStripMenuItem.Click += new System.EventHandler(this.手動更正分發課程ToolStripMenuItem_Click);
-            // 
-            // 清除分發課程ToolStripMenuItem
-            // 
-            this.清除分發課程ToolStripMenuItem.Enabled = false;
-            this.清除分發課程ToolStripMenuItem.Name = "清除分發課程ToolStripMenuItem";
-            this.清除分發課程ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.清除分發課程ToolStripMenuItem.Text = "清除分發課程";
-            this.清除分發課程ToolStripMenuItem.Click += new System.EventHandler(this.清除分發課程ToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(167, 6);
-            // 
-            // 手動輸入無法分發原因ToolStripMenuItem
-            // 
-            this.手動輸入無法分發原因ToolStripMenuItem.Enabled = false;
-            this.手動輸入無法分發原因ToolStripMenuItem.Name = "手動輸入無法分發原因ToolStripMenuItem";
-            this.手動輸入無法分發原因ToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.手動輸入無法分發原因ToolStripMenuItem.Text = "調整無法分發原因";
-            this.手動輸入無法分發原因ToolStripMenuItem.Click += new System.EventHandler(this.手動輸入無法分發原因ToolStripMenuItem_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.AutoSize = true;
-            this.btnSave.BackColor = System.Drawing.Color.Transparent;
-            this.btnSave.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnSave.Location = new System.Drawing.Point(918, 417);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(82, 25);
-            this.btnSave.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.btnSave.TabIndex = 11;
-            this.btnSave.Text = "儲存";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox1.Location = new System.Drawing.Point(707, 10);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(157, 21);
-            this.checkBox1.TabIndex = 12;
-            this.checkBox1.Text = "篩選尚未分發課程學生";
-            this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // labelX1
-            // 
-            this.labelX1.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX1.BackgroundStyle.Class = "";
-            this.labelX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX1.Location = new System.Drawing.Point(12, 12);
-            this.labelX1.Name = "labelX1";
-            this.labelX1.Size = new System.Drawing.Size(75, 23);
-            this.labelX1.TabIndex = 13;
-            this.labelX1.Text = "排序方式:";
-            // 
-            // comboBoxEx1
-            // 
-            this.comboBoxEx1.DisplayMember = "Mode";
-            this.comboBoxEx1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.comboBoxEx1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxEx1.FormattingEnabled = true;
-            this.comboBoxEx1.ItemHeight = 19;
-            this.comboBoxEx1.Location = new System.Drawing.Point(93, 10);
-            this.comboBoxEx1.Name = "comboBoxEx1";
-            this.comboBoxEx1.Size = new System.Drawing.Size(121, 25);
-            this.comboBoxEx1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.comboBoxEx1.TabIndex = 16;
-            this.comboBoxEx1.SelectedIndexChanged += new System.EventHandler(this.comboBoxEx1_SelectedIndexChanged);
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox2.Location = new System.Drawing.Point(870, 10);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(131, 21);
-            this.checkBox2.TabIndex = 17;
-            this.checkBox2.Text = "篩選本次調整學生";
-            this.checkBox2.UseVisualStyleBackColor = false;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
-            // 
-            // progressBarX1
-            // 
-            this.progressBarX1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBarX1.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.progressBarX1.BackgroundStyle.Class = "";
-            this.progressBarX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.progressBarX1.Location = new System.Drawing.Point(12, 418);
-            this.progressBarX1.Name = "progressBarX1";
-            this.progressBarX1.Size = new System.Drawing.Size(812, 23);
-            this.progressBarX1.TabIndex = 18;
-            this.progressBarX1.Text = "progressBarX1";
-            this.progressBarX1.Visible = false;
-            // 
-            // labelX2
-            // 
-            this.labelX2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelX2.AutoSize = true;
-            this.labelX2.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX2.BackgroundStyle.Class = "";
-            this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(12, 421);
-            this.labelX2.Name = "labelX2";
-            this.labelX2.Size = new System.Drawing.Size(154, 21);
-            this.labelX2.TabIndex = 19;
-            this.labelX2.Text = "滑鼠右鍵可進行手動調整";
+            this.colTarget.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colTarget.HeaderText = "分發課程";
+            this.colTarget.Name = "colTarget";
+            this.colTarget.ReadOnly = true;
             // 
             // SCSelectDistribution
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1012, 454);
+            this.ClientSize = new System.Drawing.Size(1114, 429);
             this.Controls.Add(this.labelX2);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.comboBoxEx1);
@@ -358,6 +374,7 @@
         private DevComponents.DotNetBar.Controls.ProgressBarX progressBarX1;
         private System.Windows.Forms.ToolStripMenuItem 清除分發課程ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private DevComponents.DotNetBar.LabelX labelX2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
@@ -366,7 +383,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
-        private DevComponents.DotNetBar.LabelX labelX2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTarget;
     }
 }

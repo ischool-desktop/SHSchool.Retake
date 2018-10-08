@@ -81,5 +81,15 @@ namespace SHSchool.Retake.ImportExport
         /// 開課分項類別
         /// </summary>
         public string 開課分項類別 { get; set; }
+
+        /// <summary>
+        /// 重修學年度
+        /// </summary>
+        public string RetakeSchoolYear { get; set; }
+
+        /// <summary>
+        /// 重修學期
+        /// </summary>
+        public string RetakeSemester { get; set; }
     }
 }

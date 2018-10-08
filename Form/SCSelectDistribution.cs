@@ -172,12 +172,14 @@ ORDER BY
                 displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_name"];
                 displayRow.Cells[cellIndex++].Value = "" + dataRow["subject_level"];
                 displayRow.Cells[cellIndex++].Value = "" + dataRow["credit"];
+                displayRow.Cells[cellIndex++].Value = "" + dataRow["required"];
+                displayRow.Cells[cellIndex++].Value = "" + dataRow["type"];
                 displayRow.Cells[cellIndex++].Value = "" + dataRow["course_name"];
 
                 if (("" + dataRow["course_name"]) == "" && ("" + dataRow["fail_reason"]) != "")
                 {
-                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Gray;
-                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Style.ForeColor = Color.Gray;
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Value = "" + dataRow["fail_reason"];
                 }
             }
 
@@ -189,10 +191,11 @@ ORDER BY
 
         private void btnDistribution_Click(object s1, EventArgs e1)
         {
+            int round = 1;
             BackgroundWorker bkw = new BackgroundWorker() { WorkerReportsProgress = true };
             bkw.DoWork += delegate
             {
-                bkw.ReportProgress(1);
+                bkw.ReportProgress(round == 1 ? 1 : 21);
                 AccessHelper accessHepler = new AccessHelper();
                 //[studentID][courseID *]
                 Dictionary<string, List<string>> dicStudentAttendList = new Dictionary<string, List<string>>();
@@ -206,6 +209,17 @@ ORDER BY
                 {
                     foreach (System.Data.DataRow row in _DataTable.Rows)
                     {
+                        #region 判斷分發round
+                        int targetRound = 0;
+                        if ("" + row["required"] == "必修" && "" + row["type"] == "補修")
+                            targetRound = 1;
+                        else if ("" + row["required"] == "必" && "" + row["type"] == "補")
+                            targetRound = 1;
+                        targetRound = 2;
+                        if (targetRound != round)
+                            continue;
+                        #endregion
+
                         var studentID = "" + row["student_id"];
                         if (!dicStudentDistributionList.ContainsKey(studentID))
                         {
@@ -231,7 +245,7 @@ ORDER BY
                     }
                 }
                 #endregion
-                bkw.ReportProgress(2);
+                bkw.ReportProgress(round == 1 ? 2 : 22);
                 //[subj^^level^^credit^^dept][row *]
                 Dictionary<string, List<DataRow>> dicCourseList = new Dictionary<string, List<DataRow>>();
                 //[courseID][date^^period *]
@@ -287,7 +301,7 @@ ORDER BY subject_name, subject_level, credit
                 }
                 #endregion
 
-                bkw.ReportProgress(4);
+                bkw.ReportProgress(round == 1 ? 4 : 24);
                 List<UDTScselectDef> addList = new List<UDTScselectDef>();
                 int progress = 0;
                 #region 分發
@@ -388,7 +402,10 @@ ORDER BY subject_name, subject_level, credit
                         }
                     }
                     progress++;
-                    bkw.ReportProgress(5 + 95 * progress / dicStudentDistributionList.Count);
+                    if (round == 1)
+                        bkw.ReportProgress(5 + 20 * progress / dicStudentDistributionList.Count);
+                    else
+                        bkw.ReportProgress(25 + 75 * progress / dicStudentDistributionList.Count);
                 }
                 #endregion
             };
@@ -400,11 +417,18 @@ ORDER BY subject_name, subject_level, credit
             };
             bkw.RunWorkerCompleted += delegate
             {
-                progressBarX1.Visible = false;
-                labelX2.Visible = true;
-                labelX2.Text = "自動分發完成";
-                updateDataGridView();
-                //FISCA.Presentation.Controls.MsgBox.Show("自動分發完成");
+                if (round == 1)
+                {
+                    round = 2;
+                    bkw.RunWorkerAsync();
+                }
+                else
+                {
+                    progressBarX1.Visible = false;
+                    labelX2.Visible = true;
+                    labelX2.Text = "自動分發完成";
+                    updateDataGridView();
+                }
             };
             bkw.RunWorkerAsync();
         }
@@ -429,11 +453,26 @@ ORDER BY subject_name, subject_level, credit
                     //新增課程
                     if (("" + dataRow["attend_course_id"]) == "")
                     {
+                        var type = "";
+                        switch ("" + dataRow["type"])
+                        {
+                            case "重":
+                            case "重修":
+                                type = "重修";
+                                break;
+                            case "補":
+                            case "補修":
+                                type = "補修";
+                                break;
+                            default:
+                                type = "";
+                                break;
+                        }
                         distributionList.Add(new UDTScselectDef()
                         {
                             CourseID = int.Parse("" + dataRow["distribution_id"]),
                             StudentID = (int.Parse("" + dataRow["student_id"])),
-                            Type = ("" + dataRow["type"]) == "" ? "" : ("" + dataRow["type"] + "修")
+                            Type = type
                         });
                     }
                     else //更改分發課程
@@ -463,7 +502,20 @@ ORDER BY subject_name, subject_level, credit
                     else
                     {
                         item.CourseID = int.Parse("" + dataRow["distribution_id"]);
-                        item.Type = ("" + dataRow["type"]) == "" ? "" : ("" + dataRow["type"] + "修");
+                        switch ("" + dataRow["type"])
+                        {
+                            case "重":
+                            case "重修":
+                                item.Type = "重修";
+                                break;
+                            case "補":
+                            case "補修":
+                                item.Type = "補修";
+                                break;
+                            default:
+                                item.Type = "";
+                                break;
+                        }
                     }
                     distributionList.Add(item);
                 }
@@ -604,21 +656,21 @@ ORDER BY subject_name, subject_level, credit
             foreach (DataRow dataRow in _DataTable.Rows)
             {
                 _DisplayRow[dataRow].Visible = true;
-                _DisplayRow[dataRow].Cells[8].Value = "";
+                _DisplayRow[dataRow].Cells[colTarget.Index].Value = "";
                 _DisplayRow[dataRow].Selected = false;
                 if (("" + dataRow["fail_reason"]) != "")
                 {
-                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.LightGray;
-                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["fail_reason"];
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Style.ForeColor = Color.LightGray;
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Value = "" + dataRow["fail_reason"];
                     if (("" + dataRow["fail_reason_ori"]) != ("" + dataRow["fail_reason"]))
-                        _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Gray;
+                        _DisplayRow[dataRow].Cells[colTarget.Index].Style.ForeColor = Color.Gray;
                 }
                 if (("" + dataRow["distribution_id"]) != "")
                 {
-                    _DisplayRow[dataRow].Cells[8].Style.ForeColor = _DisplayRow[dataRow].DefaultCellStyle.ForeColor;
-                    _DisplayRow[dataRow].Cells[8].Value = "" + dataRow["course_name"];
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Style.ForeColor = _DisplayRow[dataRow].DefaultCellStyle.ForeColor;
+                    _DisplayRow[dataRow].Cells[colTarget.Index].Value = "" + dataRow["course_name"];
                     if (("" + dataRow["distribution_id"]) != ("" + dataRow["attend_course_id"]))
-                        _DisplayRow[dataRow].Cells[8].Style.ForeColor = Color.Red;
+                        _DisplayRow[dataRow].Cells[colTarget.Index].Style.ForeColor = Color.Red;
                 }
 
                 if (checkBox1.Checked)//篩選未分發的
